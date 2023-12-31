@@ -25,7 +25,7 @@ export function activate(context: vscode.ExtensionContext) {
 
             const tvnClient = new meltosClient.TvnClient(userId, fileSystem);
             const sessionConfigs = await tvnClient.open_room(BigInt(60 * 60));
-            scm = new TvnSourceControl(context, tvnClient);            
+            scm = new TvnSourceControl(sessionConfigs, context, tvnClient);            
         }
     });
 
