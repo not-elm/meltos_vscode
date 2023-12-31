@@ -70,6 +70,19 @@ export class StorageFs implements vscode.FileSystemProvider {
         });
     }
 
+
+    clearMeltosDirs() {
+        fs.rmSync(this.asPath(".meltos"), {
+            recursive: true,
+            force: true,
+        });
+        fs.rmSync(this.asPath("workspace"), {
+            recursive: true,
+            force: true,
+        });
+    }
+
+
     watch(
         uri: vscode.Uri,
         options: {

@@ -26,8 +26,8 @@
         "when": "scmProvider == meltos"
       },
       {
-        "command": "meltos.stageAll",
-        "title": "stage all",
+        "command": "meltos.stage",
+        "title": "stage",
         "when": "scmProvider == meltos"
       },
       {
