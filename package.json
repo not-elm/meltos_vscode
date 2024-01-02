@@ -16,7 +16,7 @@
   "contributes": {
     "commands": [
       {
-        "command": "meltos.open",
+        "command": "meltos.init",
         "title": "open",
         "when": "scmProvider == meltos"
       },
@@ -28,6 +28,7 @@
       {
         "command": "meltos.stage",
         "title": "stage",
+        "icon": "breakpoints-view-icon",
         "when": "scmProvider == meltos"
       },
       {

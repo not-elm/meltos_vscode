@@ -70,7 +70,6 @@ export class StorageFs implements vscode.FileSystemProvider {
         });
     }
 
-
     clearMeltosDirs() {
         fs.rmSync(this.asPath(".meltos"), {
             recursive: true,
@@ -81,7 +80,6 @@ export class StorageFs implements vscode.FileSystemProvider {
             force: true,
         });
     }
-
 
     watch(
         uri: vscode.Uri,
@@ -208,7 +206,6 @@ export class StorageFs implements vscode.FileSystemProvider {
             scheme: "meltos",
         });
     }
-
 
     private createRootDirIfNeed() {
         const root = this.asPath();

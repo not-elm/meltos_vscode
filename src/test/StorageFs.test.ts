@@ -1,10 +1,12 @@
 import {StorageFs} from "../fs/StorageFs";
-import {deepStrictEqual} from "node:assert";
+import {deepStrictEqual, strictEqual} from "node:assert";
+import { MemFS } from "../fs/fileSystemProvider";
+import { parseParentPath } from "../fs/util";
 
 suite("StorageFs", () => {
-    const fs = new StorageFs();
+    const fs = new MemFS();
     setup(() => {
-        fs.clear();
+        fs.dispose();
     });
 
     test("ファイルパスがひとつ取得できること", () => {
@@ -24,7 +26,6 @@ suite("StorageFs", () => {
         ].sort());
     });
 
-
     test("ディレクトリ内のディレクトリを再帰的に確認されていること", () => {
 
         fs.writeApi("src/test.txt", Buffer.from("test"));
@@ -37,5 +38,11 @@ suite("StorageFs", () => {
             "src/dir/sample1.txt",
             "src/dir/sample2.txt"
         ].sort());
+    });
+
+    test("親ディレクトリのURIが取得できること", () => {
+        const uri = ".meltos/traces/0dajodad";
+        const parent = parseParentPath(uri);
+        strictEqual(parent, ".meltos/traces");
     });
 });
