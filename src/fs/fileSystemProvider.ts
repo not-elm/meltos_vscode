@@ -68,7 +68,9 @@ export class Directory implements vscode.FileStat {
 export type Entry = File | Directory;
 
 export class MemFS implements vscode.FileSystemProvider, vscode.Disposable {
+    constructor(private readonly scheme: string){
 
+    }
     root = new Directory("");
 
     // --- manage file metadata
@@ -347,6 +349,6 @@ export class MemFS implements vscode.FileSystemProvider, vscode.Disposable {
     }
 
     private asUri(path: string): vscode.Uri {
-        return vscode.Uri.parse(`meltos:/${path}`);
+        return vscode.Uri.parse(`${this.scheme}:/${path}`);
     }
 }

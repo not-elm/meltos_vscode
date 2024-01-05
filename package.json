@@ -16,8 +16,17 @@
   "contributes": {
     "commands": [
       {
+        "command": "meltos.openRoom",
+        "title": "open room",
+        "when": "scmProvider != meltos"
+      },
+      {
+        "command": "meltos.joinRoom",
+        "title": "join room"
+      },
+      {
         "command": "meltos.init",
-        "title": "open",
+        "title": "init",
         "when": "scmProvider == meltos"
       },
       {

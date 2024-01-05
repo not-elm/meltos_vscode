@@ -4,7 +4,7 @@ import { MemFS } from "../fs/fileSystemProvider";
 import { parseParentPath } from "../fs/util";
 
 suite("StorageFs", () => {
-    const fs = new MemFS();
+    const fs = new MemFS("meltos");
     setup(() => {
         fs.dispose();
     });
