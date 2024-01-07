@@ -1,6 +1,6 @@
-import {StorageFs} from "../fs/StorageFs";
+
 import {deepStrictEqual, strictEqual} from "node:assert";
-import { MemFS } from "../fs/fileSystemProvider";
+import { MemFS } from "../fs/MemFs";
 import { parseParentPath } from "../fs/util";
 
 suite("StorageFs", () => {

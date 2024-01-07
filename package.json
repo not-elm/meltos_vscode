@@ -50,7 +50,16 @@
         "title": "push",
         "when": "scmProvider == meltos"
       }
-    ]
+    ],
+    "views": {
+      "scm": [
+        {
+          "type": "webview",
+          "id": "meltos.scm",
+          "name": "meltos source control manager"
+        }
+      ]
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run package",
@@ -79,6 +88,6 @@
   },
   "dependencies": {
     "@wasm-tool/wasm-pack-plugin": "^1.7.0",
-    "meltos_client": "file:../meltos/crates/meltos_client/pkg"
+    "meltos_wasm": "file:../meltos/crates/meltos_wasm/pkg"
   }
 }

@@ -1,8 +1,8 @@
 import vscode, {ThemeIcon} from "vscode";
-import {SessionConfigs, TvnClient} from "meltos_client";
 
 import path from "path";
 import {toMeltosUri} from "../fs/util";
+import {SessionConfigs, WasmTvcClient} from "meltos_wasm";
 
 export class TvnSourceControl implements vscode.Disposable {
     private readonly _sc: vscode.SourceControl;
@@ -12,14 +12,13 @@ export class TvnSourceControl implements vscode.Disposable {
     constructor(
         private readonly sessionConfigs: SessionConfigs,
         private readonly context: vscode.ExtensionContext,
-        private readonly tvn: TvnClient
+        private readonly tvn: WasmTvcClient
     ) {
         this._sc = vscode.scm.createSourceControl(
             "meltos",
             "meltos",
             vscode.Uri.parse("meltos:/")
         );
-
         this._stages = this._sc.createResourceGroup("staging", "staging");
         this._changes = this._sc.createResourceGroup("changes", "changes");
 
@@ -50,7 +49,6 @@ export class TvnSourceControl implements vscode.Disposable {
         );
         this.context.subscriptions.push(command);
     };
-
 
     private readonly registerStageCommand = () => {
         const command = vscode.commands.registerCommand(
@@ -120,7 +118,6 @@ export class TvnSourceControl implements vscode.Disposable {
         }
     };
 
-
     private readonly commitAll = async () => {
         const text = await vscode.window.showInputBox();
         if (text) {
@@ -141,8 +138,7 @@ export class TvnSourceControl implements vscode.Disposable {
         }
 
         try {
-            const status = await this.tvn.merge(source);
-            console.log(`merge status = ${status}`);
+            this.tvn.merge(source);
         } catch (e) {
             if (e instanceof Error) {
                 vscode.window.showErrorMessage(e.message);

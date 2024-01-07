@@ -127,7 +127,6 @@ export class MemFS implements vscode.FileSystemProvider, vscode.Disposable {
 
     writeApi(uri: string, content: Uint8Array): void {
         try {
-
             this.writeFile(this.asUri(uri), content, {
                 create: true,
                 overwrite: true
@@ -146,14 +145,11 @@ export class MemFS implements vscode.FileSystemProvider, vscode.Disposable {
         throw vscode.FileSystemError.FileNotFound();
     }
 
-    // --- lookup
-
     writeFile(
         uri: vscode.Uri,
         content: Uint8Array,
         options: { create: boolean; overwrite: boolean }
     ): void {
-
         const basename = path.posix.basename(uri.path);
         const dirname = uri.with({path: path.posix.dirname(uri.path)});
         const {events} = this.createParents(dirname);

@@ -34,12 +34,12 @@ export const copyRealWorkspaceToVirtual = (
   realDirPath: string,
   fileSystem: vscode.FileSystemProvider
 ) => {
-  const virtualRootDir = vscode.Uri.parse("meltos:/workspace");
-  fileSystem.createDirectory(virtualRootDir);
+  const virtualRootDir = vscode.Uri.parse("meltos:/");
+
   for (const entry of fs.readdirSync(realDirPath)) {
     _copyRealWorkspaceToVirtual(
       realDirPath,
-      vscode.Uri.joinPath(virtualRootDir, entry),
+      vscode.Uri.joinPath(virtualRootDir, "workspace", entry),
       path.join(realDirPath, entry),
       fileSystem
     );
@@ -52,10 +52,10 @@ const _copyRealWorkspaceToVirtual = (
   realPath: string,
   fileSystem: vscode.FileSystemProvider
 ) => {
-  console.log("realPath = " + realPath);
+
   if (fs.statSync(realPath).isFile()) {
     const buf = fs.readFileSync(realPath);
-    console.log("write = " + realPath);
+
     fileSystem.writeFile(virtualPath, buf, {
       create: true,
       overwrite: true,
@@ -65,7 +65,7 @@ const _copyRealWorkspaceToVirtual = (
     for (const entry of fs.readdirSync(realPath)) {
       _copyRealWorkspaceToVirtual(
         rootDirPath,
-        virtualPath,
+        vscode.Uri.joinPath(virtualPath, entry),
         path.join(realPath, entry),
         fileSystem
       );

@@ -42,11 +42,12 @@ const _copyRealWorkspaceToVirtual = (
 
     if (fs.statSync(realPath).isFile()) {
         const buf = fs.readFileSync(realPath);
-        console.log("write = " + realPath);
+       
         fileSystem.writeFile(virtualPath, buf, {
             create: true,
             overwrite: true
         });
+
     } else {
         fileSystem.createDirectory(virtualPath);
         for (const entry of fs.readdirSync(realPath)) {
