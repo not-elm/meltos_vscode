@@ -62,21 +62,10 @@ export class TvcScmViewProvider implements vscode.WebviewViewProvider {
 				this._webView?.postMessage({
 					type: "initial",
 					changes,
-					stages: []
 				} as InitialMessage);
 			}
 		});
 	}
-
-	private readonly sendStagingFiles = async () => {
-		const files = this.tvc.staging_files();
-		for (const filePath of files) {
-			await this.sendStageFile({
-				changeType: "create",
-				filePath,
-			});
-		}
-	};
 
 	private readonly sendInitialMessage = async () => {
 		const changes = await this._watcher.loadChanges();

@@ -24,7 +24,8 @@
     "meltos_ts_lib": "file:../../../meltos_ts_lib",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-testing-library": "^8.0.1"
+    "react-testing-library": "^8.0.1",
+    "react-textarea-autosize": "^8.5.3"
   },
   "devDependencies": {
     "@types/react": "^18.2.43",

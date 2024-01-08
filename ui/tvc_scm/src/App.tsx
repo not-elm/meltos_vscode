@@ -6,19 +6,22 @@ import {Stages} from "./components/Stages.tsx";
 import {MockButton} from "./components/MockButton.tsx";
 import {TreeView} from "@mui/x-tree-view";
 import {ChevronRight, ExpandMore} from "@mui/icons-material";
-import {Box} from "@mui/material";
+import {Box, Divider} from "@mui/material";
 import "./reset.css"
+import {FC} from "react";
+import {CommitArea} from "./components/CommitArea.tsx";
+import {css} from "@emotion/css";
 
 // const useMockScmMessenger = () => {
 //     useEffect(() => {
-
+//
 //         const onMessage = (e: MessageEvent) => {
 //             switch (e.data.type) {
 //                 case "stage":
 //                     window.postMessage({
 //                         type: "staged",
 //                         meta: e.data.meta
-//                     } as StagedMessage, "*");
+//                     }, "*");
 //                     break;
 //                 case "unStage":
 //                     window.postMessage({
@@ -28,7 +31,7 @@ import "./reset.css"
 //             }
 //         }
 //         window.addEventListener("message", onMessage)
-
+//
 //         return () => {
 //             window.addEventListener("message", onMessage)
 //         };
@@ -42,8 +45,13 @@ export const App = () => {
     return (
         <ScmContext.Provider value={scm}>
             <Box sx={{minHeight: 180, flexGrow: 1}}>
+                <CommitArea/>
+                <Divider/>
+
+                <SpaceHeight height={32}/>
+
                 <TreeView
-                    defaultCollapseIcon={<ExpandMore height={30} width={30} />}
+                    defaultCollapseIcon={<ExpandMore height={30} width={30}/>}
                     defaultExpandIcon={<ChevronRight/>}
                 >
                     <Stages/>
@@ -53,4 +61,18 @@ export const App = () => {
             </Box>
         </ScmContext.Provider>
     );
+}
+
+
+const SpaceHeight: FC<{
+    height: number
+}> = ({height}) => {
+    const space = css`
+        height: ${height}px;
+    `
+
+    return (
+        <div className={space}>
+        </div>
+    )
 }

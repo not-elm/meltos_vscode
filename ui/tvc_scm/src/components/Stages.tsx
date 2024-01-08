@@ -7,6 +7,7 @@ import "./Stages.css"
 
 export const Stages: FC = () => {
     const {stages} = useContext(ScmContext);
+
     return (
         <TreeItem
             nodeId={"stages"}
@@ -29,7 +30,7 @@ export const StageItem: FC<{
     return (
         <TreeItem
             nodeId={meta.filePath}
-            label={<ScmItemText meta={meta} /> }
+            label={<ScmItemText meta={meta}/>}
         />
     )
 }
