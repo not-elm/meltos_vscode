@@ -10,16 +10,16 @@ suite("StorageFs", () => {
     });
 
     test("ファイルパスがひとつ取得できること", () => {
-        fs.writeApi("test", Buffer.from("hello"));
-        const files = fs.allPathApi("test");
+        fs.writeFileApi("test", Buffer.from("hello"));
+        const files = fs.allFilesIn("test");
         deepStrictEqual(files, ["test"]);
     });
 
     test("ディレクトリ内の2津のファイルが取得できること", () => {
 
-        fs.writeApi("src/test.txt", Buffer.from("test"));
-        fs.writeApi("src/hello.txt", Buffer.from("hello"));
-        const files = fs.allPathApi("src");
+        fs.writeFileApi("src/test.txt", Buffer.from("test"));
+        fs.writeFileApi("src/hello.txt", Buffer.from("hello"));
+        const files = fs.allFilesIn("src");
         deepStrictEqual(files.sort(), [
             "src/test.txt",
             "src/hello.txt"
@@ -28,11 +28,11 @@ suite("StorageFs", () => {
 
     test("ディレクトリ内のディレクトリを再帰的に確認されていること", () => {
 
-        fs.writeApi("src/test.txt", Buffer.from("test"));
-        fs.writeApi("src/dir/sample1.txt", Buffer.from("hello"));
-        fs.writeApi("src/dir/sample2.txt", Buffer.from("hello"));
+        fs.writeFileApi("src/test.txt", Buffer.from("test"));
+        fs.writeFileApi("src/dir/sample1.txt", Buffer.from("hello"));
+        fs.writeFileApi("src/dir/sample2.txt", Buffer.from("hello"));
 
-        const files = fs.allPathApi("src");
+        const files = fs.allFilesIn("src");
         deepStrictEqual(files.sort(), [
             "src/test.txt",
             "src/dir/sample1.txt",

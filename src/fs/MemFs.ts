@@ -84,7 +84,7 @@ export class MemFS implements vscode.FileSystemProvider, vscode.Disposable {
         return this._lookup(uri, false);
     }
 
-    allPathApi(path: string) {
+    allFilesIn(path: string) {
         try {
             const parent = parseParentPath(path, 1);
             const dir = this._lookupAsDirectory(this.asUri(path), false);
@@ -92,7 +92,7 @@ export class MemFS implements vscode.FileSystemProvider, vscode.Disposable {
             console.log(`ALL PATH\n ${files.join("\n")}`);
             return files;
         } catch {
-            let file = this.readApi(path);
+            let file = this.readFileApi(path);
             
             if (file) {
                 return [path];
@@ -111,7 +111,7 @@ export class MemFS implements vscode.FileSystemProvider, vscode.Disposable {
         return result;
     }
 
-    readApi(uri: string): Uint8Array | null {
+    readFileApi(uri: string): Uint8Array | null {
         try {
             const path = this.asUri(uri);
             return this.readFile(path);
@@ -125,7 +125,7 @@ export class MemFS implements vscode.FileSystemProvider, vscode.Disposable {
         this.delete(path);
     }
 
-    writeApi(uri: string, content: Uint8Array): void {
+    writeFileApi(uri: string, content: Uint8Array): void {
         try {
             this.writeFile(this.asUri(uri), content, {
                 create: true,

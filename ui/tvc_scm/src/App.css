@@ -1,0 +1,22 @@
+
+
+
+
+
+
+
+
+.scm-item{
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  gap: 8px;
+}
+
+
+.scm-absolute-path{
+  font-size: 0.8em;
+  color: #888888;
+}
+
+
