@@ -5,6 +5,7 @@ import {createOwnerArgs, createUserArgs, isOwner, loadArgs} from "./args";
 import {SessionConfigs, WasmTvcClient} from "meltos_wasm";
 import {VscodeNodeFs} from "./fs/VscodeNodeFs";
 import {TvcScmViewProvider} from "./tvn/TvcScmViewProvider";
+import {MemFS} from "./fs/MemFs";
 
 let scm: TvnSourceControl | undefined;
 let fileSystem: VscodeNodeFs | undefined;
@@ -52,7 +53,7 @@ const registerOpenRoomCommand = (context: vscode.ExtensionContext) => {
 };
 
 const registerWorkspaceInitCommand = (
-    fileSystem: vscode.FileSystemProvider,
+    fileSystem: VscodeNodeFs | MemFS,
     context: vscode.ExtensionContext
 ) => {
     const command = vscode.commands.registerCommand("meltos.init", async () => {
@@ -110,7 +111,7 @@ const registerJoinRoomCommand = (context: vscode.ExtensionContext) => {
 const registerScmView = (
     context: vscode.ExtensionContext,
     tvc: WasmTvcClient,
-    fileSystem: vscode.FileSystemProvider
+    fileSystem: VscodeNodeFs | MemFS,
 ) => {
     context.subscriptions.push(
         vscode.window.registerWebviewViewProvider(

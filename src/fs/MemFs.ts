@@ -5,7 +5,7 @@
 
 import * as path from "path";
 import * as vscode from "vscode";
-import { backslashToSlash, parseParentPath } from "./util";
+import {backslashToSlash, parseParentPath} from "./util";
 
 export class File implements vscode.FileStat {
     type: vscode.FileType;
@@ -49,15 +49,13 @@ export class Directory implements vscode.FileStat {
     }
 
     children_path(parent: string = ""): string[] {
-        console.log(`children_path parent = ${parent}`)
         const ps = [];
         for (const [uri, entry] of this.entries) {
-            console.log(`URI = ${uri} parent = ${parent}`)
             if (entry instanceof File) {
                 ps.push(path.join(parent, this.name, uri));
             }
             if (entry instanceof Directory) {
-                
+
                 ps.push(...entry.children_path(path.join(parent, this.name)));
             }
         }
@@ -68,10 +66,11 @@ export class Directory implements vscode.FileStat {
 export type Entry = File | Directory;
 
 export class MemFS implements vscode.FileSystemProvider, vscode.Disposable {
-    constructor(private readonly scheme: string){
+    constructor(private readonly scheme: string) {
 
     }
-    root = new Directory("");
+
+    root = new Directory(".");
 
     // --- manage file metadata
     private _emitter = new vscode.EventEmitter<vscode.FileChangeEvent[]>();
@@ -86,20 +85,39 @@ export class MemFS implements vscode.FileSystemProvider, vscode.Disposable {
 
     allFilesIn(path: string) {
         try {
+            if (path === "."){
+                return this.root.children_path()
+            }
+
             const parent = parseParentPath(path, 1);
             const dir = this._lookupAsDirectory(this.asUri(path), false);
-            const files =  dir.children_path(parent);
+            const files = dir.children_path(parent);
             console.log(`ALL PATH\n ${files.join("\n")}`);
             return files;
         } catch {
             let file = this.readFileApi(path);
-            
+
             if (file) {
                 return [path];
             } else {
                 return [];
             }
         }
+    }
+
+    readDirApi(uri: string): string[] | undefined {
+        try {
+            return this
+                .readDirectory(this.asUri(uri))
+                .map(([path, _]) => path)
+        }catch (e){
+            return undefined;
+        }
+    }
+
+
+    createDirApi(uri: string) {
+        this.createDirectory(this.asUri(uri))
     }
 
     readDirectory(uri: vscode.Uri): [string, vscode.FileType][] {
@@ -125,9 +143,10 @@ export class MemFS implements vscode.FileSystemProvider, vscode.Disposable {
         this.delete(path);
     }
 
-    writeFileApi(uri: string, content: Uint8Array): void {
+    writeFileApi(uri: string, content: Uint8Array | string): void {
         try {
-            this.writeFile(this.asUri(uri), content, {
+            const buf = typeof content === "string" ? new Uint8Array(Buffer.from(content)) : content;
+            this.writeFile(this.asUri(uri), buf, {
                 create: true,
                 overwrite: true
             });
@@ -137,7 +156,7 @@ export class MemFS implements vscode.FileSystemProvider, vscode.Disposable {
     }
 
     readFile(uri: vscode.Uri): Uint8Array {
-     
+
         const data = this._lookupAsFile(uri, false).data;
         if (data) {
             return data;

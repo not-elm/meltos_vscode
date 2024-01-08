@@ -51,7 +51,8 @@ const extensionConfig = {
 	},
 	plugins: [
 		new WasmPackPlugin({
-			crateDirectory: path.join(__dirname, "../meltos/crates/meltos_wasm")
+			crateDirectory: path.join(__dirname, "../meltos/crates/meltos_wasm"),
+			// extraArgs: "--target nodejs"
 		}),
 	],
 };

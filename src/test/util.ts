@@ -2,6 +2,12 @@ import * as fs from "fs";
 import vscode from "vscode";
 import * as path from "node:path";
 
+export const sleep = (ms: number) => new Promise<void>(resolve => {
+    setTimeout(() => {
+        resolve()
+    }, ms)
+})
+
 export const openWorkspacePathDialog = async () => {
     const folderPath = await vscode.window.showOpenDialog({
         title: "select workspace folder",

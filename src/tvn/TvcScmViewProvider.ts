@@ -10,18 +10,22 @@ import { StageMessage } from "meltos_ts_lib/src/scm/changes/ScmFromWebMessage";
 import { ChangeMeta } from "meltos_ts_lib/src/scm/changes";
 import { VscodeNodeFs } from "../fs/VscodeNodeFs";
 import { TvcChangeHistory } from "./TvcChangeHistory";
+import {TvcFileWatcher} from "./TvcFileWatcher";
+import {MemFS} from "../fs/MemFs";
 
 export class TvcScmViewProvider implements vscode.WebviewViewProvider {
 	private _webView: Webview | undefined;
-	private readonly _watcher: TvcChangeHistory;
+	private readonly _watcher: TvcFileWatcher;
+
+    private _emitter = new vscode.EventEmitter<vscode.FileChangeEvent[]>();
+    readonly onDidChangeFile: vscode.Event<vscode.FileChangeEvent[]> = this._emitter.event;
 
 	constructor(
 		private readonly context: vscode.ExtensionContext,
 		private readonly tvc: WasmTvcClient,
-		private readonly fileSystem: vscode.FileSystemProvider
+		private readonly fileSystem:  VscodeNodeFs | MemFS,
 	) {
-		this._watcher = new TvcChangeHistory(fileSystem, tvc);
-		this.registerChangeFileEvents();
+		this._watcher = new TvcFileWatcher(tvc, fileSystem)
 	}
 
 	resolveWebviewView(
@@ -41,55 +45,29 @@ export class TvcScmViewProvider implements vscode.WebviewViewProvider {
 		webviewView.webview.onDidReceiveMessage(async (message) => {
 			switch (message.type) {
 				case "stage":
-					await this.stage(webviewView.webview, message as StageMessage);
+					await this._watcher.stage((message as StageMessage).meta.filePath);
 					break;
+				case "commit":
+					await this._watcher.commit(message.commitText)
 			}
 		});
 		webviewView.onDidChangeVisibility(async () => {
 			if (webviewView.visible) {
-				await this.sendInitialMessage();
+				const message = await this._watcher.scmMetas();
+				await this._webView?.postMessage(message);
 			}
 		});
 		this._webView = webviewView.webview;
+		this.registerOnUpdateScm();
 	}
 
-	private registerChangeFileEvents() {
-		this.fileSystem.onDidChangeFile(async (changes) => {
-			for (const event of changes.filter((c) =>
-				c.uri.path.startsWith("/workspace/")
-			)) {
-				const changes = await this._watcher.inspectChangeStatus(event);
-				this._webView?.postMessage({
-					type: "initial",
-					changes,
-				} as InitialMessage);
-			}
+
+	private registerOnUpdateScm = () => {
+		this._watcher.onUpdateScm(async message => {
+			await this._webView?.postMessage(message);
 		});
 	}
 
-	private readonly sendInitialMessage = async () => {
-		const changes = await this._watcher.loadChanges();
-		await this._webView?.postMessage({
-			type: "initial",
-			changes: changes,
-			stages: []
-		} as InitialMessage);
-	};
-
-	private readonly stage = async (
-		webView: Webview,
-		stageMessage: StageMessage
-	) => {
-		this.tvc.stage(stageMessage.meta.filePath);
-		await this.sendStageFile(stageMessage.meta);
-	};
-
-	private readonly sendStageFile = async (meta: ChangeMeta) => {
-		await this._webView?.postMessage({
-			type: "staged",
-			meta,
-		} as StagedMessage);
-	};
 
 	private _getWebviewContent(webview: Webview, extensionUri: Uri) {
 		const stylesUri = webview.asWebviewUri(
