@@ -17,7 +17,7 @@ const extensionConfig = {
 		// the bundle is stored in the 'dist' folder (check package.json), 📖 -> https://webpack.js.org/configuration/output/
 		path: path.resolve(__dirname, "dist"),
 		filename: "extension.js",
-		// libraryTarget: "commonjs2",
+		libraryTarget: "commonjs2",
 	},
 	experiments: {
 		asyncWebAssembly: true,
@@ -28,7 +28,7 @@ const extensionConfig = {
 		vscode: "commonjs vscode", // the vscode-module is created on-the-fly and must be excluded. Add other modules that cannot be webpack'ed, 📖 -> https://webpack.js.org/configuration/externals/
 	},
 	resolve: {
-		extensions: [".ts"],
+		extensions: [".ts", ".js"],
 	},
 	module: {
 		rules: [
@@ -41,17 +41,17 @@ const extensionConfig = {
 					},
 				],
 			},
-			{
-				test: /\.wasm$/,
-				type: "asset/inline",
-			},
+			// {
+			// 	test: /\.wasm$/,
+			// 	type: "asset/inline",
+			// },
 		],
 	},
 	devtool: "nosources-source-map",
 	plugins: [
 		new WasmPackPlugin({
 			crateDirectory: path.join(__dirname, "../meltos/crates/meltos_wasm"),
-			// outDir: "wasm"
+			outDir: path.resolve(__dirname, "wasm"),
 			// extraArgs: "--target nodejs"
 		}),
 	],

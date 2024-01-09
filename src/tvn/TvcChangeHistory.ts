@@ -1,4 +1,4 @@
-import {WasmTvcClient} from "meltos_wasm";
+
 import vscode, {FileChangeEvent, FileChangeType} from "vscode";
 import {ChangeMeta} from "meltos_ts_lib/src/scm/changes";
 import {VscodeNodeFs} from "../fs/VscodeNodeFs";
@@ -7,7 +7,7 @@ import {MemFS} from "../fs/MemFs";
 export class TvcChangeHistory {
     constructor(
         private readonly fileSystem: VscodeNodeFs | MemFS,
-        private readonly tvc: WasmTvcClient
+        private readonly tvc: any
     ) {
     }
 

@@ -92,7 +92,6 @@
   },
   "dependencies": {
     "@wasm-tool/wasm-pack-plugin": "^1.7.0",
-    "meltos_ts_lib": "file:../meltos_ts_lib",
-    "meltos_wasm": "file:../meltos/crates/meltos_wasm/pkg"
+    "meltos_ts_lib": "file:../meltos_ts_lib"
   }
 }

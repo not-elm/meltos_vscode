@@ -1,11 +1,11 @@
-import {FC, useState} from "react";
+import { FC, useState } from "react";
 import TextAreaAutoSize from "react-textarea-autosize";
-import {VSCodeButton} from "@vscode/webview-ui-toolkit/react";
-import {vscodeApi} from "../client/VscodeApi.ts";
-import {css} from "@emotion/css";
+import { VSCodeButton } from "@vscode/webview-ui-toolkit/react";
+import { vscodeApi } from "../client/VscodeApi.ts";
+import { css } from "@emotion/css";
 
 export const CommitArea: FC = () => {
-    const [text, $text] = useState("")
+    const [text, $text] = useState("");
     const form = css`
         display: flex;
         flex-direction: column;
@@ -21,10 +21,10 @@ export const CommitArea: FC = () => {
         :focus {
             border: 1px solid #458cd5;
         }
-    `
+    `;
     const commitButtonBox = css`
         margin: 8px 0;
-    `
+    `;
 
     return (
         <form className={form}>
@@ -33,7 +33,7 @@ export const CommitArea: FC = () => {
                 className={textArea}
                 value={text}
                 placeholder={"commit message"}
-                onChange={e => {
+                onChange={(e) => {
                     $text(() => e.target.value);
                 }}
             />
@@ -48,6 +48,25 @@ export const CommitArea: FC = () => {
             >
                 Commit
             </VSCodeButton>
+
+            <PushButton />
         </form>
-    )
-}
+    );
+};
+
+const PushButton = () => {
+    const pushButton = css`
+
+    `;
+
+    return (
+        <VSCodeButton
+            className={pushButton}
+            onClick={() => {
+                vscodeApi.push();
+            }}
+        >
+            Push
+        </VSCodeButton>
+    );
+};

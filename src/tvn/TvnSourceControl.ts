@@ -1,8 +1,7 @@
-import vscode, {ThemeIcon} from "vscode";
+import vscode, { ThemeIcon } from "vscode";
 
 import path from "path";
-import {toMeltosUri} from "../fs/util";
-import {SessionConfigs, WasmTvcClient} from "meltos_wasm";
+import { toMeltosUri } from "../fs/util";
 
 export class TvnSourceControl implements vscode.Disposable {
     private readonly _sc: vscode.SourceControl;
@@ -10,9 +9,9 @@ export class TvnSourceControl implements vscode.Disposable {
     private readonly _changes: vscode.SourceControlResourceGroup;
 
     constructor(
-        private readonly sessionConfigs: SessionConfigs,
+        private readonly sessionConfigs: any,
         private readonly context: vscode.ExtensionContext,
-        private readonly tvn: WasmTvcClient
+        private readonly tvn: any
     ) {
         this._sc = vscode.scm.createSourceControl(
             "meltos",
@@ -23,7 +22,10 @@ export class TvnSourceControl implements vscode.Disposable {
         this._changes = this._sc.createResourceGroup("changes", "changes");
 
         const watcher = vscode.workspace.createFileSystemWatcher(
-            new vscode.RelativePattern(vscode.Uri.parse("meltos:/workspace"), "*.*")
+            new vscode.RelativePattern(
+                vscode.Uri.parse("meltos:/workspace"),
+                "*.*"
+            )
         );
         watcher.onDidCreate(this.onResourceChange);
         watcher.onDidChange(this.onResourceChange);
@@ -54,17 +56,25 @@ export class TvnSourceControl implements vscode.Disposable {
         const command = vscode.commands.registerCommand(
             "meltos.stage",
             async (filePath?: string) => {
-                const stageFilePath = filePath || (await vscode.window.showInputBox());
+                const stageFilePath =
+                    filePath || (await vscode.window.showInputBox());
                 if (stageFilePath) {
                     this.stage(stageFilePath);
-                    this._changes.resourceStates = this._changes.resourceStates.filter(
-                        (s) => path.basename(s.resourceUri.fsPath) !== stageFilePath
-                    );
+                    this._changes.resourceStates =
+                        this._changes.resourceStates.filter(
+                            (s) =>
+                                path.basename(s.resourceUri.fsPath) !==
+                                stageFilePath
+                        );
                     this._stages.resourceStates = [
-                        ...this._stages.resourceStates.filter(s => path.basename(s.resourceUri.fsPath) !== stageFilePath),
+                        ...this._stages.resourceStates.filter(
+                            (s) =>
+                                path.basename(s.resourceUri.fsPath) !==
+                                stageFilePath
+                        ),
                         {
-                            resourceUri: toMeltosUri(stageFilePath)
-                        }
+                            resourceUri: toMeltosUri(stageFilePath),
+                        },
                     ];
                 }
             }
@@ -83,9 +93,12 @@ export class TvnSourceControl implements vscode.Disposable {
     };
 
     private readonly registerPushCommand = () => {
-        const command = vscode.commands.registerCommand("meltos.push", async () => {
-            await this.pushAll();
-        });
+        const command = vscode.commands.registerCommand(
+            "meltos.push",
+            async () => {
+                await this.pushAll();
+            }
+        );
         this.context.subscriptions.push(command);
     };
 
@@ -94,7 +107,8 @@ export class TvnSourceControl implements vscode.Disposable {
             "meltos.merge",
             async (source?: string) => {
                 await this.merge(source);
-            });
+            }
+        );
         this.context.subscriptions.push(command);
     };
 
@@ -130,9 +144,11 @@ export class TvnSourceControl implements vscode.Disposable {
     };
 
     private readonly merge = async (sourceBranch?: string) => {
-        const source = sourceBranch || (await vscode.window.showInputBox({
-            placeHolder: "source branch"
-        }));
+        const source =
+            sourceBranch ||
+            (await vscode.window.showInputBox({
+                placeHolder: "source branch",
+            }));
         if (!source) {
             return;
         }
@@ -149,7 +165,9 @@ export class TvnSourceControl implements vscode.Disposable {
     private readonly onResourceChange = (resourceUri: vscode.Uri) => {
         console.log(resourceUri);
         this._changes.resourceStates = [
-            ...this._changes.resourceStates.filter(s => s.resourceUri.fsPath !== resourceUri.fsPath),
+            ...this._changes.resourceStates.filter(
+                (s) => s.resourceUri.fsPath !== resourceUri.fsPath
+            ),
             {
                 resourceUri,
                 decorations: {
