@@ -17,8 +17,7 @@
     "commands": [
       {
         "command": "meltos.openRoom",
-        "title": "open room",
-        "when": "scmProvider != meltos"
+        "title": "open room"
       },
       {
         "command": "meltos.joinRoom",

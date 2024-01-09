@@ -1,15 +1,11 @@
 import * as vscode from "vscode";
 import { Uri, Webview } from "vscode";
 import { WasmTvcClient } from "meltos_wasm";
-import {
-	ChangeMessage,
-	InitialMessage,
-	StagedMessage,
-} from "meltos_ts_lib/src/scm/changes/ScmToWebMessage";
+
 import { StageMessage } from "meltos_ts_lib/src/scm/changes/ScmFromWebMessage";
-import { ChangeMeta } from "meltos_ts_lib/src/scm/changes";
+
 import { VscodeNodeFs } from "../fs/VscodeNodeFs";
-import { TvcChangeHistory } from "./TvcChangeHistory";
+
 import {TvcFileWatcher} from "./TvcFileWatcher";
 import {MemFS} from "../fs/MemFs";
 
@@ -61,13 +57,11 @@ export class TvcScmViewProvider implements vscode.WebviewViewProvider {
 		this.registerOnUpdateScm();
 	}
 
-
 	private registerOnUpdateScm = () => {
 		this._watcher.onUpdateScm(async message => {
 			await this._webView?.postMessage(message);
 		});
 	}
-
 
 	private _getWebviewContent(webview: Webview, extensionUri: Uri) {
 		const stylesUri = webview.asWebviewUri(

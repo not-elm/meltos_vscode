@@ -16,7 +16,6 @@ export class VscodeNodeFs implements vscode.FileSystemProvider, vscode.Disposabl
 		}
 	}
 
-
 	watchWorkspace(f: (event: fs.WatchEventType, fileName: string | null) => void){
 		const path = this.asPath("workspace");
 		const watcher = fs.watch(path, {}, (event, filename) => {
@@ -224,7 +223,7 @@ export class VscodeNodeFs implements vscode.FileSystemProvider, vscode.Disposabl
 	}
 
 	dispose(){
-		this._watchers.forEach(w => w.close());
+		// this._watchers.forEach(w => w.close());
 	}
 
 	private asUri(path: string) {

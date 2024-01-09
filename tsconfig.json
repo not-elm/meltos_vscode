@@ -6,7 +6,11 @@
       "ES2022"
     ],
     "sourceMap": true,
-    "rootDir": "src",
+    "rootDirs": [
+      "src",
+      "../meltos_ts_lib/src",
+      "../meltos/crates/meltos_wasm/src"
+    ],
     "strict": true
     /* enable all strict type-checking options */
     /* Additional Checks */

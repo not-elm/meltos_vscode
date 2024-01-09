@@ -2,16 +2,15 @@ import * as vscode from "vscode";
 import {copyRealWorkspaceToVirtual, openWorkspacePathDialog, toMeltosUri,} from "./fs/util";
 import {TvnSourceControl} from "./tvn/TvnSourceControl";
 import {createOwnerArgs, createUserArgs, isOwner, loadArgs} from "./args";
-import {SessionConfigs, WasmTvcClient} from "meltos_wasm";
+
 import {VscodeNodeFs} from "./fs/VscodeNodeFs";
 import {TvcScmViewProvider} from "./tvn/TvcScmViewProvider";
 import {MemFS} from "./fs/MemFs";
 
 let scm: TvnSourceControl | undefined;
-let fileSystem: VscodeNodeFs | undefined;
 
 export function activate(context: vscode.ExtensionContext) {
-    fileSystem = new VscodeNodeFs();
+    const fileSystem = new VscodeNodeFs();
     context.subscriptions.push(
         vscode.workspace.registerFileSystemProvider("meltos", fileSystem, {
             isCaseSensitive: true,
@@ -28,7 +27,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 export function deactivate() {
     scm?.dispose();
-    fileSystem?.dispose();
+    
 }
 
 const registerOpenRoomCommand = (context: vscode.ExtensionContext) => {
@@ -57,28 +56,29 @@ const registerWorkspaceInitCommand = (
     context: vscode.ExtensionContext
 ) => {
     const command = vscode.commands.registerCommand("meltos.init", async () => {
-        fileSystem.delete(vscode.Uri.parse("meltos:/"), {recursive: true});
-        const args = loadArgs(context);
-
+        // fileSystem.delete(vscode.Uri.parse("meltos:/"), {recursive: true});
         const meltos = await import("meltos_wasm");
+        
+        const args = loadArgs(context);
+   
         const tvc = new meltos.WasmTvcClient(args.userId, fileSystem);
-        let sessionConfigs: SessionConfigs;
+        let sessionConfigs: any;
         if (isOwner(args)) {
             copyRealWorkspaceToVirtual(args.workspaceSource, fileSystem);
-            sessionConfigs = await tvc.open_room(BigInt(60 * 60));
+            // sessionConfigs = await tvc.open_room(BigInt(60 * 60));
         } else {
             // sessionConfigs = await tvnClient.join_room(args.roomId!, args.userId);
-            sessionConfigs = await tvc.open_room(BigInt(60 * 60));
+            // sessionConfigs = await tvc.open_room(BigInt(60 * 60));
         }
-        registerScmView(context, tvc, fileSystem);
-        fileSystem.writeFile(
-            toMeltosUri("sessionConfigs"),
-            Buffer.from(sessionConfigs.room_id[0]),
-            {
-                create: true,
-                overwrite: true,
-            }
-        );
+        // registerScmView(context, tvc, fileSystem);
+        // fileSystem.writeFile(
+        //     toMeltosUri("sessionConfigs"),
+        //     Buffer.from(sessionConfigs.room_id[0]),
+        //     {
+        //         create: true,
+        //         overwrite: true,
+        //     }
+        // );
 
         // scm = new TvnSourceControl(sessionConfigs, context, tvnClient);
     });
@@ -110,7 +110,7 @@ const registerJoinRoomCommand = (context: vscode.ExtensionContext) => {
 
 const registerScmView = (
     context: vscode.ExtensionContext,
-    tvc: WasmTvcClient,
+    tvc: any,
     fileSystem: VscodeNodeFs | MemFS,
 ) => {
     context.subscriptions.push(
