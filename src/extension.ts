@@ -58,7 +58,7 @@ const registerWorkspaceInitCommand = (
         fileSystem.delete(vscode.Uri.parse("meltos:/"), { recursive: true });
 
         const args = loadArgs(context);
-        const meltos = await import("../wasm");
+        const meltos = await import("../wasm/index.js");
         const tvc = new meltos.WasmTvcClient(args.userId, fileSystem);
         let sessionConfigs: any;
         if (isOwner(args)) {

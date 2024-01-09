@@ -5,13 +5,13 @@ import { StageMessage } from "meltos_ts_lib/src/scm/changes/ScmFromWebMessage";
 
 import { VscodeNodeFs } from "../fs/VscodeNodeFs";
 
-import { TvcFileWatcher } from "./TvcFileWatcher";
+import { TvcProvider } from "./TvcProvider";
 import { MemFS } from "../fs/MemFs";
 import { SessionConfigs } from "../../wasm";
 
 export class TvcScmViewProvider implements vscode.WebviewViewProvider {
     private _webView: Webview | undefined;
-    private readonly _watcher: TvcFileWatcher;
+    private readonly _watcher: TvcProvider;
 
     private _emitter = new vscode.EventEmitter<vscode.FileChangeEvent[]>();
     readonly onDidChangeFile: vscode.Event<vscode.FileChangeEvent[]> =
@@ -23,7 +23,7 @@ export class TvcScmViewProvider implements vscode.WebviewViewProvider {
         tvc: any,
         fileSystem: VscodeNodeFs | MemFS
     ) {
-        this._watcher = new TvcFileWatcher(tvc, fileSystem);
+        this._watcher = new TvcProvider(tvc, fileSystem);
     }
 
     resolveWebviewView(

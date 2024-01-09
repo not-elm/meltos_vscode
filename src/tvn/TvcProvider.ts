@@ -6,7 +6,7 @@ import { VscodeNodeFs } from "../fs/VscodeNodeFs";
 import { MemFS } from "../fs/MemFs";
 import { SessionConfigs } from "../../wasm";
 
-export class TvcFileWatcher {
+export class TvcProvider {
     private readonly _history: TvcChangeHistory;
     private _emitter = new vscode.EventEmitter<InitialMessage>();
     readonly onUpdateScm: vscode.Event<InitialMessage> = this._emitter.event;
