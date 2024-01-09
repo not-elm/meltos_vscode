@@ -115,7 +115,6 @@ export class MemFS implements vscode.FileSystemProvider, vscode.Disposable {
         }
     }
 
-
     createDirApi(uri: string) {
         this.createDirectory(this.asUri(uri))
     }
@@ -223,6 +222,11 @@ export class MemFS implements vscode.FileSystemProvider, vscode.Disposable {
     }
 
     delete(uri: vscode.Uri): void {
+       if(uri.path === "/"){
+            this.root = new Directory(".");
+            return;
+       }
+
         const dirname = uri.with({path: path.posix.dirname(uri.path)});
         const basename = path.posix.basename(uri.path);
         const parent = this._lookupAsDirectory(dirname, false);
