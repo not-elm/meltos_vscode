@@ -12,7 +12,7 @@ import { MemFS } from "./fs/MemFs";
 import { SessionConfigs, WasmTvcClient } from "../wasm";
 
 export function activate(context: vscode.ExtensionContext) {
-	const fileSystem = new MemFS("meltos");
+	const fileSystem = new VscodeNodeFs();
 	context.subscriptions.push(
 		vscode.workspace.registerFileSystemProvider("meltos", fileSystem, {
 			isCaseSensitive: true,

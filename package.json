@@ -31,7 +31,8 @@
       {
         "command": "meltos.fetch",
         "title": "fetch",
-        "when": "scmProvider == meltos"
+        "when": "scmProvider == meltos",
+        "icon": "$(refresh)"
       },
       {
         "command": "meltos.stage",
@@ -58,6 +59,12 @@
           "name": "meltos source control manager"
         }
       ]
+    },
+    "menus": {
+      "view/title": [{
+          "command": "meltos.fetch",
+          "group": "navigation"
+      }]
     }
   },
   "scripts": {

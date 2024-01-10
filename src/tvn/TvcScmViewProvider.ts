@@ -11,7 +11,7 @@ import { SessionConfigs } from "../../wasm";
 
 export class TvcScmViewProvider implements vscode.WebviewViewProvider {
     private _webView: Webview | undefined;
-    private readonly _watcher: TvcProvider;
+    private readonly _provider: TvcProvider;
 
     private _emitter = new vscode.EventEmitter<vscode.FileChangeEvent[]>();
     readonly onDidChangeFile: vscode.Event<vscode.FileChangeEvent[]> =
@@ -23,7 +23,15 @@ export class TvcScmViewProvider implements vscode.WebviewViewProvider {
         tvc: any,
         fileSystem: VscodeNodeFs | MemFS
     ) {
-        this._watcher = new TvcProvider(tvc, fileSystem);
+        this._provider = new TvcProvider(tvc, fileSystem);
+        this.registerFetchCommand(context);
+    }
+
+    private readonly registerFetchCommand = (context: vscode.ExtensionContext) => {
+        context.subscriptions.push(vscode.commands.registerCommand("meltos.fetch", async () => {
+            await this._provider.fetch(this.sessionConfigs);
+        }));
+    
     }
 
     resolveWebviewView(
@@ -43,21 +51,21 @@ export class TvcScmViewProvider implements vscode.WebviewViewProvider {
         webviewView.webview.onDidReceiveMessage(async (message) => {
             switch (message.type) {
                 case "stage":
-                    await this._watcher.stage(
+                    await this._provider.stage(
                         (message as StageMessage).meta.filePath
                     );
                     break;
                 case "commit":
-                    await this._watcher.commit(message.commitText);
+                    await this._provider.commit(message.commitText);
                     break;
                 case "push":
-                    await this._watcher.push(this.sessionConfigs);
+                    await this._provider.push(this.sessionConfigs);
                     break;
             }
         });
         webviewView.onDidChangeVisibility(async () => {
             if (webviewView.visible) {
-                const message = await this._watcher.scmMetas();
+                const message = await this._provider.scmMetas();
                 await this._webView?.postMessage(message);
             }
         });
@@ -66,7 +74,7 @@ export class TvcScmViewProvider implements vscode.WebviewViewProvider {
     }
 
     private registerOnUpdateScm = () => {
-        this._watcher.onUpdateScm(async (message) => {
+        this._provider.onUpdateScm(async (message) => {
             await this._webView?.postMessage(message);
         });
     };

@@ -4,7 +4,7 @@ import { TvcChangeHistory } from "./TvcChangeHistory";
 import { InitialMessage } from "meltos_ts_lib/src/scm/changes/ScmToWebMessage";
 import { VscodeNodeFs } from "../fs/VscodeNodeFs";
 import { MemFS } from "../fs/MemFs";
-import { SessionConfigs } from "../../wasm";
+import { SessionConfigs, WasmTvcClient } from "../../wasm";
 
 export class TvcProvider {
     private readonly _history: TvcChangeHistory;
@@ -12,7 +12,7 @@ export class TvcProvider {
     readonly onUpdateScm: vscode.Event<InitialMessage> = this._emitter.event;
 
     constructor(
-        private readonly tvc: any,
+        private readonly tvc: WasmTvcClient,
         private readonly fileSystem: VscodeNodeFs | MemFS
     ) {
         this._history = new TvcChangeHistory(fileSystem, tvc);
@@ -25,6 +25,10 @@ export class TvcProvider {
             changes: await this._history.loadChanges(),
             stages: await this._history.loadStages(),
         };
+    };
+
+    readonly fetch = async (sessionConfigs: SessionConfigs) => {
+        await this.tvc.fetch(sessionConfigs);
     };
 
     readonly stage = async (filePath: string) => {
