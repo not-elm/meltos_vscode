@@ -49,6 +49,12 @@
         "command": "meltos.push",
         "title": "push",
         "when": "scmProvider == meltos"
+      },
+      {
+        "command": "meltos.tvc.showHistory",
+        "title": "tvc show history",
+        "when": "scmProvider == meltos",
+        "icon": "$(history)"
       }
     ],
     "views": {
@@ -61,10 +67,16 @@
       ]
     },
     "menus": {
-      "view/title": [{
+      "view/title": [
+        {
+          "command": "meltos.tvc.showHistory",
+          "group": "navigation"
+        },
+        {
           "command": "meltos.fetch",
           "group": "navigation"
-      }]
+        }
+      ]
     }
   },
   "scripts": {

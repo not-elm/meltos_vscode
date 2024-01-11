@@ -1,15 +1,13 @@
-
-import vscode, {FileChangeEvent, FileChangeType} from "vscode";
-import {ChangeMeta} from "meltos_ts_lib/src/scm/changes";
-import {VscodeNodeFs} from "../fs/VscodeNodeFs";
-import {MemFS} from "../fs/MemFs";
+import vscode, { FileChangeEvent, FileChangeType } from "vscode";
+import { ChangeMeta } from "meltos_ts_lib/src/scm/changes";
+import { VscodeNodeFs } from "../fs/VscodeNodeFs";
+import { MemFS } from "../fs/MemFs";
 
 export class TvcChangeHistory {
     constructor(
         private readonly fileSystem: VscodeNodeFs | MemFS,
         private readonly tvc: any
-    ) {
-    }
+    ) {}
 
     async inspectChangeStatus(
         event: vscode.FileChangeEvent
@@ -19,40 +17,38 @@ export class TvcChangeHistory {
         return changes;
     }
 
-
     readonly clearStages = () => {
         this.saveStages([]);
-    }
-
+    };
 
     readonly moveToStages = async (filePath: string) => {
         let changes = await this.loadChanges();
-        const stages: ChangeMeta[] = await this.loadStages()
+        const stages: ChangeMeta[] = await this.loadStages();
 
         for (let file of this.fileSystem.allFilesIn(filePath)) {
             file = file.startsWith("/") ? file : `/${file}`;
-            const meta = changes.find(c => c.filePath === file)
+            const meta = changes.find((c) => c.filePath === file);
             if (meta) {
-                console.log(meta)
-                changes = changes.filter(c => c.filePath !== file);
+                console.log(meta);
+                changes = changes.filter((c) => c.filePath !== file);
                 stages.push(meta);
             }
         }
         this.saveStages(distinct(stages));
-        this.saveChanges(changes)
-    }
+        this.saveChanges(changes);
+    };
 
-    private readonly nextChanges = async (event: FileChangeEvent): Promise<ChangeMeta[]> => {
+    private readonly nextChanges = async (
+        event: FileChangeEvent
+    ): Promise<ChangeMeta[]> => {
         const filePath = event.uri.path;
         const oldChanges = await this.loadChanges();
-        const p = filePath.startsWith("/") ?
-            filePath.replace("/", "") :
-            filePath;
+        const p = filePath.startsWith("/")
+            ? filePath.replace("/", "")
+            : filePath;
 
         if (!this.existsInTrace(p) && event.type === FileChangeType.Deleted) {
-            return [
-                ...oldChanges.filter((c) => c.filePath !== event.uri.path),
-            ];
+            return [...oldChanges.filter((c) => c.filePath !== event.uri.path)];
         } else {
             return [
                 ...oldChanges.filter((c) => c.filePath !== event.uri.path),
@@ -63,7 +59,6 @@ export class TvcChangeHistory {
             ];
         }
     };
-
 
     private readonly saveStages = (stages: ChangeMeta[]) => {
         this.fileSystem.writeFile(
@@ -78,24 +73,25 @@ export class TvcChangeHistory {
 
     readonly loadStages = async (): Promise<ChangeMeta[]> => {
         try {
-            const buf = await this
-                .fileSystem
-                .readFile(vscode.Uri.parse(".stages"));
-            return JSON.parse(buf.toString()) || []
-        } catch (e) {
-            return []
-        }
-    }
-
-    readonly loadChanges = async (): Promise<ChangeMeta[]> => {
-        try {
-            const buf = await this.fileSystem.readFile(vscode.Uri.parse(".changes"));
-            return JSON.parse(buf.toString());
+            const buf = await this.fileSystem.readFile(
+                vscode.Uri.parse(".stages")
+            );
+            return JSON.parse(buf.toString()) || [];
         } catch (e) {
             return [];
         }
     };
 
+    readonly loadChanges = async (): Promise<ChangeMeta[]> => {
+        try {
+            const buf = await this.fileSystem.readFile(
+                vscode.Uri.parse(".changes")
+            );
+            return JSON.parse(buf.toString());
+        } catch (e) {
+            return [];
+        }
+    };
 
     private readonly saveChanges = (changes: ChangeMeta[]) => {
         this.fileSystem.writeFile(
@@ -111,8 +107,6 @@ export class TvcChangeHistory {
     private readonly existsInTrace = (filePath: string) => {
         return this.tvc.exists_in_traces(filePath);
     };
-
-
 }
 
 const fromFileChangeType = (ty: vscode.FileChangeType) => {
@@ -126,8 +120,7 @@ const fromFileChangeType = (ty: vscode.FileChangeType) => {
     }
 };
 
-
-const distinct = (metas: ChangeMeta[]) => metas
-    .filter((element, index) => {
-        return metas.findIndex(m => m.filePath === element.filePath) == index;
-    })
+const distinct = (metas: ChangeMeta[]) =>
+    metas.filter((element, index) => {
+        return metas.findIndex((m) => m.filePath === element.filePath) == index;
+    });

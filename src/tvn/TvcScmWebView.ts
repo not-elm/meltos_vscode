@@ -1,15 +1,16 @@
 import * as vscode from "vscode";
-import { Uri, Webview } from "vscode";
+import {Uri, Webview} from "vscode";
 
-import { StageMessage } from "meltos_ts_lib/src/scm/changes/ScmFromWebMessage";
+import {StageMessage} from "meltos_ts_lib/src/scm/changes/ScmFromWebMessage";
 
-import { VscodeNodeFs } from "../fs/VscodeNodeFs";
+import {VscodeNodeFs} from "../fs/VscodeNodeFs";
 
-import { TvcProvider } from "./TvcProvider";
-import { MemFS } from "../fs/MemFs";
-import { SessionConfigs } from "../../wasm";
+import {TvcProvider} from "./TvcProvider";
+import {MemFS} from "../fs/MemFs";
+import {SessionConfigs} from "../../wasm";
+import {getNonce} from "../nonce";
 
-export class TvcScmViewProvider implements vscode.WebviewViewProvider {
+export class TvcScmWebView implements vscode.WebviewViewProvider {
     private _webView: Webview | undefined;
     private readonly _provider: TvcProvider;
 
@@ -31,7 +32,7 @@ export class TvcScmViewProvider implements vscode.WebviewViewProvider {
         context.subscriptions.push(vscode.commands.registerCommand("meltos.fetch", async () => {
             await this._provider.fetch(this.sessionConfigs);
         }));
-    
+
     }
 
     resolveWebviewView(
@@ -100,7 +101,7 @@ export class TvcScmViewProvider implements vscode.WebviewViewProvider {
                 "index.js"
             )
         );
-        const nonce = this.getNonce();
+        const nonce = getNonce();
 
         return /*html*/ `
       <!DOCTYPE html>
@@ -120,17 +121,7 @@ export class TvcScmViewProvider implements vscode.WebviewViewProvider {
     `;
     }
 
-    private getNonce() {
-        let text = "";
-        const possible =
-            "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-        for (let i = 0; i < 32; i++) {
-            text += possible.charAt(
-                Math.floor(Math.random() * possible.length)
-            );
-        }
-        return text;
-    }
+
 }
 
 const fromFileChangeType = (ty: vscode.FileChangeType) => {
