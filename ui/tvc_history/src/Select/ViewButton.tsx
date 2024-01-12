@@ -1,11 +1,11 @@
-import {css} from "@emotion/css";
-import {FC} from "react";
-import {vscodeApi} from "../VscodeApi.ts";
-
+import { css } from "@emotion/css";
+import { FC } from "react";
+import { vscodeApi } from "../VscodeApi.ts";
+import { ObjMeta } from "meltos_ts_lib/dist/scm/commit/CommitMeta.ts";
 
 export const ObjButtons: FC<{
-    hash: string
-}> = ({hash}) => {
+    meta: ObjMeta;
+}> = ({ meta }) => {
     const root = css`
         display: flex;
         background: #3c3c3c;
@@ -15,49 +15,45 @@ export const ObjButtons: FC<{
 
     return (
         <div className={root}>
-            <ViewButton hash={hash}/>
-            <CompareButton hash={hash}/>
+            <ViewButton meta={meta} />
+            <CompareButton meta={meta} />
         </div>
-    )
-}
-
+    );
+};
 
 const ViewButton: FC<{
-    hash: string,
-}> = ({hash}) => {
-
+    meta: ObjMeta;
+}> = ({ meta }) => {
     return (
         <ButtonBase
             imgSrc={""}
             text={"View"}
             onClick={() => {
-                vscodeApi.showFile(hash)
+                vscodeApi.showFile(meta);
             }}
         />
-    )
-}
-
+    );
+};
 
 const CompareButton: FC<{
-    hash: string
-}> = ({hash}) => {
+    meta: ObjMeta;
+}> = ({ meta }) => {
     return (
         <ButtonBase
             imgSrc={""}
             text={"Workspace"}
             onClick={() => {
-                vscodeApi.showFile(hash);
+                vscodeApi.showDiffFromWorkspace(meta);
             }}
         />
-    )
-}
-
+    );
+};
 
 const ButtonBase: FC<{
-    imgSrc: string,
-    text: string,
-    onClick: () => void
-}> = ({imgSrc, text, onClick}) => {
+    imgSrc: string;
+    text: string;
+    onClick: () => void;
+}> = ({ imgSrc, text, onClick }) => {
     const root = css`
         display: flex;
         color: #007acc;
@@ -69,12 +65,9 @@ const ButtonBase: FC<{
     `;
 
     return (
-        <div
-            className={root}
-            onClick={onClick}
-        >
-            <img src={imgSrc}/>
+        <div className={root} onClick={onClick}>
+            <img src={imgSrc} />
             <p>{text}</p>
         </div>
-    )
-}
+    );
+};

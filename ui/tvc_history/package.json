@@ -3,6 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "scripts": {
+    "setup": "npm i",
     "dev": "vite",
     "build": "tsc && vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
@@ -11,6 +12,9 @@
   "dependencies": {
     "@emotion/css": "^11.11.2",
     "@vscode/webview-ui-toolkit": "^1.4.0",
+    "@mui/icons-material": "^5.15.3",
+    "@mui/material": "^5.15.3",
+    "@mui/x-tree-view": "^6.17.0",
     "meltos_ts_lib": "file:../../../meltos_ts_lib",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

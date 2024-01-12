@@ -1,12 +1,17 @@
 import * as vscode from "vscode";
-import {copyRealWorkspaceToVirtual, openWorkspacePathDialog, toMeltosUri,} from "./fs/util";
-import {createOwnerArgs, createUserArgs, isOwner, loadArgs} from "./args";
+import {
+    copyRealWorkspaceToVirtual,
+    openWorkspacePathDialog,
+    toMeltosUri,
+} from "./fs/util";
+import { createOwnerArgs, createUserArgs, isOwner, loadArgs } from "./args";
 
-import {VscodeNodeFs} from "./fs/VscodeNodeFs";
-import {TvcScmWebView} from "./tvn/TvcScmWebView";
-import {MemFS} from "./fs/MemFs";
-import {SessionConfigs, WasmTvcClient} from "../wasm";
-import {registerShowHistoryCommand} from "./tvn/TvcHistoryWebView";
+import { VscodeNodeFs } from "./fs/VscodeNodeFs";
+import { TvcScmWebView } from "./tvn/TvcScmWebView";
+import { MemFS } from "./fs/MemFs";
+import { SessionConfigs, WasmTvcClient } from "../wasm";
+import { registerShowHistoryCommand } from "./tvn/TvcHistoryWebView";
+import { ObjFileProvider } from "./tvn/ObjFileProvider";
 
 export function activate(context: vscode.ExtensionContext) {
     const fileSystem = new VscodeNodeFs();
@@ -24,8 +29,7 @@ export function activate(context: vscode.ExtensionContext) {
     }
 }
 
-export function deactivate() {
-}
+export function deactivate() {}
 
 const registerOpenRoomCommand = (context: vscode.ExtensionContext) => {
     context.subscriptions.push(
@@ -53,9 +57,11 @@ const registerWorkspaceInitCommand = (
     context: vscode.ExtensionContext
 ) => {
     const command = vscode.commands.registerCommand("meltos.init", async () => {
-        fileSystem.delete(vscode.Uri.parse("meltos:/"), {recursive: true});
+        fileSystem.delete(vscode.Uri.parse("meltos:/"), { recursive: true });
+        // fileSystem.writeFileApi("hello.txt", Buffer.from("hello"));
 
         const args = loadArgs(context);
+        console.log(args);
         const meltos = await import("../wasm/index.js");
         const tvc = new meltos.WasmTvcClient(args.userId, fileSystem);
         let sessionConfigs: SessionConfigs;
@@ -67,6 +73,13 @@ const registerWorkspaceInitCommand = (
         }
         registerShowHistoryCommand(context, tvc);
         registerScmView(context, sessionConfigs, tvc, fileSystem);
+
+        const objProvider = new ObjFileProvider(tvc);
+        vscode.workspace.registerTextDocumentContentProvider(
+            "tvc",
+            objProvider
+        );
+
         fileSystem.writeFile(
             toMeltosUri("sessionConfigs"),
             Buffer.from(sessionConfigs.room_id[0]),
@@ -75,6 +88,8 @@ const registerWorkspaceInitCommand = (
                 overwrite: true,
             }
         );
+
+        return;
     });
     context.subscriptions.push(command);
 };

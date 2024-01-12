@@ -41,10 +41,12 @@ export class TvcProvider {
         this.tvc.commit(text);
         this._history.clearStages();
         await this.fireUpdateScm();
+        vscode.window.showInformationMessage("committed success");
     };
 
     readonly push = async (sessionConfigs: SessionConfigs) => {
         await this.tvc.push(sessionConfigs);
+        vscode.window.showInformationMessage("pushed success");
     };
 
     private readonly fireUpdateScm = async () => {

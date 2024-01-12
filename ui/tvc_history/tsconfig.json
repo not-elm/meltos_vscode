@@ -17,9 +17,10 @@
     "noEmit": true,
     "jsx": "react-jsx",
     /* Linting */
-
+    "strict": true,
     "noUnusedLocals": false,
     "noUnusedParameters": false,
+    "noImplicitAny": false,
     "noFallthroughCasesInSwitch": true,
     "typeRoots": [
       "../../wasm"
@@ -28,6 +29,9 @@
   "include": [
     "src/**/*",
     "tests/**/*"
+  ],
+  "exclude": [
+    "node_modules/**/*"
   ],
   "references": [
     {

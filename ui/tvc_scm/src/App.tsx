@@ -1,16 +1,48 @@
 import "./App.css";
-import {ScmContext, useScm} from "./client/useScm.ts";
-import {Changes} from "./components/Changes.tsx";
-import {Stages} from "./components/Stages.tsx";
+import { ScmContext, useScm } from "./client/useScm.ts";
+import { Changes } from "./components/Changes.tsx";
+import { Stages } from "./components/Stages.tsx";
+import { TreeView } from "@mui/x-tree-view";
+import { ChevronRight, ExpandMore } from "@mui/icons-material";
+import { Box, Divider } from "@mui/material";
+import "./reset.css";
+import { FC } from "react";
+import { CommitArea } from "./components/CommitArea.tsx";
+import { css } from "@emotion/css";
 
-import {MockButton} from "./components/MockButton.tsx";
-import {TreeView} from "@mui/x-tree-view";
-import {ChevronRight, ExpandMore} from "@mui/icons-material";
-import {Box, Divider} from "@mui/material";
-import "./reset.css"
-import {FC} from "react";
-import {CommitArea} from "./components/CommitArea.tsx";
-import {css} from "@emotion/css";
+export const App = () => {
+    const scm = useScm();
+    // useMockScmMessenger()
+
+    return (
+        <ScmContext.Provider value={scm}>
+            <Box sx={{ minHeight: 180, flexGrow: 1 }}>
+                <CommitArea />
+                <Divider />
+
+                <SpaceHeight height={32} />
+
+                <TreeView
+                    defaultCollapseIcon={<ExpandMore height={30} width={30} />}
+                    defaultExpandIcon={<ChevronRight />}
+                >
+                    <Stages />
+                    <Changes />
+                </TreeView>
+            </Box>
+        </ScmContext.Provider>
+    );
+};
+
+const SpaceHeight: FC<{
+    height: number;
+}> = ({ height }) => {
+    const space = css`
+        height: ${height}px;
+    `;
+
+    return <div className={space}></div>;
+};
 
 // const useMockScmMessenger = () => {
 //     useEffect(() => {
@@ -37,42 +69,3 @@ import {css} from "@emotion/css";
 //         };
 //     }, [])
 // }
-
-export const App = () => {
-    const scm = useScm();
-    // useMockScmMessenger()
-
-    return (
-        <ScmContext.Provider value={scm}>
-            <Box sx={{minHeight: 180, flexGrow: 1}}>
-                <CommitArea/>
-                <Divider/>
-
-                <SpaceHeight height={32}/>
-
-                <TreeView
-                    defaultCollapseIcon={<ExpandMore height={30} width={30}/>}
-                    defaultExpandIcon={<ChevronRight/>}
-                >
-                    <Stages/>
-                    <Changes/>
-                </TreeView>
-                <MockButton/>
-            </Box>
-        </ScmContext.Provider>
-    );
-}
-
-
-const SpaceHeight: FC<{
-    height: number
-}> = ({height}) => {
-    const space = css`
-        height: ${height}px;
-    `
-
-    return (
-        <div className={space}>
-        </div>
-    )
-}

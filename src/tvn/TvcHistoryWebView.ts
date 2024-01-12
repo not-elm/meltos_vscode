@@ -1,6 +1,8 @@
-import vscode, { Uri, Webview, WebviewPanel } from "vscode";
-import { getNonce } from "../nonce";
-import { WasmTvcClient } from "../../wasm";
+import vscode, {Uri, Webview, WebviewPanel} from "vscode";
+import {getNonce} from "../nonce";
+import {ObjMeta, WasmTvcClient} from "../../wasm";
+import {showObjFile} from "./ObjFileProvider";
+import {ShowFileMessage,} from "meltos_ts_lib/dist/scm/hitory/HistoryFromWebMessage";
 
 export const registerShowHistoryCommand = (
     context: vscode.ExtensionContext,
@@ -17,7 +19,8 @@ export const registerShowHistoryCommand = (
 export class TvcHistoryWebView {
     private panel: WebviewPanel | undefined;
 
-    constructor(private readonly tvc: WasmTvcClient) {}
+    constructor(private readonly tvc: WasmTvcClient) {
+    }
 
     show(context: vscode.ExtensionContext) {
         if (this.panel) {
@@ -39,9 +42,34 @@ export class TvcHistoryWebView {
                 context.extensionUri
             );
             this.panel = panel;
+            this.onReceiveMessage();
             this.postMessage();
+            this.panel.onDidDispose(() => {
+                this.panel = undefined;
+            });
         }
     }
+
+    private onReceiveMessage() {
+        this.panel?.webview.onDidReceiveMessage(async (message) => {
+            switch (message.type) {
+                case "showFile":
+                    await showObjFile((message as ShowFileMessage).meta.hash);
+                    break;
+                case "diffFromWorkspace":
+                    await this.showDiffFromWorkspace(message.meta);
+            }
+        });
+    }
+
+    private readonly showDiffFromWorkspace = async (obj: ObjMeta) => {
+        await vscode.commands.executeCommand(
+            "vscode.diff",
+            vscode.Uri.parse(`tvc:/${obj.hash}`),
+            vscode.Uri.parse(`meltos:/${obj.file_path}`),
+            `diff(tvc ↔ workspace)`
+        );
+    };
 
     private postMessage() {
         const commits = this.tvc.all_commit_metas();

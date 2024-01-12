@@ -1,4 +1,9 @@
-import {HistoryFromWebMessage, ShowFileMessage} from "meltos_ts_lib/dist/scm/hitory/HistoryFromWebMessage";
+import {
+    DiffFromWorkspaceMessage,
+    HistoryFromWebMessage,
+    ShowFileMessage,
+} from "meltos_ts_lib/dist/scm/hitory/HistoryFromWebMessage";
+import { ObjMeta } from "meltos_ts_lib/dist/scm/commit/CommitMeta.ts";
 
 export class VscodeApi {
     private readonly _window: any;
@@ -13,11 +18,18 @@ export class VscodeApi {
         }
     }
 
-    showFile(objHash: string) {
+    showFile(meta: ObjMeta) {
         this.postMessage({
             type: "showFile",
-            objHash
-        } as ShowFileMessage)
+            meta,
+        } as ShowFileMessage);
+    }
+
+    showDiffFromWorkspace(meta: ObjMeta) {
+        this.postMessage({
+            type: "diffFromWorkspace",
+            meta,
+        } as DiffFromWorkspaceMessage);
     }
 
     private postMessage<T extends HistoryFromWebMessage>(message: T) {

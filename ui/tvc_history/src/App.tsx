@@ -1,56 +1,70 @@
 import './App.css'
-import SplitPane, {Pane} from "split-pane-react";
-import {useState} from "react";
+
 import 'split-pane-react/esm/themes/default.css';
-import {CommitItems} from "./CommitItem.tsx";
-import {SelectObj} from "./SelectObj.tsx";
-import {css} from "@emotion/css";
-import {useHistory} from "./useHistory.ts";
-import SashContent from "split-pane-react/src/SashContent.tsx";
+import {Box, Tab, Tabs, Typography} from "@mui/material";
+import React from "react";
 
 function App() {
-    // const selectObj = useState<ObjMeta | undefined>();
-    const commits = useHistory();
-    const [sizes, setSizes] = useState([100, '30%', 'auto']);
-    const splitBorder = css`
-        padding: 8px 0;
-        border-top: 7px solid #727070;
-    `;
+    const [value, setValue] = React.useState(0);
+
+    const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+        setValue(newValue);
+    };
 
     return (
-        <div style={{height: 500}}>
-            <SplitPane
-                split='vertical'
-                sizes={sizes}
-                onChange={setSizes}
-                sashRender={(_, active) =>
-                    <SashContent active={active} type='vscode'/>
-                }>
-                <Pane minSize={50} maxSize='50%'>
-                    <CommitItems key={"top"} commits={commits}/>
-                </Pane>
-                <Pane minSize={0} className={splitBorder}>
-                    <SelectObj key={"bottom"} commit={{
-                        hash: "2323131",
-                        message: "UPDATE: TODO",
-                        objs: [
-                            {
-                                file_path: "/workspace/hello.txt",
-                                hash: "dada"
-                            }
-                        ]
-                    }}/>
-                </Pane>
-            </SplitPane>
-        </div>
-    )
+        <Box sx={{width: '100%'}}>
+            <Box sx={{borderBottom: 1, borderColor: 'divider'}}>
+                <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
+                    <Tab label="Item One" {...a11yProps(0)} />
+                    <Tab label="Item Two" {...a11yProps(1)} />
+                    <Tab label="Item Three" {...a11yProps(2)} />
+                </Tabs>
+            </Box>
+            <CustomTabPanel value={value} index={0}>
+                Item One
+            </CustomTabPanel>
+            <CustomTabPanel value={value} index={1}>
+                Item Two
+            </CustomTabPanel>
+            <CustomTabPanel value={value} index={2}>
+                Item Three
+            </CustomTabPanel>
+        </Box>
+    );
 }
 
-// {/*<Pane minSize={50} maxSize='50%'>*/}
+interface TabPanelProps {
+    children?: React.ReactNode;
+    index: number;
+    value: number;
+}
 
-//   {/*        }*/}
-//   {/*    ]}/>*/}
-//   {/*</Pane>*/}
+function CustomTabPanel(props: TabPanelProps) {
+    const {children, value, index, ...other} = props;
+
+    return (
+        <div
+            role="tabpanel"
+            hidden={value !== index}
+            id={`simple-tabpanel-${index}`}
+            aria-labelledby={`simple-tab-${index}`}
+            {...other}
+        >
+            {value === index && (
+                <Box sx={{p: 3}}>
+                    <Typography>{children}</Typography>
+                </Box>
+            )}
+        </div>
+    );
+}
+
+function a11yProps(index: number) {
+    return {
+        id: `simple-tab-${index}`,
+        'aria-controls': `simple-tabpanel-${index}`,
+    };
+}
 
 
 export default App

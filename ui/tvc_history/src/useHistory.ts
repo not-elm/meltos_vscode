@@ -1,13 +1,15 @@
 import { useEffect, useState } from "react";
-import { CommitMeta } from "meltos_ts_lib/dist/scm/commit/CommitMeta";
+import {BranchCommit, CommitMeta} from "meltos_ts_lib/dist/scm/commit/CommitMeta";
 
 export const useHistory = () => {
-    const [commits, $commits] = useState<CommitMeta[]>([]);
+    const [commits, $commits] = useState<BranchCommit[]>([]);
+    console.log("COMMITS");
+    console.log(commits);
 
     useEffect(() => {
         const onMessage = (e: MessageEvent) => {
             console.log(e);
-            $commits(() => e.data);
+            $commits(() => e.data.data);
         };
 
         window.addEventListener("message", onMessage);

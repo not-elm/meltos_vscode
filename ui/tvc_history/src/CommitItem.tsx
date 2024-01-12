@@ -1,24 +1,24 @@
-import { FC } from "react";
+import {FC} from "react";
 import {css} from "@emotion/css";
 import {VSCodeDivider} from "@vscode/webview-ui-toolkit/react";
 import {CommitMeta} from "meltos_ts_lib/dist/scm/commit/CommitMeta";
 
 
-
-
 export const CommitItems: FC<{
-    commits: CommitMeta[]
-}> = ({commits}) => {
+    commits: CommitMeta[],
+    onSelect: (commit: CommitMeta) => void
+}> = ({commits, onSelect}) => {
     const style = css`
         list-style: none;
-        :hover{
+
+        :hover {
             cursor: pointer;
         }
     `
     return (
         <ul className={style}>
             {commits.map(commit => (
-                <CommitItem key={commit.hash} commit={commit} />
+                <CommitItem key={commit.hash} commit={commit} onSelect={onSelect}/>
             ))}
         </ul>
     )
@@ -27,7 +27,8 @@ export const CommitItems: FC<{
 
 export const CommitItem: FC<{
     commit: CommitMeta;
-}> = ({commit}) => {
+    onSelect: (commit: CommitMeta) => void
+}> = ({commit, onSelect}) => {
     const root = css`
         display: flex;
         flex-direction: column;
@@ -40,13 +41,13 @@ export const CommitItem: FC<{
     `;
 
     return (
-        <li className={root}>
+        <li className={root} onClick={() => onSelect(commit)}>
             <h3>{commit.message}</h3>
             <div className={bottom}>
                 <p>{commit.hash}</p>
                 <img src={"$(refresh)"}/>
             </div>
-            <VSCodeDivider />
+            <VSCodeDivider/>
         </li>
     );
 };
