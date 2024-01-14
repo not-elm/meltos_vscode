@@ -1,4 +1,4 @@
-import { TvcChangeHistory } from "../tvn/TvcChangeHistory";
+import { TvcChangeHistory } from "../tvc/TvcChangeHistory";
 import { WasmTvcClient } from "../../wasm";
 import { MemFS } from "../fs/MemFs";
 import { FileChangeType, Uri } from "vscode";

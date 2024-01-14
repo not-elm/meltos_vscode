@@ -1,5 +1,5 @@
 import { MemFS } from "../fs/MemFs";
-import { TvcProvider } from "../tvn/TvcProvider";
+import { TvcProvider } from "../tvc/TvcProvider";
 
 import { deepStrictEqual, strictEqual } from "node:assert";
 import { sleep } from "./util";

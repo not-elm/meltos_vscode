@@ -63,7 +63,7 @@
       {
         "command": "meltos.stage",
         "title": "stage",
-        "icon": "breakpoints-view-icon",
+        "icon": "$(refresh)",
         "when": "scmProvider == meltos"
       },
       {
@@ -105,6 +105,13 @@
       ]
     },
     "menus": {
+      "scm/resourceState/context": [
+          {
+            "command": "meltos.stage",
+            "group": "inline",
+            "icon": "$(refresh)"
+          }
+      ],
       "view/title": [
         {
           "command": "meltos.tvc.showHistory",

@@ -7,11 +7,10 @@ import {
 import { createOwnerArgs, createUserArgs, isOwner, loadArgs } from "./args";
 
 import { VscodeNodeFs } from "./fs/VscodeNodeFs";
-import { TvcScmWebView } from "./tvn/TvcScmWebView";
+
 import { MemFS } from "./fs/MemFs";
 import { SessionConfigs, WasmTvcClient } from "../wasm";
-import { registerShowHistoryCommand } from "./tvn/TvcHistoryWebView";
-import { ObjFileProvider } from "./tvn/ObjFileProvider";
+
 import { DiscussionTreeProvider } from "./discussion/DiscussionTreeProvider";
 import { InMemoryDiscussionIo } from './discussion/io/InMemory';
 import { DiscussionProvider } from './discussion/io/DiscussionIo';
@@ -19,6 +18,9 @@ import { DiscussionWebViewManager } from "./discussion/DiscussionWebView";
 import { HttpRoomClient } from "./http";
 import { ChannelWebsocket } from "./ChannelWebsocket";
 import { DiscussionMetaType } from "./types/api";
+import { registerShowHistoryCommand } from "./tvc/TvcHistoryWebView";
+import { ObjFileProvider } from "./tvc/ObjFileProvider";
+import { TvcScmWebView } from "./tvc/TvcScmWebView";
 
 let websocket: ChannelWebsocket | undefined;
 let discussionWebviewManager: DiscussionWebViewManager | undefined;
