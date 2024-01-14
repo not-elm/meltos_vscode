@@ -80,7 +80,7 @@ export class DiscussionWebView implements AsyncDisposable {
         });
     }
 
-    getNonce() {
+    private getNonce() {
         let text = "";
         const possible =
             "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";

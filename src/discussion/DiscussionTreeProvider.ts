@@ -19,7 +19,7 @@ export class DiscussionTreeProvider
         const item = new TreeItem(element.title);
         item.command = {
             title: "show discussion",
-            command: "meltos.showDiscussion",
+            command: "meltos.discussion.show",
             arguments: [element],
         };
         return item;

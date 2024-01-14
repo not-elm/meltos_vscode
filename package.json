@@ -17,7 +17,7 @@
     "viewsContainers": {
       "activitybar": [
         {
-          "id": "meltos.activitybar",
+          "id": "meltos",
           "title": "meltos ",
           "icon": "media/dep.svg"
         }
@@ -31,6 +31,23 @@
       {
         "command": "meltos.joinRoom",
         "title": "join room"
+      },
+      {
+        "command": "meltos.discussion.create",
+        "title": "create global discussion",
+        "icon": "$(add)"
+      },
+      {
+        "command": "meltos.discussion.speak",
+        "title": "speak"
+      },
+      {
+        "command": "meltos.discussion.reply",
+        "title": "reply"
+      },
+      {
+        "command": "meltos.discussion.show",
+        "title": "show discussion"
       },
       {
         "command": "meltos.init",
@@ -74,12 +91,16 @@
           "name": "meltos source control manager"
         }
       ],
-      "discussion": [
+      "meltos": [
         {
-          "id": "meltos.discussionTree",
-          "name": "meltos discussion tree",
-          "icon": "media/send.svg",
-          "contextualTitle": "meltos discussion tree"
+          "id": "meltos.users",
+          "name": "users"
+        },
+        {
+          "id": "meltos.discussions",
+          "name": "meltos discussions",
+          "command": "meltos.discussions.create",
+          "icon": "$(add)"
         }
       ]
     },
@@ -87,11 +108,18 @@
       "view/title": [
         {
           "command": "meltos.tvc.showHistory",
-          "group": "navigation"
+          "group": "navigation",
+          "when": "view == meltos.scm"
         },
         {
           "command": "meltos.fetch",
-          "group": "navigation"
+          "group": "navigation",
+          "when": "view == meltos.scm"
+        },
+        {
+          "command": "meltos.discussion.create",
+          "group": "navigation",
+          "when": "view == meltos.discussions"
         }
       ]
     }

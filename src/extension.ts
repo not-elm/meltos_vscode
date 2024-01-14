@@ -17,6 +17,10 @@ import { InMemoryDiscussionIo } from './discussion/io/InMemory';
 import { DiscussionProvider } from './discussion/io/DiscussionIo';
 import { DiscussionWebViewManager } from "./discussion/DiscussionWebView";
 import { HttpRoomClient } from "./http";
+import { ChannelWebsocket } from "./ChannelWebsocket";
+import { DiscussionMetaType } from "./types/api";
+
+let websocket: ChannelWebsocket | undefined;
 
 export function activate(context: vscode.ExtensionContext) {
     const fileSystem = new VscodeNodeFs();
@@ -34,7 +38,9 @@ export function activate(context: vscode.ExtensionContext) {
     }
 }
 
-export function deactivate() {}
+export function deactivate() {
+    websocket?.dispose();
+}
 
 const registerOpenRoomCommand = (context: vscode.ExtensionContext) => {
     context.subscriptions.push(
@@ -151,7 +157,33 @@ const registerDiscussion = (
 
     const web = new DiscussionWebViewManager(context, io, http);
     const provider = new DiscussionProvider(io, tree, web);
-    
-    vscode.window.registerTreeDataProvider("meltos.discussionTree", tree);
+    websocket = new ChannelWebsocket(provider);
+    websocket.connectChannel(config.room_id[0], config.session_id[0]);
 
+    vscode.window.registerTreeDataProvider("meltos.discussions", tree);
+    registerCreateDiscussion(context, http);
+    registerShowDiscussion(context, web);
+};
+
+const registerCreateDiscussion = (
+    context: vscode.ExtensionContext,
+    http: HttpRoomClient
+) => {
+    context.subscriptions.push(vscode.commands.registerCommand("meltos.discussion.create", async () => {
+        const title = await vscode.window.showInputBox({
+            placeHolder: "discussion title"
+        });
+        if(title){
+            await http.create(title);
+        }
+    }));
+};
+
+const registerShowDiscussion = (
+    context: vscode.ExtensionContext,
+    web: DiscussionWebViewManager
+) => {
+    context.subscriptions.push(vscode.commands.registerCommand("meltos.discussion.show", async (meta: DiscussionMetaType) => {
+        await web.show(meta);
+    }));
 };
