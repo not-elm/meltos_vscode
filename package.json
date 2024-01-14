@@ -14,6 +14,15 @@
   ],
   "main": "./dist/extension.js",
   "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "meltos.activitybar",
+          "title": "meltos ",
+          "icon": "media/dep.svg"
+        }
+      ]
+    },
     "commands": [
       {
         "command": "meltos.openRoom",
@@ -64,6 +73,14 @@
           "id": "meltos.scm",
           "name": "meltos source control manager"
         }
+      ],
+      "discussion": [
+        {
+          "id": "meltos.discussionTree",
+          "name": "meltos discussion tree",
+          "icon": "media/send.svg",
+          "contextualTitle": "meltos discussion tree"
+        }
       ]
     },
     "menus": {
@@ -96,8 +113,9 @@
     "@babel/plugin-proposal-class-properties": "^7.18.6",
     "@babel/preset-env": "^7.23.7",
     "@types/mocha": "^10.0.6",
-    "@types/node": "18.x",
+    "@types/node": "^18.19.6",
     "@types/vscode": "^1.85.0",
+    "@types/ws": "^8.5.10",
     "@typescript-eslint/eslint-plugin": "^6.15.0",
     "@typescript-eslint/parser": "^6.15.0",
     "@vscode/test-cli": "^0.0.4",
@@ -111,6 +129,7 @@
   },
   "dependencies": {
     "@wasm-tool/wasm-pack-plugin": "^1.7.0",
-    "meltos_ts_lib": "file:../meltos_ts_lib"
+    "meltos_ts_lib": "file:../meltos_ts_lib",
+    "ws": "^8.16.0"
   }
 }

@@ -12,6 +12,11 @@ import { MemFS } from "./fs/MemFs";
 import { SessionConfigs, WasmTvcClient } from "../wasm";
 import { registerShowHistoryCommand } from "./tvn/TvcHistoryWebView";
 import { ObjFileProvider } from "./tvn/ObjFileProvider";
+import { DiscussionTreeProvider } from "./discussion/DiscussionTreeProvider";
+import { InMemoryDiscussionIo } from './discussion/io/InMemory';
+import { DiscussionProvider } from './discussion/io/DiscussionIo';
+import { DiscussionWebViewManager } from "./discussion/DiscussionWebView";
+import { HttpRoomClient } from "./http";
 
 export function activate(context: vscode.ExtensionContext) {
     const fileSystem = new VscodeNodeFs();
@@ -73,6 +78,7 @@ const registerWorkspaceInitCommand = (
         }
         registerShowHistoryCommand(context, tvc);
         registerScmView(context, sessionConfigs, tvc, fileSystem);
+        registerDiscussion(context, sessionConfigs);
 
         const objProvider = new ObjFileProvider(tvc);
         vscode.workspace.registerTextDocumentContentProvider(
@@ -129,4 +135,23 @@ const registerScmView = (
             new TvcScmWebView(context, sessionConfigs, tvc, fileSystem)
         )
     );
+};
+
+const registerDiscussion = (
+    context: vscode.ExtensionContext,
+    config: SessionConfigs
+) => {
+    const io = new InMemoryDiscussionIo();
+    const tree = new DiscussionTreeProvider(io);
+    const http = new HttpRoomClient({
+        room_id: config.room_id[0],
+        session_id: config.session_id[0],
+        user_id: config.user_id[0]
+    });
+
+    const web = new DiscussionWebViewManager(context, io, http);
+    const provider = new DiscussionProvider(io, tree, web);
+    
+    vscode.window.registerTreeDataProvider("meltos.discussionTree", tree);
+
 };

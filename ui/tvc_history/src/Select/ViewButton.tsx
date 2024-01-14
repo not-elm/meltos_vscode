@@ -9,7 +9,7 @@ export const ObjButtons: FC<{
     const root = css`
         display: flex;
         background: #3c3c3c;
-        gap: 10px;
+      
         padding: 8px;
     `;
 

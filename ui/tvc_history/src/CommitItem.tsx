@@ -10,7 +10,7 @@ export const CommitItems: FC<{
 }> = ({commits, onSelect}) => {
     const style = css`
         list-style: none;
-
+        width: 100%;
         :hover {
             cursor: pointer;
         }

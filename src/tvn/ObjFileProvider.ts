@@ -19,7 +19,12 @@ export class ObjFileProvider implements vscode.TextDocumentContentProvider {
         token: vscode.CancellationToken
     ): string {
         console.log(`OPEN OBJ FILE ${uri}`);
-        return this.tvc.read_file_from_hash(path.basename(uri.path));
+        const content =  this.tvc.read_file_from_hash(path.basename(uri.path));
+        if(content){
+            return content
+        }else{
+            throw vscode.FileSystemError.FileNotFound(uri);
+        }
     }
 
     open(uri: vscode.Uri) {

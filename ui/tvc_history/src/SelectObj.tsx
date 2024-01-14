@@ -1,18 +1,20 @@
-import { FC } from "react";
+import {FC} from "react";
 
-import { css } from "@emotion/css";
-import { ObjButtons } from "./Select/ViewButton.tsx";
-import { VSCodeDivider } from "@vscode/webview-ui-toolkit/react";
+import {css} from "@emotion/css";
+import {ObjButtons} from "./Select/ViewButton.tsx";
+import {VSCodeDivider} from "@vscode/webview-ui-toolkit/react";
 import {CommitMeta, ObjMeta} from "meltos_ts_lib/dist/scm/commit/CommitMeta";
 
 export const SelectObj: FC<{
     commit: CommitMeta;
     onClose: () => void;
-}> = ({ commit, onClose }) => {
+}> = ({commit, onClose}) => {
     return (
-        <div>
+        <div className={css`
+            width: 100%;
+        `}>
             <Header commit={commit} onClose={onClose}/>
-            <ObjItems objs={commit.objs} />
+            <ObjItems objs={commit.objs}/>
         </div>
     );
 };
@@ -28,32 +30,32 @@ const Header: FC<{
     return (
         <div className={root}>
             <h3>{commit.message}</h3>
-            <button onClick={onClose} >×</button>
+            <button onClick={onClose}>×</button>
         </div>
     )
 }
 
 const ObjItems: FC<{
     objs: ObjMeta[];
-}> = ({ objs }) => {
+}> = ({objs}) => {
     const root = css`
         list-style: none;
-    `;
-
-    const item = css`
-        display: flex;
-        justify-content: space-between;
+        width: 100%;
     `;
 
     return (
         <ul className={root}>
             {objs.map((obj) => (
                 <li key={obj.file_path}>
-                    <div className={item}>
+                    <div className={css`
+                        display: flex;
+                        justify-content: space-between;
+                        width: 100%;
+                    `}>
                         <p>{obj.file_path}</p>
-                        <ObjButtons meta={obj} />
+                        <ObjButtons meta={obj}/>
                     </div>
-                    <VSCodeDivider />
+                    <VSCodeDivider/>
                 </li>
             ))}
         </ul>
