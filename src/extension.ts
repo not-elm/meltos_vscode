@@ -21,6 +21,7 @@ import { ChannelWebsocket } from "./ChannelWebsocket";
 import { DiscussionMetaType } from "./types/api";
 
 let websocket: ChannelWebsocket | undefined;
+let discussionWebviewManager: DiscussionWebViewManager | undefined;
 
 export function activate(context: vscode.ExtensionContext) {
     const fileSystem = new VscodeNodeFs();
@@ -40,6 +41,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 export function deactivate() {
     websocket?.dispose();
+    discussionWebviewManager?.dispose();
 }
 
 const registerOpenRoomCommand = (context: vscode.ExtensionContext) => {
@@ -156,6 +158,7 @@ const registerDiscussion = (
     });
 
     const web = new DiscussionWebViewManager(context, io, http);
+    discussionWebviewManager = web;
     const provider = new DiscussionProvider(io, tree, web);
     websocket = new ChannelWebsocket(provider);
     websocket.connectChannel(config.room_id[0], config.session_id[0]);

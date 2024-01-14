@@ -156,8 +156,11 @@
     "webpack-cli": "^5.1.4"
   },
   "dependencies": {
+    "@vscode/codicons": "^0.0.35",
     "@wasm-tool/wasm-pack-plugin": "^1.7.0",
+    "bufferutil": "^4.0.8",
     "meltos_ts_lib": "file:../meltos_ts_lib",
+    "utf-8-validate": "^6.0.3",
     "ws": "^8.16.0"
   }
 }
