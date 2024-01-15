@@ -3,6 +3,7 @@ import {FC, useState} from "react";
 import {CommitMeta} from "meltos_ts_lib/dist/scm/commit/CommitMeta.ts";
 import {css} from "@emotion/css";
 import {SelectObj} from "./SelectObj.tsx";
+import {Slide} from "@mui/material";
 
 export const CommitPanel: FC<{
     commits: CommitMeta[]
@@ -12,9 +13,9 @@ export const CommitPanel: FC<{
     const root = css`
         overflow-y: scroll;
         overflow-x: clip;
-
-        width: 50%;
+        width: 100%;
         display: flex;
+        height: 80vh;
 
         ::-webkit-scrollbar-thumb {
             background: #111111;
@@ -34,11 +35,8 @@ export const CommitPanel: FC<{
             <div className={root}>
                 <CommitItems key={"top"} commits={commits} onSelect={commit => $selectCommit(commit)}/>
             </div>
-            <div className={root}>
-                {selectCommit && (
-                    <SelectObj commit={selectCommit} onClose={() => $selectCommit(null)}/>
-                )}
-            </div>
+
+           {selectCommit && <SelectObj commit={selectCommit} onClose={() => $selectCommit(null)}/>}
         </div>
     )
 }

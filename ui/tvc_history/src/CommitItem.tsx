@@ -37,7 +37,8 @@ export const CommitItem: FC<{
 
     const bottom = css`
         display: flex;
-
+        gap: 8px;
+        align-items: center;
     `;
 
     return (
@@ -45,7 +46,9 @@ export const CommitItem: FC<{
             <h3>{commit.message}</h3>
             <div className={bottom}>
                 <p>{commit.hash}</p>
-                <img src={"$(refresh)"}/>
+                <div className="icon">
+                    <i className={`codicon codicon-repo`}></i>
+                </div>
             </div>
             <VSCodeDivider/>
         </li>

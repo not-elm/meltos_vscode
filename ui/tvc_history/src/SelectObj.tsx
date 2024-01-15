@@ -12,6 +12,8 @@ export const SelectObj: FC<{
     return (
         <div className={css`
             width: 100%;
+            height: 80vh;
+            overflow-y: auto;
         `}>
             <Header commit={commit} onClose={onClose}/>
             <ObjItems objs={commit.objs}/>
@@ -45,8 +47,8 @@ const ObjItems: FC<{
 
     return (
         <ul className={root}>
-            {objs.map((obj) => (
-                <li key={obj.file_path}>
+            {objs.map((obj, i) => (
+                <li key={i}>
                     <div className={css`
                         display: flex;
                         justify-content: space-between;

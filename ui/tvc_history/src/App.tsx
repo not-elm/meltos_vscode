@@ -5,6 +5,7 @@ import {Box, Tab, Tabs, Typography} from "@mui/material";
 import React from "react";
 import {useHistory} from "./useHistory.ts";
 import {CommitPanel} from "./CommitPanel.tsx";
+import {css} from "@emotion/css";
 
 function App() {
     const branches = useHistory();
@@ -19,12 +20,18 @@ function App() {
 
             <Box sx={{borderBottom: 1, borderColor: 'divider'}}>
                 <Tabs
+                    className={css`
+                        background: #61b2fd;
+                    `}
+                    textColor={"secondary"}
                     value={value}
                     onChange={handleChange}
                     aria-label="basic tabs example"
                 >
                     {branches.map((b, i) => (
-                        <Tab label={b.name} {...a11yProps(i)}/>
+                        <Tab
+                            label={b.name}
+                            {...a11yProps(i)}/>
                     ))}
                 </Tabs>
             </Box>
