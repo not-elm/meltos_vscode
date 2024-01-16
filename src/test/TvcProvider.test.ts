@@ -8,116 +8,116 @@ import { ChangeMeta } from "meltos_ts_lib/src/scm/changes";
 import { WasmTvcClient } from "../../wasm";
 
 suite("Tvc File Watcher", async () => {
-	test("ワークスペース内のファイルが変更された場合イベントが発火されること", async () => {
-		const memFs = new MemFS("meltos");
-		const tvc = new WasmTvcClient("owner", memFs);
-		const watcher = new TvcProvider(tvc, memFs);
-		const messages = [];
-		watcher.onUpdateScm((message) => {
-			messages.push(message);
-		});
-		memFs.writeFileApi("workspace/hello.txt", "hello");
-		await sleep(100);
-		strictEqual(messages.length, 2);
-	});
+    test("ワークスペース内のファイルが変更された場合イベントが発火されること", async () => {
+        const memFs = new MemFS("meltos");
+        const tvc = new WasmTvcClient("owner", memFs);
+        const watcher = new TvcProvider(tvc, memFs);
+        const messages = [];
+        watcher.onUpdateScm((message) => {
+            messages.push(message);
+        });
+        memFs.writeFileApi("workspace/hello.txt", "hello");
+        await sleep(100);
+        strictEqual(messages.length, 2);
+    });
 
-	test("ワークスペース内のファイルが更新された場合イベントが発火されること", async () => {
-		const memFs = new MemFS("meltos");
-		const tvc = new WasmTvcClient("owner", memFs);
-		const watcher = new TvcProvider(tvc, memFs);
-		const messages: InitialMessage[] = [];
-		watcher.onUpdateScm((message) => {
-			messages.push(message);
-		});
-		memFs.writeFileApi("workspace/hello.txt", "hello");
-		memFs.writeFileApi("workspace/hello.txt", "hello world");
-		await sleep(100);
-		strictEqual(messages.length, 3);
+    test("ワークスペース内のファイルが更新された場合イベントが発火されること", async () => {
+        const memFs = new MemFS("meltos");
+        const tvc = new WasmTvcClient("owner", memFs);
+        const watcher = new TvcProvider(tvc, memFs);
+        const messages: InitialMessage[] = [];
+        watcher.onUpdateScm((message) => {
+            messages.push(message);
+        });
+        memFs.writeFileApi("workspace/hello.txt", "hello");
+        memFs.writeFileApi("workspace/hello.txt", "hello world");
+        await sleep(100);
+        strictEqual(messages.length, 3);
 
-		deepStrictEqual(messages[2], {
-			type: "initial",
-			changes: [
-				{
-					changeType: "change",
-					filePath: "/workspace/hello.txt",
-				},
-			],
-			stages: [],
-		} as InitialMessage);
-	});
+        deepStrictEqual(messages[2], {
+            type: "initial",
+            changes: [
+                {
+                    changeType: "change",
+                    filePath: "/workspace/hello.txt",
+                },
+            ],
+            stages: [],
+        } as InitialMessage);
+    });
 
-	test("ワークスペース外のファイルが更新されてもイベントは検出されないこと", async () => {
-		const memFs = new MemFS("meltos");
-		const tvc = new WasmTvcClient("owner", memFs);
-		const watcher = new TvcProvider(tvc, memFs);
-		const messages: InitialMessage[] = [];
-		watcher.onUpdateScm((message) => {
-			messages.push(message);
-		});
+    test("ワークスペース外のファイルが更新されてもイベントは検出されないこと", async () => {
+        const memFs = new MemFS("meltos");
+        const tvc = new WasmTvcClient("owner", memFs);
+        const watcher = new TvcProvider(tvc, memFs);
+        const messages: InitialMessage[] = [];
+        watcher.onUpdateScm((message) => {
+            messages.push(message);
+        });
 
-		memFs.writeFileApi("hello.txt", "hello");
-		memFs.writeFileApi(".meltos/hello.txt", "hello");
-		await sleep(100);
-		strictEqual(messages.length, 0);
-	});
+        memFs.writeFileApi("hello.txt", "hello");
+        memFs.writeFileApi(".meltos/hello.txt", "hello");
+        await sleep(100);
+        strictEqual(messages.length, 0);
+    });
 
-	test("Stageされた際にイベントが発火されること", async () => {
-		const memFs = new MemFS("meltos");
-		const tvc = new WasmTvcClient("owner", memFs);
-		tvc.init_repository();
-		const watcher = new TvcProvider(tvc, memFs);
-		const messages: InitialMessage[] = [];
-		watcher.onUpdateScm((message) => {
-			messages.push(message);
-		});
-		memFs.writeFileApi("workspace/hello.txt", "hello");
-		await sleep(100);
-		await watcher.stage(".");
+    test("Stageされた際にイベントが発火されること", async () => {
+        const memFs = new MemFS("meltos");
+        const tvc = new WasmTvcClient("owner", memFs);
+        tvc.init_repository();
+        const watcher = new TvcProvider(tvc, memFs);
+        const messages: InitialMessage[] = [];
+        watcher.onUpdateScm((message) => {
+            messages.push(message);
+        });
+        memFs.writeFileApi("workspace/hello.txt", "hello");
+        await sleep(100);
+        await watcher.stage(".");
 
-		await sleep(100);
-		strictEqual(messages.length, 3);
-		deepStrictEqual(messages[2].changes, []);
-		deepStrictEqual(messages[2].stages, [
-			{
-				changeType: "change",
-				filePath: "/workspace/hello.txt",
-			} as ChangeMeta,
-		]);
-	});
+        await sleep(100);
+        strictEqual(messages.length, 3);
+        deepStrictEqual(messages[2].changes, []);
+        deepStrictEqual(messages[2].stages, [
+            {
+                changeType: "change",
+                filePath: "/workspace/hello.txt",
+            } as ChangeMeta,
+        ]);
+    });
 
-	test("Commitされた際にStagesが削除されること。", async () => {
-		const memFs = new MemFS("meltos");
-		const tvc = new WasmTvcClient("owner", memFs);
-		tvc.init_repository();
-		const watcher = new TvcProvider(tvc, memFs);
-		const messages: InitialMessage[] = [];
-		watcher.onUpdateScm((message) => {
-			messages.push(message);
-		});
-		memFs.writeFileApi("workspace/hello.txt", "hello");
-		await sleep(100);
-		await watcher.stage(".");
-		await watcher.commit(".");
+    test("Commitされた際にStagesが削除されること。", async () => {
+        const memFs = new MemFS("meltos");
+        const tvc = new WasmTvcClient("owner", memFs);
+        tvc.init_repository();
+        const watcher = new TvcProvider(tvc, memFs);
+        const messages: InitialMessage[] = [];
+        watcher.onUpdateScm((message) => {
+            messages.push(message);
+        });
+        memFs.writeFileApi("workspace/hello.txt", "hello");
+        await sleep(100);
+        await watcher.stage(".");
+        await watcher.commit(".");
 
-		await sleep(100);
-		strictEqual(messages.length, 4);
-		deepStrictEqual(messages[3].changes.length, 0);
-		deepStrictEqual(messages[3].stages.length, 0);
-	});
+        await sleep(100);
+        strictEqual(messages.length, 4);
+        deepStrictEqual(messages[3].changes.length, 0);
+        deepStrictEqual(messages[3].stages.length, 0);
+    });
 
-	test("Pushできること", async () => {
-		const memFs = new MemFS("meltos");
-		const tvc = new WasmTvcClient("owner", memFs);
-		const sessionConfigs = await tvc.open_room();
+    test("Pushできること", async () => {
+        const memFs = new MemFS("meltos");
+        const tvc = new WasmTvcClient("owner", memFs);
+        const sessionConfigs = await tvc.open_room();
 
-		const provider = new TvcProvider(tvc, memFs);
+        const provider = new TvcProvider(tvc, memFs);
 
-		memFs.writeFileApi("workspace/hello.txt", "hello");
-		await sleep(100);
-		await provider.stage(".");
-		await provider.commit(".");
+        memFs.writeFileApi("workspace/hello.txt", "hello");
+        await sleep(100);
+        await provider.stage(".");
+        await provider.commit(".");
 
-		await sleep(100);
-		await provider.push(sessionConfigs);
-	});
+        await sleep(100);
+        await provider.push(sessionConfigs);
+    });
 });

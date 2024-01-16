@@ -1,7 +1,7 @@
 import { CreatedType, RepliedType, SpokeType } from "./types/api";
 
 export class HttpRoomClient {
-     constructor(
+    constructor(
         private readonly opened: {
             room_id: string;
             session_id: string;
@@ -46,6 +46,13 @@ export class HttpRoomClient {
             to,
             message
         );
+    };
+
+    readonly leave = async () => {
+        await fetch(`http://localhost:3000/room/open`, {
+            method: "DELETE",
+            ...headers(this.sessionId),
+        });
     };
 }
 

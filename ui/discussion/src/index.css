@@ -229,3 +229,7 @@ button:hover {
 .icon:hover{
     cursor: pointer;
 }
+
+.discussion-message{
+    padding: 8px 0;
+}

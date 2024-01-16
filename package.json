@@ -106,11 +106,11 @@
     },
     "menus": {
       "scm/resourceState/context": [
-          {
-            "command": "meltos.stage",
-            "group": "inline",
-            "icon": "$(refresh)"
-          }
+        {
+          "command": "meltos.stage",
+          "group": "inline",
+          "icon": "$(refresh)"
+        }
       ],
       "view/title": [
         {
@@ -167,6 +167,7 @@
     "@wasm-tool/wasm-pack-plugin": "^1.7.0",
     "bufferutil": "^4.0.8",
     "meltos_ts_lib": "file:../meltos_ts_lib",
+    "node-wav-player": "^0.2.0",
     "utf-8-validate": "^6.0.3",
     "ws": "^8.16.0"
   }

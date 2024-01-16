@@ -12,8 +12,8 @@ import { MemFS } from "./fs/MemFs";
 import { SessionConfigs, WasmTvcClient } from "../wasm";
 
 import { DiscussionTreeProvider } from "./discussion/DiscussionTreeProvider";
-import { InMemoryDiscussionIo } from './discussion/io/InMemory';
-import { DiscussionProvider } from './discussion/io/DiscussionIo';
+import { InMemoryDiscussionIo } from "./discussion/io/InMemory";
+import { DiscussionProvider } from "./discussion/io/DiscussionIo";
 import { DiscussionWebViewManager } from "./discussion/DiscussionWebView";
 import { HttpRoomClient } from "./http";
 import { ChannelWebsocket } from "./ChannelWebsocket";
@@ -24,6 +24,7 @@ import { TvcScmWebView } from "./tvc/TvcScmWebView";
 
 let websocket: ChannelWebsocket | undefined;
 let discussionWebviewManager: DiscussionWebViewManager | undefined;
+let httpRoomClient: HttpRoomClient | undefined;
 
 export function activate(context: vscode.ExtensionContext) {
     const fileSystem = new VscodeNodeFs();
@@ -44,6 +45,7 @@ export function activate(context: vscode.ExtensionContext) {
 export function deactivate() {
     websocket?.dispose();
     discussionWebviewManager?.dispose();
+    httpRoomClient?.leave();
 }
 
 const registerOpenRoomCommand = (context: vscode.ExtensionContext) => {
@@ -79,6 +81,7 @@ const registerWorkspaceInitCommand = (
         console.log(args);
         const meltos = await import("../wasm/index.js");
         const tvc = new meltos.WasmTvcClient(args.userId, fileSystem);
+
         let sessionConfigs: SessionConfigs;
         if (isOwner(args)) {
             copyRealWorkspaceToVirtual(args.workspaceSource, fileSystem);
@@ -156,9 +159,9 @@ const registerDiscussion = (
     const http = new HttpRoomClient({
         room_id: config.room_id[0],
         session_id: config.session_id[0],
-        user_id: config.user_id[0]
+        user_id: config.user_id[0],
     });
-
+    httpRoomClient = http;
     const web = new DiscussionWebViewManager(context, io, http);
     discussionWebviewManager = web;
     const provider = new DiscussionProvider(io, tree, web);
@@ -174,21 +177,31 @@ const registerCreateDiscussion = (
     context: vscode.ExtensionContext,
     http: HttpRoomClient
 ) => {
-    context.subscriptions.push(vscode.commands.registerCommand("meltos.discussion.create", async () => {
-        const title = await vscode.window.showInputBox({
-            placeHolder: "discussion title"
-        });
-        if(title){
-            await http.create(title);
-        }
-    }));
+    context.subscriptions.push(
+        vscode.commands.registerCommand(
+            "meltos.discussion.create",
+            async () => {
+                const title = await vscode.window.showInputBox({
+                    placeHolder: "discussion title",
+                });
+                if (title) {
+                    await http.create(title);
+                }
+            }
+        )
+    );
 };
 
 const registerShowDiscussion = (
     context: vscode.ExtensionContext,
     web: DiscussionWebViewManager
 ) => {
-    context.subscriptions.push(vscode.commands.registerCommand("meltos.discussion.show", async (meta: DiscussionMetaType) => {
-        await web.show(meta);
-    }));
+    context.subscriptions.push(
+        vscode.commands.registerCommand(
+            "meltos.discussion.show",
+            async (meta: DiscussionMetaType) => {
+                await web.show(meta);
+            }
+        )
+    );
 };
