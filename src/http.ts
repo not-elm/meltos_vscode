@@ -49,7 +49,7 @@ export class HttpRoomClient {
     };
 
     readonly leave = async () => {
-        await fetch(`http://localhost:3000/room/open`, {
+        await fetch(`http://localhost:3000/room/${this.roomId}`, {
             method: "DELETE",
             ...headers(this.sessionId),
         });

@@ -42,10 +42,11 @@ export function activate(context: vscode.ExtensionContext) {
     }
 }
 
-export function deactivate() {
+export async function deactivate() {
+    await httpRoomClient?.leave();
     websocket?.dispose();
     discussionWebviewManager?.dispose();
-    httpRoomClient?.leave();
+ 
 }
 
 const registerOpenRoomCommand = (context: vscode.ExtensionContext) => {
