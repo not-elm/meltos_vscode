@@ -1,0 +1,23 @@
+.obj-panel{
+    height: 100%;
+    padding: 8px 12px;
+    background: #1a1a1a;
+    display: flex;
+    flex-direction: column;
+}
+
+.obj-panel-header{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 16px;
+}
+
+.obj-panel-content{
+    overflow-y: scroll;
+    padding: 0;
+}
+
+.obj-panel-item{
+    padding: 0;
+}

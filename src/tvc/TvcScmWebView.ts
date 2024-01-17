@@ -1,14 +1,14 @@
 import * as vscode from "vscode";
-import {Uri, Webview} from "vscode";
+import { Uri, Webview } from "vscode";
 
-import {StageMessage} from "meltos_ts_lib/src/scm/changes/ScmFromWebMessage";
+import { StageMessage } from "meltos_ts_lib/src/scm/changes/ScmFromWebMessage";
 
-import {VscodeNodeFs} from "../fs/VscodeNodeFs";
+import { VscodeNodeFs } from "../fs/VscodeNodeFs";
 
-import {TvcProvider} from "./TvcProvider";
-import {MemFS} from "../fs/MemFs";
-import {SessionConfigs} from "../../wasm";
-import {getNonce} from "../nonce";
+import { TvcProvider } from "./TvcProvider";
+import { MemFS } from "../fs/MemFs";
+import { SessionConfigs } from "../../wasm";
+import { getNonce } from "../webviewUtil";
 
 export class TvcScmWebView implements vscode.WebviewViewProvider {
     private _webView: Webview | undefined;
@@ -28,12 +28,15 @@ export class TvcScmWebView implements vscode.WebviewViewProvider {
         this.registerFetchCommand(context);
     }
 
-    private readonly registerFetchCommand = (context: vscode.ExtensionContext) => {
-        context.subscriptions.push(vscode.commands.registerCommand("meltos.fetch", async () => {
-            await this._provider.fetch(this.sessionConfigs);
-        }));
-
-    }
+    private readonly registerFetchCommand = (
+        context: vscode.ExtensionContext
+    ) => {
+        context.subscriptions.push(
+            vscode.commands.registerCommand("meltos.fetch", async () => {
+                await this._provider.fetch(this.sessionConfigs);
+            })
+        );
+    };
 
     resolveWebviewView(
         webviewView: vscode.WebviewView,
@@ -52,21 +55,23 @@ export class TvcScmWebView implements vscode.WebviewViewProvider {
         webviewView.webview.onDidReceiveMessage(async (message) => {
             switch (message.type) {
                 case "stage":
-                    await this._provider.stage(
+                    this._provider.stage(
                         (message as StageMessage).meta.filePath
                     );
                     break;
                 case "commit":
-                    await this._provider.commit(message.commitText);
+                    this._provider.commit(message.commitText);
                     break;
                 case "push":
+                    console.log("PUSH MESSAGE COMMING!");
                     await this._provider.push(this.sessionConfigs);
+                    console.log("PUSH COMMED!!");
                     break;
             }
         });
         webviewView.onDidChangeVisibility(async () => {
             if (webviewView.visible) {
-                const message = await this._provider.scmMetas();
+                const message = this._provider.scmMetas();
                 await this._webView?.postMessage(message);
             }
         });
@@ -120,8 +125,6 @@ export class TvcScmWebView implements vscode.WebviewViewProvider {
       </html>
     `;
     }
-
-
 }
 
 const fromFileChangeType = (ty: vscode.FileChangeType) => {

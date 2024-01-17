@@ -1,22 +1,14 @@
 import {FC} from "react";
-import {css} from "@emotion/css";
 import {VSCodeDivider} from "@vscode/webview-ui-toolkit/react";
 import {CommitMeta} from "meltos_ts_lib/dist/scm/commit/CommitMeta";
-
+import "./CommitItem.css";
 
 export const CommitItems: FC<{
     commits: CommitMeta[],
     onSelect: (commit: CommitMeta) => void
 }> = ({commits, onSelect}) => {
-    const style = css`
-        list-style: none;
-        width: 100%;
-        :hover {
-            cursor: pointer;
-        }
-    `
     return (
-        <ul className={style}>
+        <ul className={"max-width list-style-none scrollbar"}>
             {commits.map(commit => (
                 <CommitItem key={commit.hash} commit={commit} onSelect={onSelect}/>
             ))}
@@ -29,25 +21,15 @@ export const CommitItem: FC<{
     commit: CommitMeta;
     onSelect: (commit: CommitMeta) => void
 }> = ({commit, onSelect}) => {
-    const root = css`
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-    `;
-
-    const bottom = css`
-        display: flex;
-        gap: 8px;
-        align-items: center;
-    `;
-
     return (
-        <li className={root} onClick={() => onSelect(commit)}>
-            <h3>{commit.message}</h3>
-            <div className={bottom}>
-                <p>{commit.hash}</p>
-                <div className="icon">
-                    <i className={`codicon codicon-repo`}></i>
+        <li className={"max-width commit-item-li"} onClick={() => onSelect(commit)}>
+            <div className={"commit-item"}>
+                <h3 className={"commit-item-header"}>{commit.message}</h3>
+                <div className={"commit-item-bottom"}>
+                    <p>{commit.hash}</p>
+                    <div className="icon">
+                        <i className={`codicon codicon-repo`}></i>
+                    </div>
                 </div>
             </div>
             <VSCodeDivider/>

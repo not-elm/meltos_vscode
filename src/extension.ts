@@ -46,7 +46,6 @@ export async function deactivate() {
     await httpRoomClient?.leave();
     websocket?.dispose();
     discussionWebviewManager?.dispose();
- 
 }
 
 const registerOpenRoomCommand = (context: vscode.ExtensionContext) => {

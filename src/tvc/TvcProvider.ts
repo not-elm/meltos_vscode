@@ -1,10 +1,10 @@
 import vscode from "vscode";
 
-import { TvcChangeHistory } from "./TvcChangeHistory";
-import { InitialMessage } from "meltos_ts_lib/src/scm/changes/ScmToWebMessage";
-import { VscodeNodeFs } from "../fs/VscodeNodeFs";
-import { MemFS } from "../fs/MemFs";
-import { SessionConfigs, WasmTvcClient } from "../../wasm";
+import {TvcChangeHistory} from "./TvcChangeHistory";
+import {InitialMessage} from "meltos_ts_lib/src/scm/changes/ScmToWebMessage";
+import {VscodeNodeFs} from "../fs/VscodeNodeFs";
+import {MemFS} from "../fs/MemFs";
+import {SessionConfigs, WasmTvcClient} from "../../wasm";
 
 export class TvcProvider {
     private readonly _history: TvcChangeHistory;
@@ -19,11 +19,11 @@ export class TvcProvider {
         this.registerChangeFileEvents();
     }
 
-    readonly scmMetas = async (): Promise<InitialMessage> => {
+    readonly scmMetas = (): InitialMessage => {
         return {
             type: "initial",
-            changes: await this._history.loadChanges(),
-            stages: await this._history.loadStages(),
+            changes: this._history.loadChanges(),
+            stages: this._history.loadStages(),
         };
     };
 
@@ -31,16 +31,16 @@ export class TvcProvider {
         await this.tvc.fetch(sessionConfigs);
     };
 
-    readonly stage = async (filePath: string) => {
+    readonly stage = (filePath: string) => {
         this.tvc.stage(filePath.replace("/workspace/", ""));
-        await this._history.moveToStages(filePath);
-        await this.fireUpdateScm();
+        this._history.moveToStages(filePath);
+        this.fireUpdateScm();
     };
 
-    readonly commit = async (text: string) => {
+    readonly commit = (text: string) => {
         this.tvc.commit(text);
         this._history.clearStages();
-        await this.fireUpdateScm();
+        this.fireUpdateScm();
         vscode.window.showInformationMessage("committed success");
     };
 
@@ -49,8 +49,8 @@ export class TvcProvider {
         vscode.window.showInformationMessage("pushed success");
     };
 
-    private readonly fireUpdateScm = async () => {
-        this._emitter.fire(await this.scmMetas());
+    private readonly fireUpdateScm = () => {
+        this._emitter.fire(this.scmMetas());
     };
 
     private registerChangeFileEvents() {

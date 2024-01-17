@@ -1,5 +1,5 @@
 import vscode, {Uri, Webview, WebviewPanel} from "vscode";
-import {getNonce} from "../nonce";
+import {codiconsCssDir, codiconsCssPath, getNonce} from "../webviewUtil";
 import {ObjMeta, WasmTvcClient} from "../../wasm";
 import {showObjFile} from "./ObjFileProvider";
 import {ShowFileMessage,} from "meltos_ts_lib/dist/scm/hitory/HistoryFromWebMessage";
@@ -27,27 +27,50 @@ export class TvcHistoryWebView {
             this.panel.reveal();
             this.postMessage();
         } else {
-            const panel = vscode.window.createWebviewPanel(
-                "meltos.tvc.historyView",
-                "TvcHistory",
-                vscode.ViewColumn.One
-            );
-
-            panel.webview.options = {
-                enableScripts: true,
-            };
-
-            panel.webview.html = this.getWebviewContent(
-                panel.webview,
-                context.extensionUri
-            );
-            this.panel = panel;
+            this.panel = this.createWebviewPanel(context);
+            this.onDidChangeViewState();
             this.onReceiveMessage();
             this.postMessage();
             this.panel.onDidDispose(() => {
                 this.panel = undefined;
             });
         }
+    }
+
+    private createWebviewPanel(context: vscode.ExtensionContext) {
+        const panel = vscode.window.createWebviewPanel(
+            "meltos.tvc.historyView",
+            "TvcHistory",
+            vscode.ViewColumn.One
+        );
+
+        panel.webview.options = {
+            enableScripts: true,
+            localResourceRoots: [
+                codiconsCssDir(context.extensionUri),
+                vscode.Uri.joinPath(
+                    context.extensionUri,
+                    "ui",
+                    "tvc_history",
+                    "build",
+                    "assets"
+                ),
+            ]
+        };
+        panel.webview.html = this.getWebviewContent(
+            panel.webview,
+            context.extensionUri
+        );
+        return panel;
+    };
+
+
+    private onDidChangeViewState() {
+        this.panel?.onDidChangeViewState(v => {
+            if (v.webviewPanel.visible) {
+                this.postMessage();
+            }
+        });
     }
 
     private onReceiveMessage() {
@@ -73,16 +96,19 @@ export class TvcHistoryWebView {
 
     private postMessage() {
         const commits = this.tvc.all_commit_metas();
-        this.panel?.webview.postMessage({
-            data: commits.map((c) => ({
-                hash: c.hash,
-                message: c.message,
-                objs: c.objs.map((o) => ({
-                    file_path: o.file_path,
-                    hash: o.hash,
-                })),
+        const comm = commits.map((c) => ({
+            hash: c.hash,
+            message: c.message,
+            objs: c.objs.map((o) => ({
+                file_path: o.file_path,
+                hash: o.hash,
             })),
-        });
+        }));
+
+        this.panel?.webview.postMessage([{
+            name: "owner",
+            commits: comm
+        }]);
     }
 
     private getWebviewContent(webview: Webview, extensionUri: Uri) {
@@ -107,6 +133,7 @@ export class TvcHistoryWebView {
             )
         );
         const nonce = getNonce();
+        const codiconsUri = webview.asWebviewUri(codiconsCssPath(extensionUri));
 
         return /*html*/ `
       <!DOCTYPE html>
@@ -114,11 +141,12 @@ export class TvcHistoryWebView {
         <head>
           <meta charset="UTF-8" />
           <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-          <meta http-equiv="Content-Security-Policy" content="default-src 'none';  style-src 'unsafe-inline'; img-src ${webview.cspSource}; script-src 'nonce-${nonce}';">
+          <meta http-equiv="Content-Security-Policy" content="default-src 'none'; font-src ${webview.cspSource}; style-src ${webview.cspSource} 'unsafe-inline'; script-src ${webview.cspSource}; img-src ${webview.cspSource};">
           <link rel="stylesheet" type="text/css" href="${stylesUri}">
+          <link href="${codiconsUri}" rel="stylesheet" />  
           <title>Tvc History</title>
         </head>
-        <body>
+        <body>         
           <div id="root"></div>
           <script type="module" nonce="${nonce}" src="${scriptUri}"></script>
         </body>

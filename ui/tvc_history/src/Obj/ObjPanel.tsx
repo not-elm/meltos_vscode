@@ -1,20 +1,19 @@
 import {FC} from "react";
 
 import {css} from "@emotion/css";
-import {ObjButtons} from "./Select/ViewButton.tsx";
+
 import {VSCodeDivider} from "@vscode/webview-ui-toolkit/react";
 import {CommitMeta, ObjMeta} from "meltos_ts_lib/dist/scm/commit/CommitMeta";
+import {ObjButtons} from "./ViewButton.tsx";
+import "./ObjPanel.css";
+import {CodiconIconTemplate} from "../codicons/Template.tsx";
 
-export const SelectObj: FC<{
+export const ObjPanel: FC<{
     commit: CommitMeta;
     onClose: () => void;
 }> = ({commit, onClose}) => {
     return (
-        <div className={css`
-            width: 100%;
-            height: 80vh;
-            overflow-y: auto;
-        `}>
+        <div className={"obj-panel"}>
             <Header commit={commit} onClose={onClose}/>
             <ObjItems objs={commit.objs}/>
         </div>
@@ -26,13 +25,10 @@ const Header: FC<{
     commit: CommitMeta,
     onClose: () => void
 }> = ({commit, onClose}) => {
-    const root = css`
-        display: flex;
-    `;
     return (
-        <div className={root}>
-            <h3>{commit.message}</h3>
-            <button onClick={onClose}>×</button>
+        <div className={"obj-panel-header"}>
+            <h2>{commit.message}</h2>
+            <CodiconIconTemplate name={"codicon-close"} onClick={onClose}/>
         </div>
     )
 }
@@ -40,19 +36,15 @@ const Header: FC<{
 const ObjItems: FC<{
     objs: ObjMeta[];
 }> = ({objs}) => {
-    const root = css`
-        list-style: none;
-        width: 100%;
-    `;
-
     return (
-        <ul className={root}>
-            {objs.map((obj, i) => (
-                <li key={i}>
+        <ul className={"list-style-none obj-panel-content  scrollbar"}>
+            {objs.map((obj) => (
+                <li key={obj.hash} className={"obj-panel-item"} >
                     <div className={css`
                         display: flex;
                         justify-content: space-between;
-                        width: 100%;
+                        
+                        padding: 0 10px;
                     `}>
                         <p>{obj.file_path}</p>
                         <ObjButtons meta={obj}/>

@@ -8,9 +8,6 @@ export const ObjButtons: FC<{
 }> = ({ meta }) => {
     const root = css`
         display: flex;
-        background: #3c3c3c;
-      
-        padding: 8px;
     `;
 
     return (

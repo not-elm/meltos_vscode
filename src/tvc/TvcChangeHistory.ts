@@ -1,13 +1,15 @@
-import vscode, { FileChangeEvent, FileChangeType } from "vscode";
-import { ChangeMeta } from "meltos_ts_lib/src/scm/changes";
-import { VscodeNodeFs } from "../fs/VscodeNodeFs";
-import { MemFS } from "../fs/MemFs";
+import vscode, {FileChangeEvent, FileChangeType} from "vscode";
+import {ChangeMeta} from "meltos_ts_lib/src/scm/changes";
+import {VscodeNodeFs} from "../fs/VscodeNodeFs";
+import {MemFS} from "../fs/MemFs";
+import {WasmTvcClient} from "../../wasm";
 
 export class TvcChangeHistory {
     constructor(
         private readonly fileSystem: VscodeNodeFs | MemFS,
-        private readonly tvc: any
-    ) {}
+        private readonly tvc: WasmTvcClient
+    ) {
+    }
 
     async inspectChangeStatus(
         event: vscode.FileChangeEvent
@@ -21,9 +23,9 @@ export class TvcChangeHistory {
         this.saveStages([]);
     };
 
-    readonly moveToStages = async (filePath: string) => {
-        let changes = await this.loadChanges();
-        const stages: ChangeMeta[] = await this.loadStages();
+    readonly moveToStages =  (filePath: string) => {
+        let changes =  this.loadChanges();
+        const stages: ChangeMeta[] =  this.loadStages();
 
         for (let file of this.fileSystem.allFilesIn(filePath)) {
             file = file.startsWith("/") ? file : `/${file}`;
@@ -71,9 +73,9 @@ export class TvcChangeHistory {
         );
     };
 
-    readonly loadStages = async (): Promise<ChangeMeta[]> => {
+    readonly loadStages =  (): ChangeMeta[] => {
         try {
-            const buf = await this.fileSystem.readFile(
+            const buf = this.fileSystem.readFile(
                 vscode.Uri.parse(".stages")
             );
             return JSON.parse(buf.toString()) || [];
@@ -82,9 +84,9 @@ export class TvcChangeHistory {
         }
     };
 
-    readonly loadChanges = async (): Promise<ChangeMeta[]> => {
+    readonly loadChanges =  (): ChangeMeta[] => {
         try {
-            const buf = await this.fileSystem.readFile(
+            const buf = this.fileSystem.readFile(
                 vscode.Uri.parse(".changes")
             );
             return JSON.parse(buf.toString());

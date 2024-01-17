@@ -39,7 +39,7 @@ export class ChannelWebsocket implements vscode.Disposable {
 			case "joined":
 				const joined = json.message as Joined;
 				// this.users.pushUser(joined.user_id);
-				await vscode.window.showInformationMessage(
+				vscode.window.showInformationMessage(
 					`Joined user id=${joined.user_id}`
 				);
 				break;

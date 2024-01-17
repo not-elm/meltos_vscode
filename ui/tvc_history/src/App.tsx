@@ -1,46 +1,36 @@
 import './App.css'
 
 import 'split-pane-react/esm/themes/default.css';
-import {Box, Tab, Tabs, Typography} from "@mui/material";
+import {Box, Typography} from "@mui/material";
 import React from "react";
+
 import {useHistory} from "./useHistory.ts";
-import {CommitPanel} from "./CommitPanel.tsx";
-import {css} from "@emotion/css";
+import {CommitPanel} from "./Commit/CommitPanel.tsx";
 
-function App() {
+
+export default function App() {
     const branches = useHistory();
-    const [value, setValue] = React.useState(0);
-
-    const handleChange = (event: React.SyntheticEvent, newValue: number) => {
-        setValue(newValue);
-    };
-
+    const b = branches.length == 0 ? {
+        name: "DUMMY",
+        commits: []
+    } : branches[0];
     return (
-        <Box sx={{width: '100%'}}>
-
-            <Box sx={{borderBottom: 1, borderColor: 'divider'}}>
-                <Tabs
-                    className={css`
-                        background: #61b2fd;
-                    `}
-                    textColor={"secondary"}
-                    value={value}
-                    onChange={handleChange}
-                    aria-label="basic tabs example"
-                >
-                    {branches.map((b, i) => (
-                        <Tab
-                            label={b.name}
-                            {...a11yProps(i)}/>
-                    ))}
-                </Tabs>
-            </Box>
-            {branches.map((b, i) => (
-                <CustomTabPanel value={value} index={i}>
-                    <CommitPanel commits={b.commits}/>
-                </CustomTabPanel>
-            ))}
-        </Box>
+        <CommitPanel commits={b.commits} key={b.name}/>
+        // <VSCodePanels
+        //     className={"max-width"}
+        //     aria-label="basic tabs example"
+        // >
+        //     {branches.map((b) => (
+        //         <VSCodePanelTab key={b.name} id={b.name}>
+        //             {b.name}
+        //         </VSCodePanelTab>
+        //     ))}
+        //     {branches.map((b) => (
+        //         <VSCodePanelView className={"max-width"} key={b.name} id={b.name}>
+        //             <CommitPanel commits={b.commits} key={b.name}/>
+        //         </VSCodePanelView>
+        //     ))}
+        // </VSCodePanels>
     );
 }
 
@@ -78,4 +68,3 @@ function a11yProps(index: number) {
 }
 
 
-export default App

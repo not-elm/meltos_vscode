@@ -1,0 +1,29 @@
+.commit-item-li {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.commit-item {
+
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 0 16px 2px 16px;
+}
+
+.commit-item:hover {
+    cursor: pointer;
+    opacity: 0.8;
+
+}
+
+.commit-item-header {
+
+}
+
+.commit-item-bottom {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
