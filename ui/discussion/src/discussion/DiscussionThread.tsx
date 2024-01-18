@@ -31,8 +31,7 @@ const useDiscussion = () => {
             if (!(data && data.type)) {
                 return;
             }
-            console.log("+++++++++++++++++++++++++");
-            console.log(data);
+
             switch (data.type) {
                 case "discussion":
                     

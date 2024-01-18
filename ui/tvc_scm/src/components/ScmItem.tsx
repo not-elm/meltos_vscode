@@ -2,26 +2,18 @@ import {FC} from "react";
 
 import {ChangeMeta} from "meltos_ts_lib/src/scm/changes.ts";
 import {fileName} from "meltos_ts_lib/src/file.ts";
-import {css} from "@emotion/css";
+import "./ScmItem.css";
+import {vscodeApi} from "../client/VscodeApi.ts";
 
 export const ScmItemText: FC<{
     meta: ChangeMeta
-}> =  ({meta}) => {
-    const scmItem = css`
-        display: flex;
-        align-items: center;
-        justify-content: start;
-        gap: 8px;
-    `;
-
-    const scmAbsolutePath = css`
-        font-size: 0.8em;
-        color: #888888;
-    `
+}> = ({meta}) => {
     return (
-        <div className={scmItem}>
-            <p>{fileName(meta.filePath)}</p>
-            <p className={scmAbsolutePath}>{meta.filePath}</p>
+        <div className={"scm-item"} onClick={() => {
+            vscodeApi.showDiff(meta);
+        }}>
+            <p className={`file-name ${meta.changeType === "delete" ? "delete-line" : ""}`}  >{fileName(meta.filePath)}</p>
+            <p className={"absolute-path"}>{meta.filePath}</p>
         </div>
     )
 }

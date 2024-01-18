@@ -9,6 +9,7 @@ export const MockButton = () => {
                type: "change",
                meta: {
                    filePath: `workspace/${Date.now()}.txt`,
+                   changeType: "change"
                }
            } as ChangeMessage, "*")
         }}>TEST</button>

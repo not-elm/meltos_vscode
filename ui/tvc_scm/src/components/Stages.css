@@ -1,5 +1,12 @@
 .stage-label {
     display: flex;
-    alignItems: center;
+    align-items: center;
     gap: 10px;
+    padding: 0;
+    justify-content: space-between;
+}
+
+.scm-buttons{
+    display: flex;
+    gap: 1px;
 }

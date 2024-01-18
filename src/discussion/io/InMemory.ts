@@ -22,8 +22,8 @@ export class InMemoryDiscussionIo implements DiscussionIo {
     }
 
     async spoke(spoke: SpokeType): Promise<void> {
-        const messageId = spoke.text.id;
-        this._messages.set(messageId, spoke.text);
+        const messageId = spoke.message.id;
+        this._messages.set(messageId, spoke.message);
         const discussion = this._discussions.get(spoke.discussion_id);
         if (discussion) {
             discussion.messages.push(messageId);

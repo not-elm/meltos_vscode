@@ -1,0 +1,22 @@
+.scm-item {
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    gap: 8px;
+    padding: 0;
+    max-width: min-content;
+}
+
+.file-name {
+    font-size: 0.8em;
+}
+
+.absolute-path{
+    font-size: 0.7em;
+    color: #888;
+    text-overflow: ellipsis;
+}
+
+.delete-line{
+    text-decoration: line-through;
+}

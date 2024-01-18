@@ -21,7 +21,7 @@ const mockRandomBranches = (): BranchCommit[] => {
 }
 
 export const useHistory = () => {
-    const [commits, $commits] = useState<BranchCommit[]>([]);
+    const [commits, $commits] = useState<BranchCommit[]>(mockRandomBranches());
 
     useEffect(() => {
         const onMessage = (e: MessageEvent) => {
@@ -33,6 +33,6 @@ export const useHistory = () => {
             window.removeEventListener("message", onMessage);
         };
     }, []);
-    console.log(commits)
+
     return commits;
 };

@@ -1,10 +1,10 @@
-import { TvcChangeHistory } from "../tvc/TvcChangeHistory";
-import { WasmTvcClient } from "../../wasm";
-import { MemFS } from "../fs/MemFs";
-import { FileChangeType, Uri } from "vscode";
+import {TvcChangeHistory} from "../tvc/TvcChangeHistory";
+import {WasmTvcClient} from "../../wasm";
+import {MemFS} from "../fs/MemFs";
 import * as vscode from "vscode";
-import { deepStrictEqual, strictEqual } from "assert";
-import { ChangeMeta } from "meltos_ts_lib/src/scm/changes";
+import {FileChangeType} from "vscode";
+import {deepStrictEqual, strictEqual} from "assert";
+import {ChangeMeta} from "meltos_ts_lib/src/scm/changes";
 
 suite("TvcChangeHistory", () => {
     test("Changesが1つの要素を持つこと", async () => {
@@ -24,6 +24,7 @@ suite("TvcChangeHistory", () => {
         deepStrictEqual(changes[0], {
             changeType: "create",
             filePath: "/workspace/hello.txt",
+            trace_obj_hash: null
         } as ChangeMeta);
     });
 
@@ -37,7 +38,7 @@ suite("TvcChangeHistory", () => {
 
         await history.inspectChangeStatus({
             type: FileChangeType.Created,
-            uri: vscode.Uri.parse("meltos:/workspace/hello.txt"),
+            uri: vscode.Uri.parse("meltos:/workspace/hello.txt")
         });
         const changes = await history.inspectChangeStatus({
             type: FileChangeType.Created,
@@ -48,10 +49,12 @@ suite("TvcChangeHistory", () => {
         deepStrictEqual(changes[0], {
             changeType: "create",
             filePath: "/workspace/hello.txt",
+            trace_obj_hash: null
         } as ChangeMeta);
         deepStrictEqual(changes[1], {
             changeType: "create",
             filePath: "/workspace/hello2.txt",
+            trace_obj_hash: null
         } as ChangeMeta);
     });
 
@@ -71,8 +74,9 @@ suite("TvcChangeHistory", () => {
 
         strictEqual(changes.length, 1);
         deepStrictEqual(changes[0], {
-            changeType: "change",
+            changeType: "create",
             filePath: "/workspace/hello.txt",
+            trace_obj_hash: null
         } as ChangeMeta);
     });
 
@@ -81,10 +85,13 @@ suite("TvcChangeHistory", () => {
         const tvc = new WasmTvcClient("owner", memFs);
 
         const history = new TvcChangeHistory(memFs, tvc);
+        memFs.writeFileApi("workspace/hello.txt", Buffer.from("hello"));
         await history.inspectChangeStatus({
             type: FileChangeType.Created,
             uri: vscode.Uri.parse("meltos:/workspace/hello.txt"),
         });
+
+        memFs.deleteApi("workspace/hello.txt");
         const changes = await history.inspectChangeStatus({
             type: FileChangeType.Deleted,
             uri: vscode.Uri.parse("meltos:/workspace/hello.txt"),
@@ -97,15 +104,16 @@ suite("TvcChangeHistory", () => {
         const memFs = new MemFS("meltos");
         const tvc = new WasmTvcClient("owner", memFs);
         memFs.writeFileApi("workspace/hello.txt", Buffer.from("hello"));
-        console.log(memFs.allFilesIn("."));
-        tvc.stage(".");
-        tvc.commit("commit");
 
         const history = new TvcChangeHistory(memFs, tvc);
         await history.inspectChangeStatus({
             type: FileChangeType.Created,
             uri: vscode.Uri.parse("meltos:/workspace/hello.txt"),
         });
+        tvc.stage(".");
+        tvc.commit("commit");
+
+        memFs.deleteApi("workspace/hello.txt");
         const changes = await history.inspectChangeStatus({
             type: FileChangeType.Deleted,
             uri: vscode.Uri.parse("meltos:/workspace/hello.txt"),
@@ -115,6 +123,7 @@ suite("TvcChangeHistory", () => {
         deepStrictEqual(changes[0], {
             changeType: "delete",
             filePath: "/workspace/hello.txt",
+            trace_obj_hash: tvc.find_obj_hash_from_traces("workspace/hello.txt")?.["0"] || null
         } as ChangeMeta);
     });
 });

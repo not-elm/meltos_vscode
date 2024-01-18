@@ -59,7 +59,7 @@ export class TvcProvider {
                 c.uri.path.startsWith("/workspace/")
             )) {
                 await this._history.inspectChangeStatus(event);
-                await this.fireUpdateScm();
+                this.fireUpdateScm();
             }
         });
     }

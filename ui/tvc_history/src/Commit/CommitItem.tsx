@@ -2,13 +2,15 @@ import {FC} from "react";
 import {VSCodeDivider} from "@vscode/webview-ui-toolkit/react";
 import {CommitMeta} from "meltos_ts_lib/dist/scm/commit/CommitMeta";
 import "./CommitItem.css";
+import {IconButton, Tooltip} from "@mui/material";
+import {ContentCopy} from "@mui/icons-material";
 
 export const CommitItems: FC<{
     commits: CommitMeta[],
     onSelect: (commit: CommitMeta) => void
 }> = ({commits, onSelect}) => {
     return (
-        <ul className={"max-width list-style-none scrollbar"}>
+        <ul className={"max-width list-style-none scrollbar clickable"}>
             {commits.map(commit => (
                 <CommitItem key={commit.hash} commit={commit} onSelect={onSelect}/>
             ))}
@@ -26,10 +28,19 @@ export const CommitItem: FC<{
             <div className={"commit-item"}>
                 <h3 className={"commit-item-header"}>{commit.message}</h3>
                 <div className={"commit-item-bottom"}>
-                    <p>{commit.hash}</p>
-                    <div className="icon">
-                        <i className={`codicon codicon-repo`}></i>
-                    </div>
+                    <p className={"hash"}>{commit.hash}</p>
+                    <Tooltip title={"copy hash"}>
+                        <IconButton style={{
+                            padding: 0
+                        }}>
+                            <ContentCopy
+                                htmlColor={"#4198ff"}
+                                onClick={async (e) => {
+                                    e.stopPropagation()
+                                    await navigator.clipboard.writeText(commit.hash)
+                                }}/>
+                        </IconButton>
+                    </Tooltip>
                 </div>
             </div>
             <VSCodeDivider/>

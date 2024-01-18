@@ -1,7 +1,7 @@
 import vscode, {Uri, Webview, WebviewPanel} from "vscode";
 import {codiconsCssDir, codiconsCssPath, getNonce} from "../webviewUtil";
 import {ObjMeta, WasmTvcClient} from "../../wasm";
-import {showObjFile} from "./ObjFileProvider";
+import {openObjFile} from "./ObjFileProvider";
 import {ShowFileMessage,} from "meltos_ts_lib/dist/scm/hitory/HistoryFromWebMessage";
 
 export const registerShowHistoryCommand = (
@@ -77,7 +77,7 @@ export class TvcHistoryWebView {
         this.panel?.webview.onDidReceiveMessage(async (message) => {
             switch (message.type) {
                 case "showFile":
-                    await showObjFile((message as ShowFileMessage).meta.hash);
+                    await openObjFile((message as ShowFileMessage).meta.hash);
                     break;
                 case "diffFromWorkspace":
                     await this.showDiffFromWorkspace(message.meta);

@@ -1,14 +1,14 @@
-import { MemFS } from "../fs/MemFs";
-import { TvcProvider } from "../tvc/TvcProvider";
+import {MemFS} from "../fs/MemFs";
+import {TvcProvider} from "../tvc/TvcProvider";
 
-import { deepStrictEqual, strictEqual } from "node:assert";
-import { sleep } from "./util";
-import { InitialMessage } from "meltos_ts_lib/src/scm/changes/ScmToWebMessage";
-import { ChangeMeta } from "meltos_ts_lib/src/scm/changes";
-import { WasmTvcClient } from "../../wasm";
+import {deepStrictEqual, strictEqual} from "node:assert";
+import {sleep} from "./util";
+import {InitialMessage} from "meltos_ts_lib/src/scm/changes/ScmToWebMessage";
+import {ChangeMeta} from "meltos_ts_lib/src/scm/changes";
+import {WasmTvcClient} from "../../wasm";
 
-suite("Tvc File Watcher", async () => {
-    test("ワークスペース内のファイルが変更された場合イベントが発火されること", async () => {
+suite("Tvc Provider", async () => {
+    test("ワークスペース内のファイルが作成された場合イベントが発火されること", async () => {
         const memFs = new MemFS("meltos");
         const tvc = new WasmTvcClient("owner", memFs);
         const watcher = new TvcProvider(tvc, memFs);
@@ -18,12 +18,13 @@ suite("Tvc File Watcher", async () => {
         });
         memFs.writeFileApi("workspace/hello.txt", "hello");
         await sleep(100);
-        strictEqual(messages.length, 2);
+        strictEqual(messages.length, 1);
     });
 
     test("ワークスペース内のファイルが更新された場合イベントが発火されること", async () => {
         const memFs = new MemFS("meltos");
         const tvc = new WasmTvcClient("owner", memFs);
+        tvc.init_repository();
         const watcher = new TvcProvider(tvc, memFs);
         const messages: InitialMessage[] = [];
         watcher.onUpdateScm((message) => {
@@ -31,15 +32,16 @@ suite("Tvc File Watcher", async () => {
         });
         memFs.writeFileApi("workspace/hello.txt", "hello");
         memFs.writeFileApi("workspace/hello.txt", "hello world");
-        await sleep(100);
-        strictEqual(messages.length, 3);
+        await sleep(300);
+        strictEqual(messages.length, 2);
 
-        deepStrictEqual(messages[2], {
+        deepStrictEqual(messages[1], {
             type: "initial",
             changes: [
                 {
-                    changeType: "change",
+                    changeType: "create",
                     filePath: "/workspace/hello.txt",
+                    trace_obj_hash: null,
                 },
             ],
             stages: [],
@@ -72,15 +74,16 @@ suite("Tvc File Watcher", async () => {
         });
         memFs.writeFileApi("workspace/hello.txt", "hello");
         await sleep(100);
-        await watcher.stage(".");
+        watcher.stage(".");
 
         await sleep(100);
-        strictEqual(messages.length, 3);
-        deepStrictEqual(messages[2].changes, []);
-        deepStrictEqual(messages[2].stages, [
+        strictEqual(messages.length, 2);
+        deepStrictEqual(messages[1].changes, []);
+        deepStrictEqual(messages[1].stages, [
             {
-                changeType: "change",
+                changeType: "create",
                 filePath: "/workspace/hello.txt",
+                trace_obj_hash: null
             } as ChangeMeta,
         ]);
     });
@@ -96,13 +99,13 @@ suite("Tvc File Watcher", async () => {
         });
         memFs.writeFileApi("workspace/hello.txt", "hello");
         await sleep(100);
-        await watcher.stage(".");
-        await watcher.commit(".");
+        watcher.stage(".");
+        watcher.commit(".");
 
         await sleep(100);
-        strictEqual(messages.length, 4);
-        deepStrictEqual(messages[3].changes.length, 0);
-        deepStrictEqual(messages[3].stages.length, 0);
+        strictEqual(messages.length, 3);
+        deepStrictEqual(messages[2].changes.length, 0);
+        deepStrictEqual(messages[2].stages.length, 0);
     });
 
     test("Pushできること", async () => {
@@ -114,8 +117,8 @@ suite("Tvc File Watcher", async () => {
 
         memFs.writeFileApi("workspace/hello.txt", "hello");
         await sleep(100);
-        await provider.stage(".");
-        await provider.commit(".");
+        provider.stage(".");
+        provider.commit(".");
 
         await sleep(100);
         await provider.push(sessionConfigs);

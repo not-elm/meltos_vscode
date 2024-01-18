@@ -21,7 +21,7 @@ export interface MessageType {
 
 export interface SpokeType {
     discussion_id: string;
-    text: MessageType;
+    message: MessageType;
 }
 
 export interface RepliedType {

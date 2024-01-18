@@ -70,7 +70,7 @@ export class ChannelWebsocket implements vscode.Disposable {
 
 	onSpoke = async (spoke: SpokeType) => {
 		await this.withTryCatch(async () => {
-			vscode.window.showInformationMessage(`spoke message=${spoke.text.text}`);
+			vscode.window.showInformationMessage(`spoke message=${spoke.message.text}`);
 			await this.discussion.spoke(spoke);
 		});
 	};

@@ -1,14 +1,17 @@
 import * as vscode from "vscode";
-import { Uri, Webview } from "vscode";
+import {Uri, Webview} from "vscode";
 
-import { StageMessage } from "meltos_ts_lib/src/scm/changes/ScmFromWebMessage";
+import {StageMessage} from "meltos_ts_lib/src/scm/changes/ScmFromWebMessage";
 
-import { VscodeNodeFs } from "../fs/VscodeNodeFs";
+import {VscodeNodeFs} from "../fs/VscodeNodeFs";
 
-import { TvcProvider } from "./TvcProvider";
-import { MemFS } from "../fs/MemFs";
-import { SessionConfigs } from "../../wasm";
-import { getNonce } from "../webviewUtil";
+import {TvcProvider} from "./TvcProvider";
+import {MemFS} from "../fs/MemFs";
+import {SessionConfigs} from "../../wasm";
+import {codiconsCssDir, codiconsCssPath, getNonce} from "../webviewUtil";
+import {toMeltosUri} from "../fs/util";
+import {openDiffCommand} from "../apiWrapper";
+import {openObjDiff} from "./ObjFileProvider";
 
 export class TvcScmWebView implements vscode.WebviewViewProvider {
     private _webView: Webview | undefined;
@@ -45,6 +48,16 @@ export class TvcScmWebView implements vscode.WebviewViewProvider {
     ): void | Thenable<void> {
         webviewView.webview.options = {
             enableScripts: true,
+            localResourceRoots: [
+                codiconsCssDir(this.context.extensionUri),
+                vscode.Uri.joinPath(
+                    this.context.extensionUri,
+                    "ui",
+                    "tvc_scm",
+                    "build",
+                    "assets"
+                ),
+            ]
         };
 
         webviewView.webview.html = this._getWebviewContent(
@@ -66,6 +79,12 @@ export class TvcScmWebView implements vscode.WebviewViewProvider {
                     console.log("PUSH MESSAGE COMMING!");
                     await this._provider.push(this.sessionConfigs);
                     console.log("PUSH COMMED!!");
+                    break;
+                case "showDiff":
+                    await openObjDiff(message.meta);
+                    break;
+                case "openFile":
+                    await vscode.commands.executeCommand("vscode.open", toMeltosUri(message.filePath));
                     break;
             }
         });
@@ -107,6 +126,7 @@ export class TvcScmWebView implements vscode.WebviewViewProvider {
             )
         );
         const nonce = getNonce();
+        const codiconsUri = webview.asWebviewUri(codiconsCssPath(extensionUri));
 
         return /*html*/ `
       <!DOCTYPE html>
@@ -114,8 +134,9 @@ export class TvcScmWebView implements vscode.WebviewViewProvider {
         <head>
           <meta charset="UTF-8" />
           <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-          <meta http-equiv="Content-Security-Policy" content="default-src 'none';  style-src 'unsafe-inline'; img-src ${webview.cspSource}; script-src 'nonce-${nonce}';">
+          <meta http-equiv="Content-Security-Policy" content="default-src 'none'; font-src ${webview.cspSource}; style-src ${webview.cspSource} 'unsafe-inline'; script-src ${webview.cspSource}; img-src ${webview.cspSource};">
           <link rel="stylesheet" type="text/css" href="${stylesUri}">
+          <link href="${codiconsUri}" rel="stylesheet" />  
           <title>Hello World</title>
         </head>
         <body>

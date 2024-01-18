@@ -23,15 +23,14 @@ export class TvcChangeHistory {
         this.saveStages([]);
     };
 
-    readonly moveToStages =  (filePath: string) => {
-        let changes =  this.loadChanges();
-        const stages: ChangeMeta[] =  this.loadStages();
+    readonly moveToStages = (filePath: string) => {
+        let changes = this.loadChanges();
+        const stages: ChangeMeta[] = this.loadStages();
 
         for (let file of this.fileSystem.allFilesIn(filePath)) {
             file = file.startsWith("/") ? file : `/${file}`;
             const meta = changes.find((c) => c.filePath === file);
             if (meta) {
-                console.log(meta);
                 changes = changes.filter((c) => c.filePath !== file);
                 stages.push(meta);
             }
@@ -44,19 +43,22 @@ export class TvcChangeHistory {
         event: FileChangeEvent
     ): Promise<ChangeMeta[]> => {
         const filePath = event.uri.path;
-        const oldChanges = await this.loadChanges();
+        const oldChanges = this.loadChanges();
         const p = filePath.startsWith("/")
             ? filePath.replace("/", "")
             : filePath;
+        const objHash = this.tvc.find_obj_hash_from_traces(p);
+        const notExistsInTraces = objHash === undefined;
 
-        if (!this.existsInTrace(p) && event.type === FileChangeType.Deleted) {
+        if (notExistsInTraces && event.type === FileChangeType.Deleted) {
             return [...oldChanges.filter((c) => c.filePath !== event.uri.path)];
         } else {
             return [
                 ...oldChanges.filter((c) => c.filePath !== event.uri.path),
                 {
-                    changeType: fromFileChangeType(event.type),
+                    changeType: this.fromFileChangeType(event.type, notExistsInTraces),
                     filePath: event.uri.path,
+                    trace_obj_hash: objHash?.[0] || null
                 },
             ];
         }
@@ -73,22 +75,18 @@ export class TvcChangeHistory {
         );
     };
 
-    readonly loadStages =  (): ChangeMeta[] => {
+    readonly loadStages = (): ChangeMeta[] => {
         try {
-            const buf = this.fileSystem.readFile(
-                vscode.Uri.parse(".stages")
-            );
+            const buf = this.fileSystem.readFile(vscode.Uri.parse(".stages"));
             return JSON.parse(buf.toString()) || [];
         } catch (e) {
             return [];
         }
     };
 
-    readonly loadChanges =  (): ChangeMeta[] => {
+    readonly loadChanges = (): ChangeMeta[] => {
         try {
-            const buf = this.fileSystem.readFile(
-                vscode.Uri.parse(".changes")
-            );
+            const buf = this.fileSystem.readFile(vscode.Uri.parse(".changes"));
             return JSON.parse(buf.toString());
         } catch (e) {
             return [];
@@ -105,13 +103,18 @@ export class TvcChangeHistory {
             }
         );
     };
-
-    private readonly existsInTrace = (filePath: string) => {
-        return this.tvc.exists_in_traces(filePath);
+    private readonly fromFileChangeType = (
+        ty: vscode.FileChangeType,
+        notExistsInTraces: boolean
+    ) => {
+        const changeType = _fromFileChangeType(ty);
+        return changeType === "change" && notExistsInTraces ? "create" : changeType;
     };
+
+
 }
 
-const fromFileChangeType = (ty: vscode.FileChangeType) => {
+const _fromFileChangeType = (ty: vscode.FileChangeType) => {
     switch (ty) {
         case vscode.FileChangeType.Changed:
             return "change";

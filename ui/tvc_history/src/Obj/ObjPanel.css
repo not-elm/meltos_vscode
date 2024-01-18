@@ -1,6 +1,6 @@
 .obj-panel{
     height: 100%;
-    padding: 8px 12px;
+    padding: 8px 0px;
     background: #1a1a1a;
     display: flex;
     flex-direction: column;

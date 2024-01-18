@@ -10,20 +10,22 @@ export const CommitPanel: FC<{
 }> = ({commits}) => {
     const [selectCommit, $selectCommit] = useState<CommitMeta | null>(null);
 
-
     return (
-        <div style={{height: "100%", position: "absolute", top: 0, overflow: "clip",
-    left: 0}} className={"max-width"}>
+        <div style={{
+            height: "100%", position: "absolute", top: 0, overflow: "clip",
+            left: 0
+        }} className={"max-width"}>
             <div
                 style={{height: '100%'}}
                 className={"commits max-width scrollbar"}>
                 <CommitItems
-                    commits={commits} onSelect={(commit) => {
-                    $selectCommit(commit);
-                }}/>
+                    commits={commits}
+                    onSelect={(commit) => {
+                        $selectCommit(commit);
+                    }}/>
             </div>
             {selectCommit && (
-               <ObjPanelRoot selectCommit={selectCommit} onClose={() => {
+                <ObjPanelRoot selectCommit={selectCommit} onClose={() => {
                     $selectCommit(null);
                 }}/>
             ) || <></>}
@@ -40,7 +42,7 @@ const ObjPanelRoot: FC<{
         <Split
             mode={"vertical"}
             className={"commit-panel max-width"}>
-            <div style={{height: "50%", visibility: "collapse"}} >
+            <div style={{height: "50%", visibility: "collapse"}}>
             </div>
             <div className={"bottom-panel  max-width"}>
                 <ObjPanel commit={selectCommit} onClose={onClose}/>

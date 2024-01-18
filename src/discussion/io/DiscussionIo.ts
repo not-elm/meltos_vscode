@@ -56,7 +56,7 @@ export class DiscussionProvider implements AsyncDisposable {
 
     async spoke(spoke: SpokeType) {
         await this.withTryCatch(async () => {
-            const id = spoke.text.id.toString();
+            const id = spoke.message.id.toString();
             vscode.window.showInformationMessage(`spoke id=${id}`);
             await this.io.spoke(spoke);
             await this.viewManager.notify(spoke.discussion_id);

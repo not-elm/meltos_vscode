@@ -6,7 +6,8 @@ import {VSCodeDivider} from "@vscode/webview-ui-toolkit/react";
 import {CommitMeta, ObjMeta} from "meltos_ts_lib/dist/scm/commit/CommitMeta";
 import {ObjButtons} from "./ViewButton.tsx";
 import "./ObjPanel.css";
-import {CodiconIconTemplate} from "../codicons/Template.tsx";
+import {IconButton} from "@mui/material";
+import {Close} from "@mui/icons-material";
 
 export const ObjPanel: FC<{
     commit: CommitMeta;
@@ -28,7 +29,9 @@ const Header: FC<{
     return (
         <div className={"obj-panel-header"}>
             <h2>{commit.message}</h2>
-            <CodiconIconTemplate name={"codicon-close"} onClick={onClose}/>
+            <IconButton onClick={onClose}>
+                <Close htmlColor={"#fff"}/>
+            </IconButton>
         </div>
     )
 }
@@ -39,12 +42,12 @@ const ObjItems: FC<{
     return (
         <ul className={"list-style-none obj-panel-content  scrollbar"}>
             {objs.map((obj) => (
-                <li key={obj.hash} className={"obj-panel-item"} >
+                <li key={obj.hash} className={"obj-panel-item"}>
                     <div className={css`
                         display: flex;
                         justify-content: space-between;
                         
-                        padding: 0 10px;
+                        padding: 3px 10px;
                     `}>
                         <p>{obj.file_path}</p>
                         <ObjButtons meta={obj}/>

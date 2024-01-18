@@ -1,10 +1,13 @@
-import { FC, useState } from "react";
+import {FC, useState} from "react";
 import TextAreaAutoSize from "react-textarea-autosize";
-import { VSCodeButton } from "@vscode/webview-ui-toolkit/react";
-import { vscodeApi } from "../client/VscodeApi.ts";
-import { css } from "@emotion/css";
+import {VSCodeButton} from "@vscode/webview-ui-toolkit/react";
+import {vscodeApi} from "../client/VscodeApi.ts";
+import {css} from "@emotion/css";
+import {useScm} from "../client/useScm.ts";
 
 export const CommitArea: FC = () => {
+    const {stages} = useScm();
+
     const [text, $text] = useState("");
     const form = css`
         display: flex;
@@ -30,6 +33,7 @@ export const CommitArea: FC = () => {
         <form className={form}>
             <TextAreaAutoSize
                 rows={1}
+                disabled={stages.length === 0}
                 className={textArea}
                 value={text}
                 placeholder={"commit message"}
@@ -40,7 +44,7 @@ export const CommitArea: FC = () => {
 
             <VSCodeButton
                 className={commitButtonBox}
-                disabled={text === ""}
+                disabled={text === "" || stages.length === 0}
                 onClick={() => {
                     vscodeApi.commit(text);
                     $text(() => "");
@@ -49,7 +53,7 @@ export const CommitArea: FC = () => {
                 Commit
             </VSCodeButton>
 
-            <PushButton />
+            <PushButton/>
         </form>
     );
 };

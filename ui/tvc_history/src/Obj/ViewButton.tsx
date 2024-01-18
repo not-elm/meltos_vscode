@@ -53,7 +53,7 @@ const ButtonBase: FC<{
 }> = ({ imgSrc, text, onClick }) => {
     const root = css`
         display: flex;
-        color: #007acc;
+        color: #4198ff;
         gap: 8px;
 
         :hover {

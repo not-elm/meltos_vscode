@@ -9,7 +9,6 @@ export const CodiconIconTemplate: FC<{
 		<div className="icon" >
 			<i
 				className={`codicon ${name}`}
-
                 onClick={() => {
                     if(!disabled){
                         onClick?.();
