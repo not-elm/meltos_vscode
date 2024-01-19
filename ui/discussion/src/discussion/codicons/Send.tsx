@@ -8,8 +8,8 @@ export const SendIcon: FC<{
     onClick?: () => void;
 }> = ({onClick, disabled}) => {
     return (
-        <IconButton disabled={disabled} onClick={onClick}>
-            <Send htmlColor={"#43a047"}/>
+        <IconButton className={"disable-button-parent"} disabled={disabled} onClick={onClick}>
+            <Send className={"primary-color disable-button"}/>
         </IconButton>
     );
 };

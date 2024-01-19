@@ -1,9 +1,9 @@
 import {FC, useContext, useEffect, useRef} from "react";
-import {MessageData} from "../DiscussionData";
+import {MessageData} from "../../DiscussionData";
+import {DiscussionContext} from "../DiscussionThread.tsx";
+import {MessageCard} from "../Message.tsx";
+import {ReplyBox} from "./ReplyBox.tsx";
 
-import {ReplyBox} from "./InputText.tsx";
-import {MessageCard} from "./Message.tsx";
-import {DiscussionContext} from "./DiscussionThread.tsx";
 
 export type ReplyStatus = "hidden" | "show" | "showFocus";
 

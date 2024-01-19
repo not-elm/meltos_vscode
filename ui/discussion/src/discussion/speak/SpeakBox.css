@@ -1,0 +1,21 @@
+.speak-box {
+    border-top: 2px solid #7781ab;
+    background: #4b4a4a;
+    padding: 8px 12px;
+    min-height: 30%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+}
+
+.speak-box-input {
+    flex-grow: 1;
+}
+
+.send-box-footer {
+    display: flex;
+    flex-direction: row-reverse;
+}
+
+

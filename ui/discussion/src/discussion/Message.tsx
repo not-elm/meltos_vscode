@@ -1,9 +1,12 @@
 import { FC, useMemo, useState } from "react";
 import { VSCodeDivider } from "@vscode/webview-ui-toolkit/react";
 import { MessageData, MessageThread } from "../DiscussionData";
-import "../index.css";
-import { ReplyStatus, ReplyThread } from "./ReplyThread.tsx";
+import { ReplyStatus, ReplyThread } from "./reply/ReplyThread.tsx";
 import { ReplyIcon } from "./codicons/Reply.tsx";
+import {ClipBoardIcon} from "./codicons/ClipBoardIcon.tsx";
+import "../index.css";
+import "./Message.css";
+import "../color.css";
 
 export const DiscussionMessages: FC<{
     messages: MessageThread[];
@@ -40,7 +43,7 @@ export const DiscussionMessage: FC<{
             <div className={"reply-thread"}>
                 {0 < (message.replies?.length || 0) && (
                     <p
-                        className={"reply-link"}
+                        className={"reply-link primary-color"}
                         onClick={() => {
                             $visibleReply(
                                 visibleReply === "hidden" ? "show" : "hidden"
@@ -73,7 +76,7 @@ export const MessageCard: FC<{
                 onClickReply={onClickReply}
             />
             <div>
-                <p className={"message-text"}>{message.text}</p>
+                <p className={"message-text output-new-line"}>{message.text}</p>
             </div>
         </div>
     );
@@ -93,6 +96,9 @@ const MessageHeader: FC<{
                         onClickReply(messageId);
                     }}
                 />
+                <ClipBoardIcon
+                    title={"copy message id"}
+                    content={messageId} />
             </div>
         </div>
     );

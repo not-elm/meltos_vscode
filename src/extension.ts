@@ -1,26 +1,21 @@
 import * as vscode from "vscode";
-import {
-    copyRealWorkspaceToVirtual,
-    openWorkspacePathDialog,
-    toMeltosUri,
-} from "./fs/util";
-import { createOwnerArgs, createUserArgs, isOwner, loadArgs } from "./args";
+import {copyRealWorkspaceToVirtual, openWorkspacePathDialog, toMeltosUri,} from "./fs/util";
+import {createOwnerArgs, createUserArgs, isOwner, loadArgs} from "./args";
 
-import { VscodeNodeFs } from "./fs/VscodeNodeFs";
+import {VscodeNodeFs} from "./fs/VscodeNodeFs";
 
-import { MemFS } from "./fs/MemFs";
-import { SessionConfigs, WasmTvcClient } from "../wasm";
+import {MemFS} from "./fs/MemFs";
+import {SessionConfigs, WasmTvcClient} from "../wasm";
 
-import { DiscussionTreeProvider } from "./discussion/DiscussionTreeProvider";
-import { InMemoryDiscussionIo } from "./discussion/io/InMemory";
-import { DiscussionProvider } from "./discussion/io/DiscussionIo";
-import { DiscussionWebViewManager } from "./discussion/DiscussionWebView";
-import { HttpRoomClient } from "./http";
-import { ChannelWebsocket } from "./ChannelWebsocket";
-import { DiscussionMetaType } from "./types/api";
-import { registerShowHistoryCommand } from "./tvc/TvcHistoryWebView";
-import { ObjFileProvider } from "./tvc/ObjFileProvider";
-import { TvcScmWebView } from "./tvc/TvcScmWebView";
+import {DiscussionTreeProvider} from "./discussion/DiscussionTreeProvider";
+import {InMemoryDiscussionIo} from "./discussion/io/InMemory";
+import {DiscussionIo, DiscussionProvider} from "./discussion/io/DiscussionIo";
+import {DiscussionWebViewManager} from "./discussion/DiscussionWebView";
+import {HttpRoomClient} from "./http";
+import {ChannelWebsocket} from "./ChannelWebsocket";
+import {registerShowHistoryCommand} from "./tvc/TvcHistoryWebView";
+import {ObjFileProvider} from "./tvc/ObjFileProvider";
+import {TvcScmWebView} from "./tvc/TvcScmWebView";
 
 let websocket: ChannelWebsocket | undefined;
 let discussionWebviewManager: DiscussionWebViewManager | undefined;
@@ -74,7 +69,7 @@ const registerWorkspaceInitCommand = (
     context: vscode.ExtensionContext
 ) => {
     const command = vscode.commands.registerCommand("meltos.init", async () => {
-        fileSystem.delete(vscode.Uri.parse("meltos:/"), { recursive: true });
+        fileSystem.delete(vscode.Uri.parse("meltos:/"), {recursive: true});
         // fileSystem.writeFileApi("hello.txt", Buffer.from("hello"));
 
         const args = loadArgs(context);
@@ -165,12 +160,12 @@ const registerDiscussion = (
     const web = new DiscussionWebViewManager(context, io, http);
     discussionWebviewManager = web;
     const provider = new DiscussionProvider(io, tree, web);
-    websocket = new ChannelWebsocket(provider);
+    websocket = new ChannelWebsocket(provider, config);
     websocket.connectChannel(config.room_id[0], config.session_id[0]);
 
     vscode.window.registerTreeDataProvider("meltos.discussions", tree);
     registerCreateDiscussion(context, http);
-    registerShowDiscussion(context, web);
+    registerShowDiscussion(context, web, io);
 };
 
 const registerCreateDiscussion = (
@@ -194,13 +189,19 @@ const registerCreateDiscussion = (
 
 const registerShowDiscussion = (
     context: vscode.ExtensionContext,
-    web: DiscussionWebViewManager
+    web: DiscussionWebViewManager,
+    io: DiscussionIo
 ) => {
     context.subscriptions.push(
         vscode.commands.registerCommand(
             "meltos.discussion.show",
-            async (meta: DiscussionMetaType) => {
-                await web.show(meta);
+            async (discussionId: string) => {
+                const meta = io.discussionIds().find(meta => meta.id === discussionId);
+                if (meta) {
+                    await web.show(meta);
+                } else {
+                    vscode.window.showErrorMessage(`not found discussion id = ${discussionId}`)
+                }
             }
         )
     );

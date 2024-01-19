@@ -1,0 +1,18 @@
+.reply-box {
+    padding: 8px 12px;
+    width: 100%;
+    background-color: #5b5b5b;
+    color: #60aeee;
+    caret-color: white;
+    box-shadow: 1px 1px 1px rgba(0, 0, 0, .1);
+    border-radius: 8px;
+    display: flex;
+    height: fit-content;
+    box-sizing: border-box;
+    flex-direction: column;
+    border: 2px solid rgba(255, 255, 255, 0);
+}
+
+.reply-box:focus-within {
+    border: 2px solid #226ac7;
+}

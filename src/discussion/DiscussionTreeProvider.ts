@@ -20,7 +20,7 @@ export class DiscussionTreeProvider
         item.command = {
             title: "show discussion",
             command: "meltos.discussion.show",
-            arguments: [element],
+            arguments: [element.id],
         };
         return item;
     }

@@ -1,7 +1,9 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import "./index.css";
 import {DiscussionContext, DiscussionThread,} from "./discussion/DiscussionThread.tsx";
+import "./index.css";
+import "./reset.css";
+import "./color.css";
 import {VscodeDiscussionClient} from "./discussion/client/vscode.ts";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(

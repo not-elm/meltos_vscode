@@ -56,8 +56,6 @@ export class DiscussionProvider implements AsyncDisposable {
 
     async spoke(spoke: SpokeType) {
         await this.withTryCatch(async () => {
-            const id = spoke.message.id.toString();
-            vscode.window.showInformationMessage(`spoke id=${id}`);
             await this.io.spoke(spoke);
             await this.viewManager.notify(spoke.discussion_id);
         });
@@ -65,9 +63,6 @@ export class DiscussionProvider implements AsyncDisposable {
 
     async replied(replied: RepliedType) {
         await this.withTryCatch(async () => {
-            vscode.window.showInformationMessage(
-                `coming reply message id=${replied.to}`
-            );
             await this.io.replied(replied);
             await this.viewManager.notifyAll();
         });

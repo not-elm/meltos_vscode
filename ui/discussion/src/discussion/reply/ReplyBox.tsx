@@ -1,6 +1,8 @@
-import React, { FC, useState } from "react";
+import React, {FC, useState} from "react";
 import TextAreaAutoSize from "react-textarea-autosize";
-import { SendIcon } from "./codicons/Send";
+import {SendIcon} from "../codicons/Send.tsx";
+import "./ReplyBox.css";
+import "../input.css";
 
 export const ReplyBox: FC<{
 	inputRef: React.RefObject<HTMLTextAreaElement>;
@@ -9,39 +11,12 @@ export const ReplyBox: FC<{
 	return (
 		<InputBox
 			inputRef={inputRef}
-			className={"send-box reply-box"}
+			className={"reply-box"}
 			onClick={onClick}
 		/>
 	);
 };
 
-export const SpeakBox: FC<{
-	onClick: (text: string) => void;
-}> = ({ onClick }) => {
-	const [text, $text] = useState("");
-
-	return (
-		<form className={"speak-box"}>
-			<textarea
-				rows={1}
-				autoFocus={true}
-				placeholder={"メッセージを送信"}
-				className={"send-input"}
-				value={text}
-				onChange={(e) => $text(() => e.target.value)}
-			/>
-			<div className={"send-box-footer"}>
-				<SendIcon
-					disabled={text === ""}
-					onClick={() => {
-						onClick(text);
-						$text("");
-					}}
-				/>
-			</div>
-		</form>
-	);
-};
 
 const InputBox: FC<{
 	inputRef: React.RefObject<HTMLTextAreaElement>;
@@ -56,7 +31,7 @@ const InputBox: FC<{
 				rows={1}
 				ref={inputRef}
 				placeholder={"メッセージを送信"}
-				className={"send-input"}
+				className={"input-box"}
 				value={text}
 				onChange={(e) => $text(() => e.target.value)}
 			/>

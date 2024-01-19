@@ -1,22 +1,30 @@
 import React, {useContext, useEffect} from "react";
 import {DiscussionData} from "../DiscussionData";
-import {DiscussionMessages} from "./Message.tsx";
 import {useDiscussionState} from "../vscodeApi.ts";
-import "../index.css"
+
 import {MockDiscussionClient} from "./client/mock.ts";
-import {SpeakBox} from "./InputText.tsx";
 import {DiscussionIo} from "./client/interface.ts";
+
+import Split from "@uiw/react-split";
+import {DiscussionMessages} from "./Message.tsx";
+import {SpeakBox} from "./speak/SpeakBox.tsx";
+import "../index.css"
+import "./DiscussionThread.css";
 
 export const DiscussionThread = () => {
     const discussion = useDiscussion();
     const client = useContext(DiscussionContext);
     return (
-        <div id={"panel"}>
-            <DiscussionMessages messages={discussion?.messages || []}/>
+        <Split
+            id={"discussion-thread"}
+            mode={"vertical"}
+          >
+            <DiscussionMessages
+                messages={discussion?.messages || []}/>
             <SpeakBox onClick={text => {
                 client.speak(text);
             }}/>
-        </div>
+        </Split>
     );
 }
 
@@ -34,7 +42,7 @@ const useDiscussion = () => {
 
             switch (data.type) {
                 case "discussion":
-                    
+
                     set(data.data as DiscussionData);
             }
         };

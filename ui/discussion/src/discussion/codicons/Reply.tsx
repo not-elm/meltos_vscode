@@ -7,9 +7,12 @@ export const ReplyIcon: FC<{
 }> = ({onClick}) => {
     return (
         // <CodiconIconTemplate name="codicon-comment" onClick={onClick} />
-        <Tooltip title={"reply"} onClick={onClick}>
-            <IconButton>
-                <Reply htmlColor={"#fff"}/>
+        <Tooltip title={"reply"}>
+            <IconButton
+                sx={{padding: 0}}
+                onClick={onClick}
+            >
+                <Reply fontSize={"small"} htmlColor={"#ffffff"}/>
             </IconButton>
         </Tooltip>
     );
