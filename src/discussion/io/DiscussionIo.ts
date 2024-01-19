@@ -64,7 +64,7 @@ export class DiscussionProvider  {
     async replied(replied: RepliedType) {
         await this.withTryCatch(async () => {
             await this.io.replied(replied);
-            await this.viewManager.notifyAll();
+            await this.viewManager.notify(replied.discussion_id);
         });
     }
 

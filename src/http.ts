@@ -39,10 +39,11 @@ export class HttpRoomClient {
         );
     };
 
-    readonly reply = async (to: string, message: string) => {
+    readonly reply = async (discussionId: string, to: string, message: string) => {
         return await httpReply(
             this.opened.room_id,
             this.opened.session_id,
+            discussionId,
             to,
             message
         );
@@ -117,6 +118,7 @@ export const httpSpeak = async (
 export const httpReply = async (
     roomId: string,
     sessionId: string,
+    discussionId: string,
     to: string,
     message: string
 ) => {
@@ -126,6 +128,7 @@ export const httpReply = async (
             method: "POST",
             ...headers(sessionId),
             body: JSON.stringify({
+                discussion_id: discussionId,
                 to,
                 text: message,
             }),

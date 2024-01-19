@@ -75,14 +75,14 @@ export class ChannelWebsocket implements vscode.Disposable {
 
     onSpoke = async (from: string, spoke: SpokeType) => {
         await this.withTryCatch(async () => {
-            this.showComingMessageIfFromOthers(from, spoke.discussion_id);
+            this.showComingMessageIfFromOthers(from, spoke.message.text, spoke.discussion_id);
             await this.discussion.spoke(spoke);
         });
     };
 
     onReplied = async (from: string, replied: RepliedType) => {
         await this.withTryCatch(async () => {
-            // this.showComingMessageIfFromOthers(from, replied.);
+            this.showComingMessageIfFromOthers(from, replied.message.text, replied.discussion_id);
             await this.discussion.replied(replied);
         });
     };
@@ -99,14 +99,15 @@ export class ChannelWebsocket implements vscode.Disposable {
 
     private readonly showComingMessageIfFromOthers = (
         from: string,
+        message: string,
         discussionId: string
     ) => {
         if (this.fromOthers(from)) {
             vscode
                 .window
-                .showInformationMessage(`coming message from ${from}`, discussionId)
-                .then(async discussionId => {
-                    if (discussionId) {
+                .showInformationMessage(message, "open discussion")
+                .then(async item => {
+                    if (item) {
                         await vscode.commands.executeCommand("meltos.discussion.show", discussionId);
                     }
                 });

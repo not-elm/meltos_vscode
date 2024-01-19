@@ -1,13 +1,11 @@
-import {DiscussionId} from "../../wasm";
-
 export interface DiscussionMetaType {
     id: string;
     creator: string;
     title: string;
 }
 
-export interface Open{
-    user_id: string,   
+export interface Open {
+    user_id: string,
     lifetime_secs?: number
 }
 
@@ -27,6 +25,7 @@ export interface SpokeType {
 }
 
 export interface RepliedType {
+    discussion_id: string;
     to: string;
     message: MessageType;
 }

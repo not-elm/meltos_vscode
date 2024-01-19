@@ -95,17 +95,6 @@ const registerWorkspaceInitCommand = (
             "tvc",
             objProvider
         );
-
-        fileSystem.writeFile(
-            toMeltosUri("sessionConfigs"),
-            Buffer.from(sessionConfigs.room_id[0]),
-            {
-                create: true,
-                overwrite: true,
-            }
-        );
-
-        return;
     });
     context.subscriptions.push(command);
 };
