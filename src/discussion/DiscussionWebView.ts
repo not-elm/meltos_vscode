@@ -1,9 +1,10 @@
 import * as vscode from "vscode";
-import {Uri, Webview} from "vscode";
+import {Uri, ViewColumn, Webview} from "vscode";
 import {DiscussionIo} from "./io/DiscussionIo";
 import {HttpRoomClient} from "../http";
 import {DiscussionMetaType} from "../types/api";
 import {codiconsCssDir} from "../webviewUtil";
+import {sleep} from "../test/util";
 
 export class DiscussionWebViewManager implements vscode.Disposable {
     private readonly _views = new Map<string, DiscussionWebView>();
@@ -37,6 +38,8 @@ export class DiscussionWebViewManager implements vscode.Disposable {
     async show(meta: DiscussionMetaType) {
         const view = this._views.get(meta.id);
         if (view) {
+            view.panel.reveal(ViewColumn.Active);
+            await sleep(100);
             await view.notify();
         } else {
             const newView = new DiscussionWebView(
@@ -46,7 +49,14 @@ export class DiscussionWebViewManager implements vscode.Disposable {
                 this.client
             );
             newView.panel.onDidDispose(() => this._views.delete(meta.id));
+            newView.panel.onDidChangeViewState(async () => {
+                if(newView.panel.visible){
+                    await newView.notify();
+                }
+            })
             this._views.set(meta.id, newView);
+            await sleep(100);
+            await newView.notify();
         }
     }
 }

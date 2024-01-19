@@ -1,5 +1,5 @@
 import React, {FC, useState} from "react";
-import {CommitMeta} from "meltos_ts_lib/dist/scm/commit/CommitMeta.ts";
+import {CommitMeta} from "meltos_ts_lib/src/scm/commit/CommitMeta.ts";
 import {CommitItems} from "./CommitItem.tsx";
 import "./CommitPanel.css";
 import {ObjPanel} from "../Obj/ObjPanel.tsx";

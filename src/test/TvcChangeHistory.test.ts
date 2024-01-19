@@ -6,7 +6,7 @@ import {MemFS} from "../fs/MemFs";
 import * as vscode from "vscode";
 import {FileChangeType} from "vscode";
 import {deepStrictEqual, strictEqual} from "assert";
-import {ChangeMeta} from "meltos_ts_lib/src/scm/changes";
+import {ChangeMeta} from "meltos_ts_lib/src/scm/changes/ChangeMeta";
 
 suite("TvcChangeHistory", () => {
     test("Changesが1つの要素を持つこと", async () => {

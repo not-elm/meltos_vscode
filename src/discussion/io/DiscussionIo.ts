@@ -36,7 +36,7 @@ export interface DiscussionIo {
     discussion(id: string): DiscussionData | undefined;
 }
 
-export class DiscussionProvider implements AsyncDisposable {
+export class DiscussionProvider  {
     constructor(
         readonly io: DiscussionIo,
         readonly tree: DiscussionTreeProvider,
@@ -78,9 +78,7 @@ export class DiscussionProvider implements AsyncDisposable {
         });
     }
 
-    async [Symbol.asyncDispose](): Promise<void> {
-        await this.io.dispose();
-    }
+
 
     private async withTryCatch<T>(f: () => Promise<T>) {
         try {

@@ -2,6 +2,7 @@ import vscode from "vscode";
 import * as fs from "fs";
 import * as path from "node:path";
 import { backslashToSlash } from "./util";
+import {loadArgs} from "../args";
 
 export class VscodeNodeFs
     implements vscode.FileSystemProvider, vscode.Disposable
@@ -13,6 +14,7 @@ export class VscodeNodeFs
         this._emitter.event;
 
     constructor() {
+
         const dir = path.join(process.env.APPDATA!, "meltos");
         if (!fs.existsSync(dir)) {
             fs.mkdirSync(dir);

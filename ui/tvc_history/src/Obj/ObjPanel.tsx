@@ -3,7 +3,7 @@ import {FC} from "react";
 import {css} from "@emotion/css";
 
 import {VSCodeDivider} from "@vscode/webview-ui-toolkit/react";
-import {CommitMeta, ObjMeta} from "meltos_ts_lib/dist/scm/commit/CommitMeta";
+import {CommitMeta, ObjMeta} from "meltos_ts_lib/src/scm/commit/CommitMeta";
 import {ObjButtons} from "./ViewButton.tsx";
 import "./ObjPanel.css";
 import {IconButton} from "@mui/material";

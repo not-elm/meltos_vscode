@@ -1,3 +1,5 @@
+import {DiscussionId} from "../../wasm";
+
 export interface DiscussionMetaType {
     id: string;
     creator: string;

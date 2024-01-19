@@ -1,5 +1,5 @@
 import vscode, {FileChangeEvent, FileChangeType} from "vscode";
-import {ChangeMeta} from "meltos_ts_lib/src/scm/changes";
+import {ChangeMeta} from "meltos_ts_lib/src/scm/changes/ChangeMeta";
 import {VscodeNodeFs} from "../fs/VscodeNodeFs";
 import {MemFS} from "../fs/MemFs";
 import {WasmTvcClient} from "../../wasm";

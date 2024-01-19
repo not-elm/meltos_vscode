@@ -1,7 +1,7 @@
 import { css } from "@emotion/css";
 import { FC } from "react";
 import { vscodeApi } from "../VscodeApi.ts";
-import { ObjMeta } from "meltos_ts_lib/dist/scm/commit/CommitMeta.ts";
+import { ObjMeta } from "meltos_ts_lib/src/scm/commit/CommitMeta.ts";
 
 export const ObjButtons: FC<{
     meta: ObjMeta;

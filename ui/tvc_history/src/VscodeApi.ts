@@ -2,8 +2,8 @@ import {
     DiffFromWorkspaceMessage,
     HistoryFromWebMessage,
     ShowFileMessage,
-} from "meltos_ts_lib/dist/scm/hitory/HistoryFromWebMessage";
-import { ObjMeta } from "meltos_ts_lib/dist/scm/commit/CommitMeta.ts";
+} from "meltos_ts_lib/src/scm/hitory/HistoryFromWebMessage";
+import { ObjMeta } from "meltos_ts_lib/src/scm/commit/CommitMeta.ts";
 
 export class VscodeApi {
     private readonly _window: any;

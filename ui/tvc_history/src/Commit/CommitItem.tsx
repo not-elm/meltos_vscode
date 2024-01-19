@@ -1,6 +1,6 @@
 import {FC} from "react";
 import {VSCodeDivider} from "@vscode/webview-ui-toolkit/react";
-import {CommitMeta} from "meltos_ts_lib/dist/scm/commit/CommitMeta";
+import {CommitMeta} from "meltos_ts_lib/src/scm/commit/CommitMeta";
 import "./CommitItem.css";
 import {IconButton, Tooltip} from "@mui/material";
 import {ContentCopy} from "@mui/icons-material";

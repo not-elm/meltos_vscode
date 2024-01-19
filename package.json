@@ -1,6 +1,6 @@
 {
-  "name": "meltos-fs-provider",
-  "displayName": "meltos_fs_provider",
+  "name": "meltos-vscode",
+  "displayName": "meltos-vscode",
   "description": "",
   "version": "0.0.1",
   "engines": {
@@ -143,6 +143,7 @@
     }
   },
   "scripts": {
+    "setup": "npm install --no-optional",
     "vscode:prepublish": "npm run package",
     "compile": "webpack",
     "watch": "webpack --watch",
@@ -182,6 +183,7 @@
     "meltos_ts_lib": "file:../meltos_ts_lib",
     "node-wav-player": "^0.2.0",
     "utf-8-validate": "^6.0.3",
+    "vsce": "^2.15.0",
     "ws": "^8.16.0"
   }
 }

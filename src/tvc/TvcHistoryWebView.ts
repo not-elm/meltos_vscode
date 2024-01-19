@@ -2,7 +2,7 @@ import vscode, {Uri, Webview, WebviewPanel} from "vscode";
 import {codiconsCssDir, codiconsCssPath, getNonce} from "../webviewUtil";
 import {ObjMeta, WasmTvcClient} from "../../wasm";
 import {openObjFile} from "./ObjFileProvider";
-import {ShowFileMessage,} from "meltos_ts_lib/dist/scm/hitory/HistoryFromWebMessage";
+import {ShowFileMessage,} from "meltos_ts_lib/src/scm/hitory/HistoryFromWebMessage";
 
 export const registerShowHistoryCommand = (
     context: vscode.ExtensionContext,

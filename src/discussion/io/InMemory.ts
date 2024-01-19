@@ -58,9 +58,9 @@ export class InMemoryDiscussionIo implements DiscussionIo {
     }
 
     async dispose(): Promise<void> {
-        this._discussions.clear();
-        this._replies.clear();
-        this._messages.clear();
+        // this._discussions.clear();
+        // this._replies.clear();
+        // this._messages.clear();
     }
 
     discussionIds(): DiscussionMetaType[] {

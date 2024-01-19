@@ -1,7 +1,7 @@
 import vscode from "vscode";
 import {WasmTvcClient} from "../../wasm";
 import path from "path";
-import {ChangeMeta} from "meltos_ts_lib/dist/scm/changes";
+import {ChangeMeta} from "meltos_ts_lib/src/scm/changes/ChangeMeta";
 import {openDiffCommand} from "../apiWrapper";
 import {toMeltosUri} from "../fs/util";
 

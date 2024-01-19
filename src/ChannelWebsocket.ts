@@ -107,7 +107,7 @@ export class ChannelWebsocket implements vscode.Disposable {
                 .showInformationMessage(`coming message from ${from}`, discussionId)
                 .then(async discussionId => {
                     if (discussionId) {
-                        await vscode.commands.executeCommand("meltos.show", discussionId);
+                        await vscode.commands.executeCommand("meltos.discussion.show", discussionId);
                     }
                 });
         }
@@ -126,9 +126,8 @@ export class ChannelWebsocket implements vscode.Disposable {
             return await f();
         } catch (e) {
             if (e instanceof Error) {
-                await vscode.window.showErrorMessage(e.message);
+                vscode.window.showErrorMessage(e.message);
             }
-            await this.discussion[Symbol.asyncDispose]();
         }
     }
 }

@@ -1,4 +1,4 @@
-import React, {useContext, useEffect} from "react";
+import React, {useContext, useEffect, useRef} from "react";
 import {DiscussionData} from "../DiscussionData";
 import {useDiscussionState} from "../vscodeApi.ts";
 
@@ -18,7 +18,7 @@ export const DiscussionThread = () => {
         <Split
             id={"discussion-thread"}
             mode={"vertical"}
-          >
+        >
             <DiscussionMessages
                 messages={discussion?.messages || []}/>
             <SpeakBox onClick={text => {
@@ -32,6 +32,7 @@ export const DiscussionContext = React.createContext<DiscussionIo>(new MockDiscu
 
 const useDiscussion = () => {
     const {discussion, set} = useDiscussionState();
+    const setRef = useRef(set);
 
     useEffect(() => {
         const handler = (event: MessageEvent) => {
@@ -42,15 +43,14 @@ const useDiscussion = () => {
 
             switch (data.type) {
                 case "discussion":
-
-                    set(data.data as DiscussionData);
+                    setRef.current(data.data as DiscussionData);
             }
         };
         window.addEventListener("message", handler);
         return () => {
             window.removeEventListener("message", handler)
         }
-    }, [set, discussion])
+    }, [])
 
     return discussion;
 }

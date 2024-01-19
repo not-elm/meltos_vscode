@@ -1,5 +1,5 @@
 import {useEffect, useState} from "react";
-import {BranchCommit, CommitMeta, ObjMeta} from "meltos_ts_lib/dist/scm/commit/CommitMeta";
+import {BranchCommit, CommitMeta, ObjMeta} from "meltos_ts_lib/src/scm/commit/CommitMeta";
 
 
 const mockRandomBranches = (): BranchCommit[] => {

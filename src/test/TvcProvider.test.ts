@@ -6,7 +6,7 @@ import {TvcProvider} from "../tvc/TvcProvider";
 import {deepStrictEqual, strictEqual} from "node:assert";
 import {sleep} from "./util";
 import {InitialMessage} from "meltos_ts_lib/src/scm/changes/ScmToWebMessage";
-import {ChangeMeta} from "meltos_ts_lib/src/scm/changes";
+import {ChangeMeta} from "meltos_ts_lib/src/scm/changes/ChangeMeta";
 import {WasmTvcClient} from "../../wasm";
 
 suite("Tvc Provider", async () => {
