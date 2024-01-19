@@ -18,36 +18,47 @@
       "activitybar": [
         {
           "id": "meltos",
-          "title": "meltos ",
-          "icon": "media/dep.svg"
+          "title": "meltos",
+          "icon": "$(add)"
         }
       ]
     },
     "commands": [
       {
         "command": "meltos.openRoom",
-        "title": "open room"
+        "title": "open room",
+        "when": "scmProvider != meltos"
       },
       {
         "command": "meltos.joinRoom",
-        "title": "join room"
+        "title": "join room",
+        "when": "scmProvider != meltos"
+      },
+      {
+        "command": "meltos.clipboard.roomId",
+        "title": "copy room id",
+        "when": "scmProvider == meltos"
       },
       {
         "command": "meltos.discussion.create",
         "title": "create global discussion",
-        "icon": "$(add)"
+        "icon": "$(add)",
+        "when": "scmProvider == meltos"
       },
       {
         "command": "meltos.discussion.speak",
-        "title": "speak"
+        "title": "speak",
+        "when": "scmProvider == meltos"
       },
       {
         "command": "meltos.discussion.reply",
-        "title": "reply"
+        "title": "reply",
+        "when": "scmProvider == meltos"
       },
       {
         "command": "meltos.discussion.show",
-        "title": "show discussion"
+        "title": "show discussion",
+        "when": "scmProvider == meltos"
       },
       {
         "command": "meltos.init",
@@ -88,7 +99,7 @@
         {
           "type": "webview",
           "id": "meltos.scm",
-          "name": "meltos source control manager"
+          "name": "meltos source control"
         }
       ],
       "meltos": [
@@ -98,7 +109,7 @@
         },
         {
           "id": "meltos.discussions",
-          "name": "meltos discussions",
+          "name": "discussions",
           "command": "meltos.discussions.create",
           "icon": "$(add)"
         }
@@ -147,6 +158,7 @@
     "@babel/node": "^7.22.19",
     "@babel/plugin-proposal-class-properties": "^7.18.6",
     "@babel/preset-env": "^7.23.7",
+    "@types/copy-paste": "^1.1.33",
     "@types/mocha": "^10.0.6",
     "@types/node": "^18.19.6",
     "@types/vscode": "^1.85.0",
@@ -166,6 +178,7 @@
     "@vscode/codicons": "^0.0.35",
     "@wasm-tool/wasm-pack-plugin": "^1.7.0",
     "bufferutil": "^4.0.8",
+    "copy-paste": "^1.5.3",
     "meltos_ts_lib": "file:../meltos_ts_lib",
     "node-wav-player": "^0.2.0",
     "utf-8-validate": "^6.0.3",

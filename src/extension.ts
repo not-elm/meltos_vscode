@@ -16,6 +16,7 @@ import {ChannelWebsocket} from "./ChannelWebsocket";
 import {registerShowHistoryCommand} from "./tvc/TvcHistoryWebView";
 import {ObjFileProvider} from "./tvc/ObjFileProvider";
 import {TvcScmWebView} from "./tvc/TvcScmWebView";
+import {copy} from "copy-paste";
 
 let websocket: ChannelWebsocket | undefined;
 let discussionWebviewManager: DiscussionWebViewManager | undefined;
@@ -87,6 +88,7 @@ const registerWorkspaceInitCommand = (
         registerShowHistoryCommand(context, tvc);
         registerScmView(context, sessionConfigs, tvc, fileSystem);
         registerDiscussion(context, sessionConfigs);
+        registerClipboardRoomIdCommand(context, sessionConfigs.room_id[0]);
 
         const objProvider = new ObjFileProvider(tvc);
         vscode.workspace.registerTextDocumentContentProvider(
@@ -205,4 +207,13 @@ const registerShowDiscussion = (
             }
         )
     );
+};
+
+
+const registerClipboardRoomIdCommand = (context: vscode.ExtensionContext, roomId: string) => {
+    context.subscriptions.push(vscode.commands.registerCommand("meltos.clipboard.roomId", () => {
+        copy(roomId, () => {
+           vscode.window.showInformationMessage("copied room id");
+        });
+    }));
 };
