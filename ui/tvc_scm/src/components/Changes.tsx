@@ -8,6 +8,7 @@ import "./tree.css";
 import {IconButton, Tooltip} from "@mui/material";
 import {CodiconIconTemplate} from "./Template.tsx";
 import {vscodeApi} from "../client/VscodeApi.ts";
+import {iconButtonColor} from "./color.ts";
 
 export const Changes: FC = () => {
     const {changes} = useContext(ScmContext);
@@ -16,7 +17,7 @@ export const Changes: FC = () => {
         <TreeItem
             key={"changes"}
             nodeId={"changes"}
-            label={"changes"}
+            label={<ChangesLabel/>}
         >
             <></>
             {changes.map(meta => (
@@ -29,6 +30,16 @@ export const Changes: FC = () => {
     )
 }
 
+
+const ChangesLabel = () => {
+    return (
+        <div className={"stage-label"}>
+            <p>changes</p>
+            <StageButton/>
+        </div>
+    )
+}
+
 export const ChangeItem: FC<{
     meta: ChangeMeta
 }> = ({meta}) => {
@@ -36,7 +47,7 @@ export const ChangeItem: FC<{
         <TreeItem
             className={"tree-item"}
             nodeId={meta.filePath}
-            label={<StageLabel meta={meta}/>}
+            label={<ChangeItemLabel meta={meta}/>}
             endIcon={<ChangeTypeIcon meta={meta}/>}
         />
     )
@@ -72,13 +83,17 @@ const Icon: FC<{
     }
 };
 
-const StageLabel: FC<{
+const ChangeItemLabel: FC<{
     meta: ChangeMeta
 }> = ({meta}) => {
     return (
-        <div className={"stage-label"}>
+        <div className={"stage-label"} onClick={() => {
+            vscodeApi.showDiff(meta);
+        }}>
             <ScmItemText meta={meta}/>
-            <div className={"scm-buttons"}>
+            <div className={"scm-buttons"} onClick={e => {
+                e.stopPropagation()
+            }}>
                 {meta.changeType !== "delete" && <OpenFileButton filePath={meta.filePath}/>}
                 <StageButton meta={meta}/>
             </div>
@@ -86,18 +101,19 @@ const StageLabel: FC<{
     )
 }
 
-const OpenFileButton: FC<{
+export const OpenFileButton: FC<{
     filePath: string
 }> = ({filePath}) => {
     return (
         <Tooltip title={"open file"}>
-            <IconButton>
+            <IconButton
+                sx={{padding: 0}}
+                onClick={() => {
+                    vscodeApi.openFile(filePath)
+                }}>
                 <FileOpen
                     fontSize={"small"}
-                    htmlColor={"#12b3e3"}
-                    onClick={() => {
-                        vscodeApi.openFile(filePath)
-                    }}>
+                    htmlColor={iconButtonColor}>
                 </FileOpen>
             </IconButton>
         </Tooltip>
@@ -105,19 +121,19 @@ const OpenFileButton: FC<{
 }
 
 const StageButton: FC<{
-    meta: ChangeMeta
+    meta?: ChangeMeta
 }> = ({meta}) => {
-    const {stage} = useContext(ScmContext);
 
     return (
-        <Tooltip title={"stage"}>
-            <IconButton>
+        <Tooltip title={meta === undefined ? "stage all" : "stage"}>
+            <IconButton
+                sx={{padding: 0}}
+                onClick={() => {
+                    vscodeApi.stage(meta);
+                }}>
                 <Add
                     fontSize={"small"}
-                    htmlColor={"#12b3e3"}
-                    onClick={() => {
-                        stage(meta);
-                    }}>
+                    htmlColor={iconButtonColor}>
                 </Add>
             </IconButton>
         </Tooltip>

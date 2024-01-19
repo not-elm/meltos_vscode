@@ -68,18 +68,18 @@ export class VscodeApi {
         this.postMessage(showDiff);
     }
 
-    stage(meta: ChangeMeta) {
+    stage(meta?: ChangeMeta) {
         const stage: StageMessage = {
             type: "stage",
-            meta,
+            meta: meta || null,
         };
         this.postMessage(stage);
     }
 
-    unStage(meta: ChangeMeta) {
+    unStage(filePath?: string) {
         const stage: UnStageMessage = {
             type: "unStage",
-            meta,
+            filePath: filePath || null,
         };
         this.postMessage(stage);
     }

@@ -46,6 +46,7 @@ export async function deactivate() {
     await httpRoomClient?.leave();
     websocket?.dispose();
     discussionWebviewManager?.dispose();
+
 }
 
 const registerOpenRoomCommand = (context: vscode.ExtensionContext) => {
@@ -57,8 +58,7 @@ const registerOpenRoomCommand = (context: vscode.ExtensionContext) => {
             }
 
             const args = createOwnerArgs(workspaceSource.fsPath);
-            context.globalState.update("args", args);
-
+            await context.globalState.update("args", args);
             await vscode.commands.executeCommand(
                 `vscode.openFolder`,
                 vscode.Uri.parse("/").with({

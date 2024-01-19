@@ -1,22 +1,15 @@
 import {useChanges} from "./changes/useChanges.ts";
 import React, {useEffect, useRef, useState} from "react";
 import {ChangeMeta} from "meltos_ts_lib/src/scm/changes.ts";
-import {vscodeApi} from "./VscodeApi.ts";
 
 export const ScmContext = React.createContext<ScmStore>({
     changes: [],
-    stages: [],
-    stage: () => {
-    },
-    unStage: () => {
-    },
+    stages: []
 });
 
 export interface ScmStore {
     changes: ChangeMeta[];
     stages: ChangeMeta[];
-    stage: (meta: ChangeMeta) => void;
-    unStage: (meta: ChangeMeta) => void;
 }
 
 export const useScm = (): ScmStore => {
@@ -48,11 +41,11 @@ export const useScm = (): ScmStore => {
                     ]);
                     break;
                 case "unStaged":
-                    const meta2 = e.data.meta as ChangeMeta;
+                    console.log(e.data)
                     $stages(() =>
-                        stagesRef.current.filter((m) => m.filePath !== meta2.filePath)
+                        stagesRef.current.filter((m) => m.filePath !== e.data.filePath)
                     );
-                    feedChange(meta2);
+                // feedChange(meta2);
             }
         };
 
@@ -65,14 +58,6 @@ export const useScm = (): ScmStore => {
     return {
         changes,
 
-        stages,
-
-        stage: (meta: ChangeMeta) => {
-            vscodeApi.stage(meta);
-        },
-
-        unStage: (meta: ChangeMeta) => {
-            vscodeApi.unStage(meta)
-        },
+        stages
     };
 };

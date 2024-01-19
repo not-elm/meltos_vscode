@@ -31,9 +31,26 @@ export class TvcProvider {
         await this.tvc.fetch(sessionConfigs);
     };
 
-    readonly stage = (filePath: string) => {
-        this.tvc.stage(filePath.replace("/workspace/", ""));
-        this._history.moveToStages(filePath);
+    readonly stage = (filePath: string | null) => {
+        if (filePath) {
+            this.tvc.stage(filePath.replace("workspace/", ""));
+            this._history.moveToStagesFromChanges(filePath);
+        } else {
+            this.tvc.stage(".");
+            this._history.allMoveToStagesFromChanges();
+        }
+        this.fireUpdateScm();
+    };
+
+
+    readonly unStage = (filePath: string | null) => {
+        if (filePath) {
+            this.tvc.un_stage(filePath);
+            this._history.moveToChangesFromStages(filePath);
+        } else {
+            this.tvc.un_stage_all();
+            this._history.allMoveToChangesFromStages();
+        }
         this.fireUpdateScm();
     };
 
@@ -58,7 +75,7 @@ export class TvcProvider {
             for (const event of changes.filter((c) =>
                 c.uri.path.startsWith("/workspace/")
             )) {
-                await this._history.inspectChangeStatus(event);
+                await this._history.feed(event);
                 this.fireUpdateScm();
             }
         });

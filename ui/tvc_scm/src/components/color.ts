@@ -1,0 +1,1 @@
+export const iconButtonColor = "#12b3e3";

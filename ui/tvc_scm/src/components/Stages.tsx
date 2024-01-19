@@ -5,7 +5,11 @@ import {ScmContext} from "../client/useScm.ts";
 import {ScmItemText} from "./ScmItem.tsx";
 import "./Stages.css";
 import "./tree.css";
-import {ChangeTypeIcon} from "./Changes.tsx";
+import {ChangeTypeIcon, OpenFileButton} from "./Changes.tsx";
+import {IconButton, Tooltip} from "@mui/material";
+import {Remove} from "@mui/icons-material";
+import {vscodeApi} from "../client/VscodeApi.ts";
+import {iconButtonColor} from "./color.ts";
 
 
 export const Stages: FC = () => {
@@ -14,11 +18,8 @@ export const Stages: FC = () => {
     return (
         <TreeItem
             nodeId={"stages"}
-            label={"stages"}
+            label={<StagesLabel/>}
             key={"stages"}
-            onClick={() => {
-
-            }}
         >
             <></>
             {stages.map(meta => (
@@ -31,6 +32,16 @@ export const Stages: FC = () => {
     )
 }
 
+
+const StagesLabel = () => {
+    return (
+        <div className={"stage-label"}>
+            <p>stages</p>
+            <UnStageButton/>
+        </div>
+    )
+}
+
 export const StageItem: FC<{
     meta: ChangeMeta
 }> = ({meta}) => {
@@ -38,8 +49,46 @@ export const StageItem: FC<{
         <TreeItem
             className={"tree-item"}
             nodeId={meta.filePath}
-            label={<ScmItemText meta={meta}/>}
-            endIcon={<ChangeTypeIcon meta={meta} /> }
+            label={<StageItemLabel meta={meta}/>}
+            endIcon={<ChangeTypeIcon meta={meta}/>}
         />
+    )
+}
+
+
+const StageItemLabel: FC<{
+    meta: ChangeMeta
+}> = ({meta}) => {
+    return (
+        <div className={"stage-label"} onClick={() => {
+            vscodeApi.showDiff(meta);
+        }}>
+            <ScmItemText meta={meta}/>
+            <div className={"scm-buttons"} onClick={e => {
+                e.stopPropagation()
+            }}>
+                <OpenFileButton filePath={meta.filePath}/>
+                <UnStageButton filePath={meta.filePath}/>
+            </div>
+        </div>
+    )
+}
+
+
+const UnStageButton: FC<{
+    filePath?: string
+}> = ({filePath}) => {
+    return (
+        <Tooltip
+            title={filePath === undefined ? "unstage all" : "unstage"}
+            className={"un-stage-button"}>
+            <IconButton
+                sx={{padding: 0}}
+                onClick={() => {
+                    vscodeApi.unStage(filePath)
+                }}>
+                <Remove htmlColor={iconButtonColor}/>
+            </IconButton>
+        </Tooltip>
     )
 }

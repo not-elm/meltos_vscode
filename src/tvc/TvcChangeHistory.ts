@@ -11,7 +11,7 @@ export class TvcChangeHistory {
     ) {
     }
 
-    async inspectChangeStatus(
+    async feed(
         event: vscode.FileChangeEvent
     ): Promise<ChangeMeta[]> {
         const changes = await this.nextChanges(event);
@@ -23,12 +23,12 @@ export class TvcChangeHistory {
         this.saveStages([]);
     };
 
-    readonly moveToStages = (filePath: string) => {
+    readonly moveToStagesFromChanges = (filePath: string) => {
         let changes = this.loadChanges();
         const stages: ChangeMeta[] = this.loadStages();
 
         for (let file of this.fileSystem.allFilesIn(filePath)) {
-            file = file.startsWith("/") ? file : `/${file}`;
+            file = trimStartSlash(file);
             const meta = changes.find((c) => c.filePath === file);
             if (meta) {
                 changes = changes.filter((c) => c.filePath !== file);
@@ -39,25 +39,61 @@ export class TvcChangeHistory {
         this.saveChanges(changes);
     };
 
+    readonly allMoveToStagesFromChanges = () => {
+        const stages = this.loadStages();
+        const changes = this
+            .loadChanges()
+            .filter(m => !stages.some(c => c.filePath !== m.filePath));
+
+        this.saveStages([
+            ...stages,
+            ...changes
+        ]);
+        this.saveChanges([]);
+    };
+
+    readonly moveToChangesFromStages = (filePath: string) => {
+        const changes = this.loadChanges();
+        const stages = this.loadStages();
+        const targetMeta = stages.find(m => m.filePath === filePath);
+        if (targetMeta) {
+            this.saveStages([...stages.filter(m => m.filePath !== filePath)]);
+            this.saveChanges([
+                ...changes.filter(m => m.filePath !== filePath),
+                targetMeta
+            ]);
+        }
+    };
+
+
+    readonly allMoveToChangesFromStages = () => {
+        const changes = this.loadChanges();
+        const stages = this
+            .loadStages()
+            .filter(m => !changes.some(c => c.filePath !== m.filePath));
+        this.saveStages([]);
+        this.saveChanges([
+            ...stages,
+            ...changes
+        ]);
+    };
+
     private readonly nextChanges = async (
         event: FileChangeEvent
     ): Promise<ChangeMeta[]> => {
-        const filePath = event.uri.path;
+        const filePath = trimStartSlash(event.uri.path);
         const oldChanges = this.loadChanges();
-        const p = filePath.startsWith("/")
-            ? filePath.replace("/", "")
-            : filePath;
-        const objHash = this.tvc.find_obj_hash_from_traces(p);
+        const objHash = this.tvc.find_obj_hash_from_traces(filePath);
         const notExistsInTraces = objHash === undefined;
 
         if (notExistsInTraces && event.type === FileChangeType.Deleted) {
-            return [...oldChanges.filter((c) => c.filePath !== event.uri.path)];
+            return [...oldChanges.filter((c) => c.filePath !== filePath)];
         } else {
             return [
-                ...oldChanges.filter((c) => c.filePath !== event.uri.path),
+                ...oldChanges.filter((c) => c.filePath !== filePath),
                 {
                     changeType: this.fromFileChangeType(event.type, notExistsInTraces),
-                    filePath: event.uri.path,
+                    filePath,
                     trace_obj_hash: objHash?.[0] || null
                 },
             ];
@@ -129,3 +165,7 @@ const distinct = (metas: ChangeMeta[]) =>
     metas.filter((element, index) => {
         return metas.findIndex((m) => m.filePath === element.filePath) == index;
     });
+
+const trimStartSlash = (filePath: string) => filePath.startsWith("/")
+    ? filePath.replace("/", "")
+    : filePath;

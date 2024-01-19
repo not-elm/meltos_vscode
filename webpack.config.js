@@ -47,7 +47,6 @@ const extensionConfig = {
 			// },
 		],
 	},
-	devtool: "nosources-source-map",
 	plugins: [
 		new WasmPackPlugin({
 			crateDirectory: path.join(__dirname, "../meltos/crates/meltos_wasm"),

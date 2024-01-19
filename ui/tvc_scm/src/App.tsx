@@ -7,12 +7,12 @@ import {CommitArea} from "./components/CommitArea.tsx";
 import {css} from "@emotion/css";
 import {VSCodeDivider} from "@vscode/webview-ui-toolkit/react";
 import {MockButton} from "./components/MockButton.tsx";
-import {SourceTrees} from "./client/SourceTrees.tsx";
+import {SourceTrees} from "./components/SourceTrees.tsx";
 
 
 export const App = () => {
     const scm = useScm();
-
+    // useMockScmMessenger();
     return (
         <ScmContext.Provider value={scm}>
             <Box sx={{minHeight: 180, flexGrow: 1}}>
@@ -38,7 +38,7 @@ const SpaceHeight: FC<{
 
     return <div className={space}></div>;
 };
-
+//
 // const useMockScmMessenger = () => {
 //     useEffect(() => {
 //
@@ -53,7 +53,7 @@ const SpaceHeight: FC<{
 //                 case "unStage":
 //                     window.postMessage({
 //                         type: "unStaged",
-//                         meta: e.data.meta
+//                         filePath: e.data.filePath
 //                     }, "*")
 //             }
 //         }

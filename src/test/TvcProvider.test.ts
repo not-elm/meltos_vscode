@@ -1,3 +1,5 @@
+// noinspection DuplicatedCode
+
 import {MemFS} from "../fs/MemFs";
 import {TvcProvider} from "../tvc/TvcProvider";
 
@@ -11,13 +13,13 @@ suite("Tvc Provider", async () => {
     test("ワークスペース内のファイルが作成された場合イベントが発火されること", async () => {
         const memFs = new MemFS("meltos");
         const tvc = new WasmTvcClient("owner", memFs);
-        const watcher = new TvcProvider(tvc, memFs);
+        const provider = new TvcProvider(tvc, memFs);
         const messages = [];
-        watcher.onUpdateScm((message) => {
+        provider.onUpdateScm((message) => {
             messages.push(message);
         });
         memFs.writeFileApi("workspace/hello.txt", "hello");
-        await sleep(100);
+        await sleep(10);
         strictEqual(messages.length, 1);
     });
 
@@ -25,9 +27,9 @@ suite("Tvc Provider", async () => {
         const memFs = new MemFS("meltos");
         const tvc = new WasmTvcClient("owner", memFs);
         tvc.init_repository();
-        const watcher = new TvcProvider(tvc, memFs);
+        const provider = new TvcProvider(tvc, memFs);
         const messages: InitialMessage[] = [];
-        watcher.onUpdateScm((message) => {
+        provider.onUpdateScm((message) => {
             messages.push(message);
         });
         memFs.writeFileApi("workspace/hello.txt", "hello");
@@ -40,7 +42,7 @@ suite("Tvc Provider", async () => {
             changes: [
                 {
                     changeType: "create",
-                    filePath: "/workspace/hello.txt",
+                    filePath: "workspace/hello.txt",
                     trace_obj_hash: null,
                 },
             ],
@@ -51,15 +53,15 @@ suite("Tvc Provider", async () => {
     test("ワークスペース外のファイルが更新されてもイベントは検出されないこと", async () => {
         const memFs = new MemFS("meltos");
         const tvc = new WasmTvcClient("owner", memFs);
-        const watcher = new TvcProvider(tvc, memFs);
+        const provider = new TvcProvider(tvc, memFs);
         const messages: InitialMessage[] = [];
-        watcher.onUpdateScm((message) => {
+        provider.onUpdateScm((message) => {
             messages.push(message);
         });
 
         memFs.writeFileApi("hello.txt", "hello");
         memFs.writeFileApi(".meltos/hello.txt", "hello");
-        await sleep(100);
+        await sleep(10);
         strictEqual(messages.length, 0);
     });
 
@@ -67,22 +69,22 @@ suite("Tvc Provider", async () => {
         const memFs = new MemFS("meltos");
         const tvc = new WasmTvcClient("owner", memFs);
         tvc.init_repository();
-        const watcher = new TvcProvider(tvc, memFs);
+        const provider = new TvcProvider(tvc, memFs);
         const messages: InitialMessage[] = [];
-        watcher.onUpdateScm((message) => {
+        provider.onUpdateScm((message) => {
             messages.push(message);
         });
         memFs.writeFileApi("workspace/hello.txt", "hello");
-        await sleep(100);
-        watcher.stage(".");
+        await sleep(10);
+        provider.stage(".");
 
-        await sleep(100);
+        await sleep(10);
         strictEqual(messages.length, 2);
         deepStrictEqual(messages[1].changes, []);
         deepStrictEqual(messages[1].stages, [
             {
                 changeType: "create",
-                filePath: "/workspace/hello.txt",
+                filePath: "workspace/hello.txt",
                 trace_obj_hash: null
             } as ChangeMeta,
         ]);
@@ -92,17 +94,17 @@ suite("Tvc Provider", async () => {
         const memFs = new MemFS("meltos");
         const tvc = new WasmTvcClient("owner", memFs);
         tvc.init_repository();
-        const watcher = new TvcProvider(tvc, memFs);
+        const provider = new TvcProvider(tvc, memFs);
         const messages: InitialMessage[] = [];
-        watcher.onUpdateScm((message) => {
+        provider.onUpdateScm((message) => {
             messages.push(message);
         });
         memFs.writeFileApi("workspace/hello.txt", "hello");
-        await sleep(100);
-        watcher.stage(".");
-        watcher.commit(".");
+        await sleep(10);
+        provider.stage(".");
+        provider.commit(".");
 
-        await sleep(100);
+        await sleep(10);
         strictEqual(messages.length, 3);
         deepStrictEqual(messages[2].changes.length, 0);
         deepStrictEqual(messages[2].stages.length, 0);
@@ -116,11 +118,72 @@ suite("Tvc Provider", async () => {
         const provider = new TvcProvider(tvc, memFs);
 
         memFs.writeFileApi("workspace/hello.txt", "hello");
-        await sleep(100);
+        await sleep(10);
         provider.stage(".");
         provider.commit(".");
 
-        await sleep(100);
+        await sleep(10);
         await provider.push(sessionConfigs);
+    });
+
+
+    test("unstageされた際にchangesに対象が移動されること", async () => {
+        const memFs = new MemFS("meltos");
+        const tvc = new WasmTvcClient("owner", memFs);
+        tvc.init_repository();
+
+        const messages: InitialMessage[] = [];
+        const provider = new TvcProvider(tvc, memFs);
+        provider.onUpdateScm((message) => {
+            messages.push(message);
+        });
+
+        memFs.writeFileApi("workspace/hello.txt", "hello");
+        await sleep(10);
+        provider.stage(".");
+        provider.unStage("workspace/hello.txt");
+
+        await sleep(10);
+        strictEqual(messages.length, 3);
+        deepStrictEqual(messages[2], {
+            type: "initial",
+            stages: [],
+            changes: [{
+                changeType: "create",
+                filePath: "workspace/hello.txt",
+                trace_obj_hash: null
+            }]
+        } as InitialMessage);
+    });
+
+
+    test("unstage後に再びstageできること", async () => {
+        const memFs = new MemFS("meltos");
+        const tvc = new WasmTvcClient("owner", memFs);
+        tvc.init_repository();
+
+        const messages: InitialMessage[] = [];
+        const provider = new TvcProvider(tvc, memFs);
+        provider.onUpdateScm((message) => {
+            messages.push(message);
+        });
+
+        memFs.writeFileApi("workspace/hello.txt", "hello");
+        await sleep(10);
+        provider.stage(".");
+        provider.unStage("workspace/hello.txt");
+        await sleep(10);
+        provider.stage("workspace/hello.txt");
+        await sleep(10);
+        strictEqual(messages.length, 4);
+        deepStrictEqual(messages[3], {
+            type: "initial",
+            stages: [{
+                changeType: "create",
+                filePath: "workspace/hello.txt",
+                trace_obj_hash: null
+            }],
+            changes: []
+        } as InitialMessage);
     });
 });

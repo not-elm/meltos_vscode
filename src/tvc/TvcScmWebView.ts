@@ -10,7 +10,6 @@ import {MemFS} from "../fs/MemFs";
 import {SessionConfigs} from "../../wasm";
 import {codiconsCssDir, codiconsCssPath, getNonce} from "../webviewUtil";
 import {toMeltosUri} from "../fs/util";
-import {openDiffCommand} from "../apiWrapper";
 import {openObjDiff} from "./ObjFileProvider";
 
 export class TvcScmWebView implements vscode.WebviewViewProvider {
@@ -69,7 +68,7 @@ export class TvcScmWebView implements vscode.WebviewViewProvider {
             switch (message.type) {
                 case "stage":
                     this._provider.stage(
-                        (message as StageMessage).meta.filePath
+                        (message as StageMessage).meta?.filePath || null
                     );
                     break;
                 case "commit":
@@ -85,6 +84,9 @@ export class TvcScmWebView implements vscode.WebviewViewProvider {
                     break;
                 case "openFile":
                     await vscode.commands.executeCommand("vscode.open", toMeltosUri(message.filePath));
+                    break;
+                case "unStage":
+                    this._provider.unStage(message.filePath);
                     break;
             }
         });

@@ -1,12 +1,12 @@
 import {FC, useMemo} from "react";
 import {ChevronRight, ExpandMore} from "@mui/icons-material";
-import {vscodeApi} from "./VscodeApi.ts";
-import {Stages} from "../components/Stages.tsx";
-import {Changes} from "../components/Changes.tsx";
+
 import {TreeView} from "@mui/x-tree-view";
+import {vscodeApi} from "../client/VscodeApi.ts";
+import {Stages} from "./Stages.tsx";
+import {Changes} from "./Changes.tsx";
 
 export const SourceTrees: FC = () => {
-
     const defaultExpanded = useMemo(() => {
         const {expandStages, expandChanges} = vscodeApi.state()
         const e = [];
@@ -17,7 +17,7 @@ export const SourceTrees: FC = () => {
             e.push("changes")
         }
         return e;
-    },[]);
+    }, []);
 
     return (
         <TreeView

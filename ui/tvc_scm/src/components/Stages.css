@@ -2,11 +2,15 @@
     display: flex;
     align-items: center;
     gap: 10px;
-    padding: 0;
+    padding: 3px 0;
     justify-content: space-between;
 }
 
 .scm-buttons{
     display: flex;
-    gap: 1px;
+    gap: 5px;
+}
+
+.un-stage-button{
+    transform: translate(3px, 0);
 }
