@@ -78,6 +78,24 @@ export class TvcChangeHistory {
         ]);
     };
 
+    readonly loadStages = (): ChangeMeta[] => {
+        try {
+            const buf = this.fileSystem.readFile(vscode.Uri.parse(".stages"));
+            return JSON.parse(buf.toString()) || [];
+        } catch (e) {
+            return [];
+        }
+    };
+
+    readonly loadChanges = (): ChangeMeta[] => {
+        try {
+            const buf = this.fileSystem.readFile(vscode.Uri.parse(".changes"));
+            return JSON.parse(buf.toString());
+        } catch (e) {
+            return [];
+        }
+    };
+
     private readonly nextChanges = async (
         event: FileChangeEvent
     ): Promise<ChangeMeta[]> => {
@@ -111,24 +129,6 @@ export class TvcChangeHistory {
         );
     };
 
-    readonly loadStages = (): ChangeMeta[] => {
-        try {
-            const buf = this.fileSystem.readFile(vscode.Uri.parse(".stages"));
-            return JSON.parse(buf.toString()) || [];
-        } catch (e) {
-            return [];
-        }
-    };
-
-    readonly loadChanges = (): ChangeMeta[] => {
-        try {
-            const buf = this.fileSystem.readFile(vscode.Uri.parse(".changes"));
-            return JSON.parse(buf.toString());
-        } catch (e) {
-            return [];
-        }
-    };
-
     private readonly saveChanges = (changes: ChangeMeta[]) => {
         this.fileSystem.writeFile(
             vscode.Uri.parse(".changes"),
@@ -139,12 +139,20 @@ export class TvcChangeHistory {
             }
         );
     };
+
     private readonly fromFileChangeType = (
         ty: vscode.FileChangeType,
         notExistsInTraces: boolean
     ) => {
         const changeType = _fromFileChangeType(ty);
-        return changeType === "change" && notExistsInTraces ? "create" : changeType;
+        switch (changeType) {
+            case "change":
+                return notExistsInTraces ? "create" : changeType;
+            case "create":
+                return notExistsInTraces ? "create" : "change";
+            case "delete":
+                return "delete";
+        }
     };
 
 

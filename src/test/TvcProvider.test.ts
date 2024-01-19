@@ -186,4 +186,33 @@ suite("Tvc Provider", async () => {
             changes: []
         } as InitialMessage);
     });
+
+
+    test("既にTracesに存在している状態でdeleteし、再度同名ファイルを作成した際にchangeの状態になること", async () => {
+        const memFs = new MemFS("meltos");
+        const tvc = new WasmTvcClient("owner", memFs);
+        const provider = new TvcProvider(tvc, memFs);
+        const messages: InitialMessage[] = [];
+        provider.onUpdateScm((message) => {
+            messages.push(message);
+        });
+        memFs.writeFileApi("workspace/hello.txt", Buffer.from("hello"));
+        tvc.stage(".");
+        tvc.commit("commit text");
+        memFs.deleteApi("workspace/hello.txt");
+
+        await sleep(10);
+        memFs.writeFileApi("workspace/hello.txt", "");
+        await sleep(10);
+        const lastMessage = messages[messages.length - 1];
+        deepStrictEqual(lastMessage, {
+            type: "initial",
+            stages: [],
+            changes: [{
+                changeType: "change",
+                filePath: "workspace/hello.txt",
+                trace_obj_hash: tvc.find_obj_hash_from_traces("workspace/hello.txt")![0]
+            }]
+        } as InitialMessage)
+    });
 });

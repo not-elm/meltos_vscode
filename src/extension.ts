@@ -42,7 +42,6 @@ export async function deactivate() {
     await httpRoomClient?.leave();
     websocket?.dispose();
     discussionWebviewManager?.dispose();
-
 }
 
 const registerOpenRoomCommand = (context: vscode.ExtensionContext) => {
@@ -197,7 +196,6 @@ const registerShowDiscussion = (
         )
     );
 };
-
 
 const registerClipboardRoomIdCommand = (context: vscode.ExtensionContext, roomId: string) => {
     context.subscriptions.push(vscode.commands.registerCommand("meltos.clipboard.roomId", () => {
