@@ -30,15 +30,18 @@ export const CommitItem: FC<{
                 <div className={"commit-item-bottom"}>
                     <p className={"hash"}>{commit.hash}</p>
                     <Tooltip title={"copy hash"}>
-                        <IconButton style={{
-                            padding: 0
-                        }}>
+                        <IconButton
+                            style={{
+                                padding: 0
+                            }}
+                            onClick={async (e) => {
+                                e.stopPropagation()
+                                await navigator.clipboard.writeText(commit.hash)
+                            }}
+                        >
                             <ContentCopy
                                 htmlColor={"#4198ff"}
-                                onClick={async (e) => {
-                                    e.stopPropagation()
-                                    await navigator.clipboard.writeText(commit.hash)
-                                }}/>
+                            />
                         </IconButton>
                     </Tooltip>
                 </div>

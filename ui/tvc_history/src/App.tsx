@@ -6,31 +6,28 @@ import React from "react";
 
 import {useHistory} from "./useHistory.ts";
 import {CommitPanel} from "./Commit/CommitPanel.tsx";
+import {VSCodePanels, VSCodePanelTab, VSCodePanelView} from "@vscode/webview-ui-toolkit/react";
 
 
 export default function App() {
     const branches = useHistory();
-    const b = branches.length == 0 ? {
-        name: "DUMMY",
-        commits: []
-    } : branches[0];
+
     return (
-        <CommitPanel commits={b.commits} key={b.name}/>
-        // <VSCodePanels
-        //     className={"max-width"}
-        //     aria-label="basic tabs example"
-        // >
-        //     {branches.map((b) => (
-        //         <VSCodePanelTab key={b.name} id={b.name}>
-        //             {b.name}
-        //         </VSCodePanelTab>
-        //     ))}
-        //     {branches.map((b) => (
-        //         <VSCodePanelView className={"max-width"} key={b.name} id={b.name}>
-        //             <CommitPanel commits={b.commits} key={b.name}/>
-        //         </VSCodePanelView>
-        //     ))}
-        // </VSCodePanels>
+        <VSCodePanels
+            className={"max-width max-height"}
+            aria-label="basic tabs example"
+        >
+            {branches.map((b) => (
+                <VSCodePanelTab key={b.name} id={b.name}>
+                    {b.name}
+                </VSCodePanelTab>
+            ))}
+            {branches.map((b) => (
+                <VSCodePanelView className={"max-width max-height"} key={b.name} id={b.name}>
+                    <CommitPanel commits={b.commits} key={b.name}/>
+                </VSCodePanelView>
+            ))}
+        </VSCodePanels>
     );
 }
 

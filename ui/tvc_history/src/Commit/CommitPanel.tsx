@@ -12,12 +12,11 @@ export const CommitPanel: FC<{
 
     return (
         <div style={{
-            height: "100%", position: "absolute", top: 0, overflow: "clip",
+            overflow: "clip",
             left: 0
-        }} className={"max-width"}>
+        }} className={"max-width max-height"}>
             <div
-                style={{height: '100%'}}
-                className={"commits max-width scrollbar"}>
+                className={"commits max-width scrollbar max-height"}>
                 <CommitItems
                     commits={commits}
                     onSelect={(commit) => {
@@ -41,7 +40,7 @@ const ObjPanelRoot: FC<{
     return (
         <Split
             mode={"vertical"}
-            className={"commit-panel max-width"}>
+            className={"commit-panel max-width max-height"}>
             <div style={{height: "50%", visibility: "collapse"}}>
             </div>
             <div className={"bottom-panel  max-width"}>

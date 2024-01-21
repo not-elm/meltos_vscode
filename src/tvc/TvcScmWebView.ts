@@ -14,7 +14,6 @@ import {openObjDiff} from "./ObjFileProvider";
 
 export class TvcScmWebView implements vscode.WebviewViewProvider {
     private _webView: Webview | undefined;
-    private readonly _provider: TvcProvider;
 
     private _emitter = new vscode.EventEmitter<vscode.FileChangeEvent[]>();
     readonly onDidChangeFile: vscode.Event<vscode.FileChangeEvent[]> =
@@ -23,10 +22,8 @@ export class TvcScmWebView implements vscode.WebviewViewProvider {
     constructor(
         private readonly context: vscode.ExtensionContext,
         private readonly sessionConfigs: SessionConfigs,
-        tvc: any,
-        fileSystem: VscodeNodeFs | MemFS
+        private readonly _provider: TvcProvider
     ) {
-        this._provider = new TvcProvider(tvc, fileSystem);
         this.registerFetchCommand(context);
     }
 
