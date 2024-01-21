@@ -1,8 +1,9 @@
 import WebSocket from "ws";
 import * as vscode from "vscode";
-import {DiscussionProvider} from "./discussion/io/DiscussionIo";
+
 import {ClosedType, CreatedType, RepliedType, SpokeType} from "./types/api";
 import {SessionConfigs} from "../wasm";
+import {DiscussionProvider} from "./discussion/DiscussionProvider";
 
 export class ChannelWebsocket implements vscode.Disposable {
     private _ws: WebSocket | undefined;

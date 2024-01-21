@@ -66,6 +66,11 @@
         "when": "scmProvider == meltos"
       },
       {
+        "command": "meltos.sync",
+        "title": "sync room",
+        "when": "scmProvider == meltos"
+      },
+      {
         "command": "meltos.fetch",
         "title": "fetch",
         "when": "scmProvider == meltos",

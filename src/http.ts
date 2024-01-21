@@ -1,4 +1,5 @@
-import { CreatedType, RepliedType, SpokeType } from "./types/api";
+import {CreatedType, RepliedType, SpokeType} from "./types/api";
+import {RoomBundleType} from "meltos_ts_lib/src/RoomBundle";
 
 export class HttpRoomClient {
     constructor(
@@ -7,7 +8,8 @@ export class HttpRoomClient {
             session_id: string;
             user_id: string;
         }
-    ) {}
+    ) {
+    }
 
     get roomId() {
         return this.opened.room_id;
@@ -22,12 +24,16 @@ export class HttpRoomClient {
         return new HttpRoomClient(opened);
     }
 
+    readonly sync = async (): Promise<RoomBundleType> => {
+        const response = await fetch(this.apiUri(), {
+            ...headers(this.sessionId),
+        });
+        const json = await response.json();
+        return json as RoomBundleType;
+    };
+
     readonly create = async (title: string) => {
-        return await httpCreate(
-            this.opened.room_id,
-            this.opened.session_id,
-            title
-        );
+        return await httpCreate(this.opened.room_id, this.opened.session_id, title);
     };
 
     readonly speak = async (discussionId: string, message: string) => {
@@ -39,7 +45,11 @@ export class HttpRoomClient {
         );
     };
 
-    readonly reply = async (discussionId: string, to: string, message: string) => {
+    readonly reply = async (
+        discussionId: string,
+        to: string,
+        message: string
+    ) => {
         return await httpReply(
             this.opened.room_id,
             this.opened.session_id,
@@ -54,6 +64,12 @@ export class HttpRoomClient {
             method: "DELETE",
             ...headers(this.sessionId),
         });
+    };
+
+    private readonly apiUri = (uri?: string) => {
+        return !!uri
+            ? `http://localhost:3000/room/${this.roomId}/${uri}`
+            : `http://localhost:3000/room/${this.roomId}`;
     };
 }
 

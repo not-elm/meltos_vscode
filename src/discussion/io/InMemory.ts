@@ -1,6 +1,7 @@
 import {DiscussionData, DiscussionIo, MessageData, MessageThread,} from "./DiscussionIo";
 
 import {ClosedType, CreatedType, DiscussionMetaType, MessageType, RepliedType, SpokeType,} from "../../types/api";
+import {DiscussionBundleType} from "meltos_ts_lib/dist/discussion";
 
 export class InMemoryDiscussionIo implements DiscussionIo {
     private readonly _messages = new Map<string, MessageType>();
@@ -13,6 +14,14 @@ export class InMemoryDiscussionIo implements DiscussionIo {
     >();
 
     private readonly _replies = new Map<string, string[]>();
+
+
+    async sync(discussions: DiscussionBundleType[]): Promise<void> {
+        this.syncDiscussions(discussions);
+        this.syncMessages(discussions);
+        this.syncReplies(discussions);
+    }
+
 
     async created(created: CreatedType): Promise<void> {
         this._discussions.set(created.meta.id, {
@@ -88,6 +97,37 @@ export class InMemoryDiscussionIo implements DiscussionIo {
             meta: discussion.meta,
             messages,
         };
+    }
+
+
+    private syncMessages(discussions: DiscussionBundleType[]) {
+        this._messages.clear();
+        for (const message of discussions.flatMap(d => d.messages)) {
+            this._messages.set(message.message.id, message.message);
+            for (const reply of message.replies) {
+                this._messages.set(reply.id, reply);
+            }
+        }
+    }
+
+
+    private syncReplies(discussions: DiscussionBundleType[]) {
+        this._replies.clear();
+        for (const message of discussions.flatMap(d => d.messages)) {
+            if (0 < message.replies.length) {
+                this._replies.set(message.message.id, message.replies.map(m => m.id));
+            }
+        }
+    }
+
+    private syncDiscussions(discussions: DiscussionBundleType[]) {
+        this._discussions.clear();
+        for (const d of discussions) {
+            this._discussions.set(d.meta.id, {
+                meta: d.meta,
+                messages: d.messages.map(m => m.message.id)
+            })
+        }
     }
 
     private getReplies(messageId: string): MessageData[] | undefined {

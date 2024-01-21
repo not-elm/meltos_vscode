@@ -1,11 +1,11 @@
-import path from "path";
 import * as vscode from "vscode";
+
 export type ClientType = "user" | "owner";
 
 export const loadArgs = (context: vscode.ExtensionContext): OwnerArgs | UserArgs => {
     const args = context.globalState.get("args");
-    if(typeof args === "object" && args && "clientType" in args ){
-        switch(args["clientType"]){
+    if (typeof args === "object" && args && "clientType" in args) {
+        switch (args["clientType"]) {
             case "owner":
                 return args as OwnerArgs;
             case "user":
@@ -14,7 +14,7 @@ export const loadArgs = (context: vscode.ExtensionContext): OwnerArgs | UserArgs
                 throw new Error("invalid args type");
         }
 
-    }else{
+    } else {
         throw new Error("invalid args type");
     }
 
@@ -41,7 +41,7 @@ export const createUserArgs = (
     };
 };
 
-export const isOwner = (args: OwnerArgs | UserArgs) : args is OwnerArgs => {
+export const isOwner = (args: OwnerArgs | UserArgs): args is OwnerArgs => {
     return args.clientType === "owner";
 }
 
