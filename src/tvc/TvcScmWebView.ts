@@ -11,6 +11,7 @@ import {SessionConfigs} from "../../wasm";
 import {codiconsCssDir, codiconsCssPath, getNonce} from "../webviewUtil";
 import {toMeltosUri} from "../fs/util";
 import {openObjDiff} from "./ObjFileProvider";
+import {sleep} from "../test/util";
 
 export class TvcScmWebView implements vscode.WebviewViewProvider {
     private _webView: Webview | undefined;
@@ -37,11 +38,11 @@ export class TvcScmWebView implements vscode.WebviewViewProvider {
         );
     };
 
-    resolveWebviewView(
+    async resolveWebviewView(
         webviewView: vscode.WebviewView,
         context: vscode.WebviewViewResolveContext<unknown>,
         token: vscode.CancellationToken
-    ): void | Thenable<void> {
+    ) {
         webviewView.webview.options = {
             enableScripts: true,
             localResourceRoots: [
@@ -95,6 +96,8 @@ export class TvcScmWebView implements vscode.WebviewViewProvider {
         });
         this._webView = webviewView.webview;
         this.registerOnUpdateScm();
+        await sleep(300);
+        await this._webView?.postMessage(this._provider.scmMetas());
     }
 
     private registerOnUpdateScm = () => {

@@ -12,6 +12,7 @@ suite("TvcChangeHistory", () => {
     test("Changesが1つの要素を持つこと", async () => {
         const memFs = new MemFS("meltos");
         const tvc = new WasmTvcClient("owner", memFs);
+        tvc.init_repository();
 
         const history = new TvcChangeHistory(memFs, tvc);
         memFs.writeFileApi("workspace/hello.txt", Buffer.from("hello"));
@@ -26,13 +27,14 @@ suite("TvcChangeHistory", () => {
         deepStrictEqual(changes[0], {
             changeType: "create",
             filePath: "workspace/hello.txt",
-            trace_obj_hash: null
+            trace_obj_hash: null,
         } as ChangeMeta);
     });
 
     test("2つファイルが新規作成された際にChangesが2つになること", async () => {
         const memFs = new MemFS("meltos");
         const tvc = new WasmTvcClient("owner", memFs);
+        tvc.init_repository();
 
         const history = new TvcChangeHistory(memFs, tvc);
         memFs.writeFileApi("workspace/hello.txt", Buffer.from("hello"));
@@ -40,7 +42,7 @@ suite("TvcChangeHistory", () => {
 
         await history.feed({
             type: FileChangeType.Created,
-            uri: vscode.Uri.parse("meltos:/workspace/hello.txt")
+            uri: vscode.Uri.parse("meltos:/workspace/hello.txt"),
         });
         const changes = await history.feed({
             type: FileChangeType.Created,
@@ -51,24 +53,28 @@ suite("TvcChangeHistory", () => {
         deepStrictEqual(changes[0], {
             changeType: "create",
             filePath: "workspace/hello.txt",
-            trace_obj_hash: null
+            trace_obj_hash: null,
         } as ChangeMeta);
         deepStrictEqual(changes[1], {
             changeType: "create",
             filePath: "workspace/hello2.txt",
-            trace_obj_hash: null
+            trace_obj_hash: null,
         } as ChangeMeta);
     });
 
     test("ファイル新規作成後、そのファイルが更新された際にChangesの要素数が変わらないこと", async () => {
         const memFs = new MemFS("meltos");
         const tvc = new WasmTvcClient("owner", memFs);
+        tvc.init_repository();
+        memFs.writeFileApi("workspace/hello.txt", Buffer.from("hello"));
 
         const history = new TvcChangeHistory(memFs, tvc);
         await history.feed({
             type: FileChangeType.Created,
             uri: vscode.Uri.parse("meltos:/workspace/hello.txt"),
         });
+
+        memFs.writeFileApi("workspace/hello.txt", Buffer.from("hello2"));
         const changes = await history.feed({
             type: FileChangeType.Changed,
             uri: vscode.Uri.parse("meltos:/workspace/hello.txt"),
@@ -78,13 +84,14 @@ suite("TvcChangeHistory", () => {
         deepStrictEqual(changes[0], {
             changeType: "create",
             filePath: "workspace/hello.txt",
-            trace_obj_hash: null
+            trace_obj_hash: null,
         } as ChangeMeta);
     });
 
     test("Trace内に対象ファイルが存在していない状態からファイルが新規作成され削除された場合、Changesから消えること", async () => {
         const memFs = new MemFS("meltos");
         const tvc = new WasmTvcClient("owner", memFs);
+        tvc.init_repository();
 
         const history = new TvcChangeHistory(memFs, tvc);
         memFs.writeFileApi("workspace/hello.txt", Buffer.from("hello"));
@@ -105,6 +112,8 @@ suite("TvcChangeHistory", () => {
     test("Trace内にファイルが存在する場合、ファイルが新規作成され削除された際にChangesにDeleteが追加されること", async () => {
         const memFs = new MemFS("meltos");
         const tvc = new WasmTvcClient("owner", memFs);
+        tvc.init_repository();
+
         memFs.writeFileApi("workspace/hello.txt", Buffer.from("hello"));
 
         const history = new TvcChangeHistory(memFs, tvc);
@@ -125,14 +134,17 @@ suite("TvcChangeHistory", () => {
         deepStrictEqual(changes[0], {
             changeType: "delete",
             filePath: "workspace/hello.txt",
-            trace_obj_hash: tvc.find_obj_hash_from_traces("workspace/hello.txt")?.["0"] || null
+            trace_obj_hash:
+                tvc.find_obj_hash_from_traces("workspace/hello.txt")?.["0"] ||
+                null,
         } as ChangeMeta);
     });
-
 
     test("unStageされた際にstagesからchangesへ対象が移動されること", async () => {
         const memFs = new MemFS("meltos");
         const tvc = new WasmTvcClient("owner", memFs);
+        tvc.init_repository();
+
         memFs.writeFileApi("workspace/hello.txt", Buffer.from("hello"));
 
         const history = new TvcChangeHistory(memFs, tvc);
@@ -146,10 +158,41 @@ suite("TvcChangeHistory", () => {
         history.moveToChangesFromStages("workspace/hello.txt");
 
         strictEqual(history.loadStages().length, 0);
-        deepStrictEqual(history.loadChanges(), [{
-            changeType: "create",
-            filePath: "workspace/hello.txt",
-            trace_obj_hash: null
-        } as ChangeMeta]);
+        deepStrictEqual(history.loadChanges(), [
+            {
+                changeType: "create",
+                filePath: "workspace/hello.txt",
+                trace_obj_hash: null,
+            } as ChangeMeta,
+        ]);
+    });
+
+    test("ファイルが変更されたときにトレース情報と同じハッシュ値ならばchangesから消えること", async () => {
+        const memFs = new MemFS("meltos");
+        const tvc = new WasmTvcClient("owner", memFs);
+        tvc.init_repository();
+
+        memFs.writeFileApi("workspace/hello.txt", Buffer.from("hello"));
+
+        const history = new TvcChangeHistory(memFs, tvc);
+        await history.feed({
+            type: FileChangeType.Created,
+            uri: vscode.Uri.parse("meltos:/workspace/hello.txt"),
+        });
+        history.moveToStagesFromChanges("workspace/hello.txt");
+        tvc.stage(".");
+        tvc.commit(".");
+
+        tvc.un_stage("workspace/hello.txt");
+        history.moveToChangesFromStages("workspace/hello.txt");
+
+        strictEqual(history.loadStages().length, 0);
+        deepStrictEqual(history.loadChanges(), [
+            {
+                changeType: "create",
+                filePath: "workspace/hello.txt",
+                trace_obj_hash: null,
+            } as ChangeMeta,
+        ]);
     });
 });

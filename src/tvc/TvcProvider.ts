@@ -17,7 +17,6 @@ export class TvcProvider {
     constructor(
         private readonly tvc: WasmTvcClient,
         private readonly view: TvcHistoryWebView,
-        private readonly meltos: any,
         private readonly fileSystem: VscodeNodeFs | MemFS
     ) {
         this._history = new TvcChangeHistory(fileSystem, tvc);
@@ -25,7 +24,7 @@ export class TvcProvider {
     }
 
     readonly saveBundle = async (bundle: BundleType) => {
-        this.tvc.save_bundle(convertToWasmBundle(bundle, this.meltos));
+        this.tvc.save_bundle(await convertToWasmBundle(bundle));
         this.view.postMessage();
     };
 

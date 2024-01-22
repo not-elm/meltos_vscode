@@ -6,7 +6,6 @@ import {FC} from "react";
 import {CommitArea} from "./components/CommitArea.tsx";
 import {css} from "@emotion/css";
 import {VSCodeDivider} from "@vscode/webview-ui-toolkit/react";
-import {MockButton} from "./components/MockButton.tsx";
 import {SourceTrees} from "./components/SourceTrees.tsx";
 
 
@@ -22,8 +21,6 @@ export const App = () => {
                 <SpaceHeight height={32}/>
 
                 <SourceTrees/>
-
-                <MockButton/>
             </Box>
         </ScmContext.Provider>
     );

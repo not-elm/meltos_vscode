@@ -104,7 +104,9 @@ export class TvcChangeHistory {
         const objHash = this.tvc.find_obj_hash_from_traces(filePath);
         const notExistsInTraces = objHash === undefined;
 
-        if (notExistsInTraces && event.type === FileChangeType.Deleted) {
+        if (!this.tvc.is_change(filePath)) {
+            return [...oldChanges.filter((c) => c.filePath !== filePath)];
+        } else if(notExistsInTraces && event.type === FileChangeType.Deleted) {
             return [...oldChanges.filter((c) => c.filePath !== filePath)];
         } else {
             return [
