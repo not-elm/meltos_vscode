@@ -153,7 +153,7 @@ export class VscodeNodeFs
     readDirectory(uri: vscode.Uri): [string, vscode.FileType][] {
         return fs.readdirSync(this.asPath(uri)).map((p) => {
             const stat = this._stat(vscode.Uri.joinPath(uri, p));
-            return [p, stat.type];
+            return [p.replaceAll("\\", "/"), stat.type];
         });
     }
 
@@ -288,6 +288,6 @@ export class VscodeNodeFs
         } else {
             p = uri.fsPath;
         }
-        return path.join(process.env.APPDATA!, "meltos", p);
+        return path.join(process.env.APPDATA!, "meltos", p).replaceAll("\\", "/");
     }
 }

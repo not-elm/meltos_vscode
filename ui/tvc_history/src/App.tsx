@@ -1,67 +1,64 @@
-import './App.css'
+import "./App.css";
 
-import 'split-pane-react/esm/themes/default.css';
-import {Box, Typography} from "@mui/material";
-import React from "react";
+import "split-pane-react/esm/themes/default.css";
+import React, { FC, useState } from "react";
 
-import {useHistory} from "./useHistory.ts";
-import {CommitPanel} from "./Commit/CommitPanel.tsx";
-import {VSCodePanels, VSCodePanelTab, VSCodePanelView} from "@vscode/webview-ui-toolkit/react";
-
+import { useHistory } from "./useHistory.ts";
+import { CommitPanel } from "./Commit/CommitPanel.tsx";
+import { FormControl, MenuItem, Select } from "@mui/material";
+import { BranchCommit } from "meltos_ts_lib/dist/scm/commit/CommitMeta";
 
 export default function App() {
     const branches = useHistory();
-
-    return (
-        <VSCodePanels
-            className={"max-width max-height"}
-            aria-label="basic tabs example"
-        >
-            {branches.map((b) => (
-                <VSCodePanelTab key={b.name} id={b.name}>
-                    {b.name}
-                </VSCodePanelTab>
-            ))}
-            {branches.map((b) => (
-                <VSCodePanelView className={"max-width max-height"} key={b.name} id={b.name}>
-                    <CommitPanel commits={b.commits} key={b.name}/>
-                </VSCodePanelView>
-            ))}
-        </VSCodePanels>
+    const [selectBranch, $selectBranch] = useState(
+        branches.length === 0 ? "owner" : branches[0].name
     );
-}
-
-interface TabPanelProps {
-    children?: React.ReactNode;
-    index: number;
-    value: number;
-}
-
-function CustomTabPanel(props: TabPanelProps) {
-    const {children, value, index, ...other} = props;
 
     return (
-        <div
-            role="tabpanel"
-            hidden={value !== index}
-            id={`simple-tabpanel-${index}`}
-            aria-labelledby={`simple-tab-${index}`}
-            {...other}
-        >
-            {value === index && (
-                <Box sx={{p: 3}}>
-                    <Typography>{children}</Typography>
-                </Box>
-            )}
+        <div className={"max-width max-height flex-column"}>
+            <SelectBranchForm
+                branches={branches}
+                onChange={(branchName) => {
+                    const nextBranch = branches.find(
+                        (b) => b.name == branchName
+                    );
+                    if (nextBranch) {
+                        $selectBranch(nextBranch.name);
+                    }
+                }}
+            />
+            <CommitPanel
+                commits={
+                    branches.find((b) => b.name == selectBranch)?.commits || []
+                }
+            />
         </div>
     );
 }
 
-function a11yProps(index: number) {
-    return {
-        id: `simple-tab-${index}`,
-        'aria-controls': `simple-tabpanel-${index}`,
-    };
-}
-
-
+const SelectBranchForm: FC<{
+    branches: BranchCommit[];
+    onChange: (branchName: string) => void;
+}> = ({ branches, onChange }) => {
+    console.log(branches);
+    return (
+        <div id={"branch-select-form-container"}>
+            <FormControl id={"select-branch-form"}>
+                {/*<InputLabel id="branch-select-label">Branch</InputLabel>*/}
+                <Select
+                    defaultValue="owner"
+                    id={"branch-select"}
+                    onChange={(e) => {
+                        onChange(e.target.value);
+                    }}
+                >
+                    {branches.map((b) => (
+                        <MenuItem key={b.name} value={b.name}>
+                            {b.name}
+                        </MenuItem>
+                    ))}
+                </Select>
+            </FormControl>
+        </div>
+    );
+};

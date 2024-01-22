@@ -12,7 +12,7 @@
     padding: 3px 8px 3px 16px;
 }
 
-.padding-none{
+.padding-none {
     padding: 0;
 }
 
@@ -22,15 +22,30 @@
 }
 
 .commit-item-header {
-
+    display: flex;
+    padding-bottom: 8px;
 }
 
-.hash{
+.new-line {
+    white-space: pre-wrap;
+}
+
+.hash-item {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+}
+
+.hash {
+    align-self: center;
+
+    font-size: 0.9em;
     color: #4198ff;
 }
 
 .commit-item-bottom {
     display: flex;
-    gap: 8px;
+    gap: 16px;
     align-items: center;
+
 }

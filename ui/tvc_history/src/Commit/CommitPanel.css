@@ -7,6 +7,10 @@
     background: transparent;
 }
 
+.over-flow-clip{
+    overflow-y: clip;
+}
+
 .pointer-ignore {
     pointer-events: none;
 }
@@ -19,6 +23,7 @@
     overflow-y: scroll;
     /*overflow-x: clip;*/
     width: 100%;
+    flex-grow: 1;
 }
 
 

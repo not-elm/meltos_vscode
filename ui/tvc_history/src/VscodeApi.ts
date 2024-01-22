@@ -1,9 +1,10 @@
 import {
     DiffFromWorkspaceMessage,
     HistoryFromWebMessage,
+    MergeMessage,
     ShowFileMessage,
 } from "meltos_ts_lib/src/scm/hitory/HistoryFromWebMessage";
-import { ObjMeta } from "meltos_ts_lib/src/scm/commit/CommitMeta.ts";
+import {ObjMeta} from "meltos_ts_lib/src/scm/commit/CommitMeta.ts";
 
 export class VscodeApi {
     private readonly _window: any;
@@ -16,6 +17,13 @@ export class VscodeApi {
         } else {
             this._window = window;
         }
+    }
+
+    merge(commitHash: string) {
+        this.postMessage({
+            type: "merge",
+            commitHash,
+        } as MergeMessage);
     }
 
     showFile(meta: ObjMeta) {

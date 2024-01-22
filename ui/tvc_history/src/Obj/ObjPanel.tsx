@@ -4,7 +4,7 @@ import {css} from "@emotion/css";
 
 import {VSCodeDivider} from "@vscode/webview-ui-toolkit/react";
 import {CommitMeta, ObjMeta} from "meltos_ts_lib/src/scm/commit/CommitMeta";
-import {ObjButtons} from "./ViewButton.tsx";
+import {ObjButtons} from "./ObjPanelButtons.tsx";
 import "./ObjPanel.css";
 import {IconButton} from "@mui/material";
 import {Close} from "@mui/icons-material";

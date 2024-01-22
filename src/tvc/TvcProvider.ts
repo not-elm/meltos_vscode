@@ -1,12 +1,13 @@
 import vscode from "vscode";
 
-import {TvcChangeHistory} from "./TvcChangeHistory";
-import {InitialMessage} from "meltos_ts_lib/src/scm/changes/ScmToWebMessage";
-import {VscodeNodeFs} from "../fs/VscodeNodeFs";
-import {MemFS} from "../fs/MemFs";
-import {SessionConfigs, WasmTvcClient} from "../../wasm";
-import {BundleType} from "meltos_ts_lib/src/tvc/Bundle";
-import {convertToWasmBundle} from "../extension";
+import { TvcChangeHistory } from "./TvcChangeHistory";
+import { InitialMessage } from "meltos_ts_lib/src/scm/changes/ScmToWebMessage";
+import { VscodeNodeFs } from "../fs/VscodeNodeFs";
+import { MemFS } from "../fs/MemFs";
+import { SessionConfigs, WasmTvcClient } from "../../wasm";
+import { BundleType } from "meltos_ts_lib/src/tvc/Bundle";
+import { convertToWasmBundle } from "../extension";
+import { TvcHistoryWebView } from "./TvcHistoryWebView";
 
 export class TvcProvider {
     private readonly _history: TvcChangeHistory;
@@ -15,6 +16,7 @@ export class TvcProvider {
 
     constructor(
         private readonly tvc: WasmTvcClient,
+        private readonly view: TvcHistoryWebView,
         private readonly meltos: any,
         private readonly fileSystem: VscodeNodeFs | MemFS
     ) {
@@ -23,8 +25,8 @@ export class TvcProvider {
     }
 
     readonly saveBundle = async (bundle: BundleType) => {
-        console.log(bundle);
         this.tvc.save_bundle(convertToWasmBundle(bundle, this.meltos));
+        this.view.postMessage();
     };
 
     readonly scmMetas = (): InitialMessage => {

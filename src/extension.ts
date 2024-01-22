@@ -6,7 +6,7 @@ import {createOwnerArgs, createUserArgs, isOwner, loadArgs} from "./args";
 import {VscodeNodeFs} from "./fs/VscodeNodeFs";
 
 import {MemFS} from "./fs/MemFs";
-import {SessionConfigs, WasmTvcClient} from "../wasm";
+import {SessionConfigs} from "../wasm";
 
 import {DiscussionTreeProvider} from "./discussion/DiscussionTreeProvider";
 import {InMemoryDiscussionIo} from "./discussion/io/InMemory";
@@ -14,7 +14,7 @@ import {DiscussionIo} from "./discussion/io/DiscussionIo";
 import {DiscussionWebViewManager} from "./discussion/DiscussionWebView";
 import {HttpRoomClient} from "./http";
 import {ChannelWebsocket} from "./ChannelWebsocket";
-import {registerShowHistoryCommand} from "./tvc/TvcHistoryWebView";
+import {registerShowHistoryCommand, TvcHistoryWebView} from "./tvc/TvcHistoryWebView";
 import {ObjFileProvider} from "./tvc/ObjFileProvider";
 import {TvcScmWebView} from "./tvc/TvcScmWebView";
 import {copy} from "copy-paste";
@@ -25,7 +25,7 @@ import {TvcProvider} from "./tvc/TvcProvider";
 let websocket: ChannelWebsocket | undefined;
 let discussionWebviewManager: DiscussionWebViewManager | undefined;
 let httpRoomClient: HttpRoomClient | undefined;
-const fileSystem = new MemFS("meltos");
+const fileSystem = new VscodeNodeFs();
 
 export function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(
@@ -59,12 +59,14 @@ const registerWorkspaceInitCommand = (
     fileSystem: MemFS | VscodeNodeFs
 ) => {
     const command = vscode.commands.registerCommand("meltos.init", async () => {
+        fileSystem.deleteApi(".");
 
         const args = loadArgs(context);
         console.log(args);
         const meltos = await import("../wasm/index.js");
         const tvc = new meltos.WasmTvcClient(args.userId, fileSystem);
-        const provider = new TvcProvider(tvc, meltos, fileSystem);
+        const view = new TvcHistoryWebView(tvc);
+        const provider = new TvcProvider(tvc, view, meltos,  fileSystem);
         let sessionConfigs: SessionConfigs;
         if (isOwner(args)) {
             copyRealWorkspaceToVirtual(args.workspaceSource, fileSystem);
@@ -72,7 +74,7 @@ const registerWorkspaceInitCommand = (
         } else {
             sessionConfigs = await tvc.join_room(args.roomId!, args.userId);
         }
-        registerShowHistoryCommand(context, tvc);
+        registerShowHistoryCommand(context, view);
         registerScmView(context, sessionConfigs, provider);
         registerDiscussion(context, sessionConfigs, provider, meltos);
         registerClipboardRoomIdCommand(context, sessionConfigs.room_id[0]);

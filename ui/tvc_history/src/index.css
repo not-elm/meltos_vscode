@@ -5,7 +5,9 @@ html, body, #root {
     color: #e0dfdf;
     background: #2c2b2b;
     padding: 0;
+    text-align: left;
 }
+
 
 .list-style-none {
     list-style: none;

@@ -11,10 +11,7 @@ export const CommitPanel: FC<{
     const [selectCommit, $selectCommit] = useState<CommitMeta | null>(null);
 
     return (
-        <div style={{
-            overflow: "clip",
-            left: 0
-        }} className={"max-width max-height"}>
+        <div className={"max-width over-flow-clip"}>
             <div
                 className={"commits max-width scrollbar max-height"}>
                 <CommitItems
