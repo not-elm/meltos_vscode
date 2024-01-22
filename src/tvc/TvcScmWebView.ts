@@ -1,17 +1,17 @@
 import * as vscode from "vscode";
-import {Uri, Webview} from "vscode";
+import { Uri, Webview } from "vscode";
 
-import {StageMessage} from "meltos_ts_lib/src/scm/changes/ScmFromWebMessage";
+import { StageMessage } from "meltos_ts_lib/src/scm/changes/ScmFromWebMessage";
 
-import {VscodeNodeFs} from "../fs/VscodeNodeFs";
+import { VscodeNodeFs } from "../fs/VscodeNodeFs";
 
-import {TvcProvider} from "./TvcProvider";
-import {MemFS} from "../fs/MemFs";
-import {SessionConfigs} from "../../wasm";
-import {codiconsCssDir, codiconsCssPath, getNonce} from "../webviewUtil";
-import {toMeltosUri} from "../fs/util";
-import {openObjDiff} from "./ObjFileProvider";
-import {sleep} from "../test/util";
+import { TvcProvider } from "./TvcProvider";
+import { MemFS } from "../fs/MemFs";
+import { SessionConfigs } from "../../wasm";
+import { codiconsCssDir, codiconsCssPath, getNonce } from "../webviewUtil";
+import { toMeltosUri } from "../fs/util";
+import { openObjDiff } from "./ObjFileProvider";
+import { sleep } from "../test/util";
 
 export class TvcScmWebView implements vscode.WebviewViewProvider {
     private _webView: Webview | undefined;
@@ -54,7 +54,7 @@ export class TvcScmWebView implements vscode.WebviewViewProvider {
                     "build",
                     "assets"
                 ),
-            ]
+            ],
         };
 
         webviewView.webview.html = this._getWebviewContent(
@@ -71,23 +71,27 @@ export class TvcScmWebView implements vscode.WebviewViewProvider {
                     break;
                 case "commit":
                     this._provider.commit(message.commitText);
+                    await this._webView?.postMessage(this._provider.scmMetas());
                     break;
                 case "push":
-                    console.log("PUSH MESSAGE COMMING!");
                     await this._provider.push(this.sessionConfigs);
-                    console.log("PUSH COMMED!!");
+                    await this._webView?.postMessage(this._provider.scmMetas());
                     break;
                 case "showDiff":
                     await openObjDiff(message.meta);
                     break;
                 case "openFile":
-                    await vscode.commands.executeCommand("vscode.open", toMeltosUri(message.filePath));
+                    await vscode.commands.executeCommand(
+                        "vscode.open",
+                        toMeltosUri(message.filePath)
+                    );
                     break;
                 case "unStage":
                     this._provider.unStage(message.filePath);
                     break;
             }
         });
+
         webviewView.onDidChangeVisibility(async () => {
             if (webviewView.visible) {
                 const message = this._provider.scmMetas();

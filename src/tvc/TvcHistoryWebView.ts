@@ -104,6 +104,7 @@ export class TvcHistoryWebView {
     private readonly merge = (commitHash: string) => {
         try {
             this.tvc.merge(commitHash);
+            this.postMessage();
             vscode.window.showInformationMessage("merge succeed");
         } catch (e) {
             vscode.window.showErrorMessage(`merge failed! ${e}`);

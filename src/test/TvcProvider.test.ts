@@ -5,7 +5,7 @@ import {TvcProvider} from "../tvc/TvcProvider";
 
 import {deepStrictEqual, strictEqual} from "node:assert";
 import {sleep} from "./util";
-import {InitialMessage} from "meltos_ts_lib/src/scm/changes/ScmToWebMessage";
+import {SourceControlMetaMessage} from "meltos_ts_lib/src/scm/changes/ScmToWebMessage";
 import {ChangeMeta} from "meltos_ts_lib/src/scm/changes/ChangeMeta";
 import {WasmTvcClient} from "../../wasm";
 import {TvcHistoryWebView} from "../tvc/TvcHistoryWebView";
@@ -30,7 +30,7 @@ suite("Tvc Provider", async () => {
         const tvc = new WasmTvcClient("owner", memFs);
         tvc.init_repository();
         const provider = new TvcProvider(tvc, new TvcHistoryWebView(tvc), memFs);
-        const messages: InitialMessage[] = [];
+        const messages: SourceControlMetaMessage[] = [];
         provider.onUpdateScm((message) => {
             messages.push(message);
         });
@@ -41,6 +41,7 @@ suite("Tvc Provider", async () => {
 
         deepStrictEqual(messages[1], {
             type: "initial",
+            canPush: true,
             changes: [
                 {
                     changeType: "create",
@@ -49,7 +50,7 @@ suite("Tvc Provider", async () => {
                 },
             ],
             stages: [],
-        } as InitialMessage);
+        } as SourceControlMetaMessage);
     });
 
     test("ワークスペース外のファイルが更新されてもイベントは検出されないこと", async () => {
@@ -57,7 +58,7 @@ suite("Tvc Provider", async () => {
         const tvc = new WasmTvcClient("owner", memFs);
         tvc.init_repository();
         const provider = new TvcProvider(tvc, new TvcHistoryWebView(tvc), memFs);
-        const messages: InitialMessage[] = [];
+        const messages: SourceControlMetaMessage[] = [];
         provider.onUpdateScm((message) => {
             messages.push(message);
         });
@@ -73,7 +74,7 @@ suite("Tvc Provider", async () => {
         const tvc = new WasmTvcClient("owner", memFs);
         tvc.init_repository();
         const provider = new TvcProvider(tvc, new TvcHistoryWebView(tvc), memFs);
-        const messages: InitialMessage[] = [];
+        const messages: SourceControlMetaMessage[] = [];
         provider.onUpdateScm((message) => {
             messages.push(message);
         });
@@ -98,7 +99,7 @@ suite("Tvc Provider", async () => {
         const tvc = new WasmTvcClient("owner", memFs);
         tvc.init_repository();
         const provider = new TvcProvider(tvc, new TvcHistoryWebView(tvc), memFs);
-        const messages: InitialMessage[] = [];
+        const messages: SourceControlMetaMessage[] = [];
         provider.onUpdateScm((message) => {
             messages.push(message);
         });
@@ -132,7 +133,7 @@ suite("Tvc Provider", async () => {
         const tvc = new WasmTvcClient("owner", memFs);
         tvc.init_repository();
 
-        const messages: InitialMessage[] = [];
+        const messages: SourceControlMetaMessage[] = [];
         const provider = new TvcProvider(tvc, new TvcHistoryWebView(tvc), memFs);
         provider.onUpdateScm((message) => {
             messages.push(message);
@@ -147,13 +148,14 @@ suite("Tvc Provider", async () => {
         strictEqual(messages.length, 3);
         deepStrictEqual(messages[2], {
             type: "initial",
+            canPush: true,
             stages: [],
             changes: [{
                 changeType: "create",
                 filePath: "workspace/hello.txt",
                 trace_obj_hash: null
             }]
-        } as InitialMessage);
+        } as SourceControlMetaMessage);
     });
 
     test("unstage後に再びstageできること", async () => {
@@ -161,7 +163,7 @@ suite("Tvc Provider", async () => {
         const tvc = new WasmTvcClient("owner", memFs);
         tvc.init_repository();
 
-        const messages: InitialMessage[] = [];
+        const messages: SourceControlMetaMessage[] = [];
         const provider = new TvcProvider(tvc, new TvcHistoryWebView(tvc), memFs);
         provider.onUpdateScm((message) => {
             messages.push(message);
@@ -177,13 +179,14 @@ suite("Tvc Provider", async () => {
         strictEqual(messages.length, 4);
         deepStrictEqual(messages[3], {
             type: "initial",
+            canPush: true,
             stages: [{
                 changeType: "create",
                 filePath: "workspace/hello.txt",
                 trace_obj_hash: null
             }],
             changes: []
-        } as InitialMessage);
+        } as SourceControlMetaMessage);
     });
 
     test("既にTracesに存在している状態でdeleteし、再度同名ファイルを作成した際にchangeの状態になること", async () => {
@@ -191,7 +194,7 @@ suite("Tvc Provider", async () => {
         const tvc = new WasmTvcClient("owner", memFs);
         tvc.init_repository();
         const provider = new TvcProvider(tvc, new TvcHistoryWebView(tvc), memFs);
-        const messages: InitialMessage[] = [];
+        const messages: SourceControlMetaMessage[] = [];
         provider.onUpdateScm((message) => {
             messages.push(message);
         });
@@ -208,12 +211,13 @@ suite("Tvc Provider", async () => {
         deepStrictEqual(lastMessage, {
             type: "initial",
             stages: [],
+            canPush: true,
             changes: [{
                 changeType: "change",
                 filePath: "workspace/hello.txt",
                 trace_obj_hash: tvc.find_obj_hash_from_traces("workspace/hello.txt")![0]
             }]
-        } as InitialMessage);
+        } as SourceControlMetaMessage);
     });
 
 
@@ -222,7 +226,7 @@ suite("Tvc Provider", async () => {
         const tvc = new WasmTvcClient("owner", memFs);
         const provider = new TvcProvider(tvc, new TvcHistoryWebView(tvc), memFs);
         tvc.init_repository();
-        const messages: InitialMessage[] = [];
+        const messages: SourceControlMetaMessage[] = [];
         provider.onUpdateScm((message) => {
             messages.push(message);
         });
@@ -238,8 +242,9 @@ suite("Tvc Provider", async () => {
         const lastMessage = messages[messages.length - 1];
         deepStrictEqual(lastMessage, {
             type: "initial",
+            canPush: true,
             stages: [],
             changes: []
-        } as InitialMessage);
+        } as SourceControlMetaMessage);
     });
 });

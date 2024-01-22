@@ -1,9 +1,9 @@
-import {FC, useState} from "react";
+import {FC, useContext, useState} from "react";
 import TextAreaAutoSize from "react-textarea-autosize";
 import {VSCodeButton} from "@vscode/webview-ui-toolkit/react";
 import {vscodeApi} from "../client/VscodeApi.ts";
 import {css} from "@emotion/css";
-import {useScm} from "../client/useScm.ts";
+import {ScmContext, useScm} from "../client/useScm.ts";
 
 export const CommitArea: FC = () => {
     const {stages} = useScm();
@@ -59,13 +59,11 @@ export const CommitArea: FC = () => {
 };
 
 const PushButton = () => {
-    const pushButton = css`
-
-    `;
+    const {canPush} = useContext(ScmContext);
 
     return (
         <VSCodeButton
-            className={pushButton}
+            disabled={!canPush}
             onClick={() => {
                 vscodeApi.push();
             }}

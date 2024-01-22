@@ -17,7 +17,7 @@ export const Changes: FC = () => {
         <TreeItem
             key={"changes"}
             nodeId={"changes"}
-            label={<ChangesLabel/>}
+            label={<ChangesLabel showStageButton={0 < changes.length}/>}
         >
             <></>
             {changes.map(meta => (
@@ -31,11 +31,13 @@ export const Changes: FC = () => {
 }
 
 
-const ChangesLabel = () => {
+const ChangesLabel:FC<{
+    showStageButton: boolean
+}> = ({showStageButton}) => {
     return (
         <div className={"stage-label"}>
             <p>changes</p>
-            <StageButton/>
+            {showStageButton && <StageButton/>}
         </div>
     )
 }

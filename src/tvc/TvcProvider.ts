@@ -1,7 +1,7 @@
 import vscode from "vscode";
 
 import { TvcChangeHistory } from "./TvcChangeHistory";
-import { InitialMessage } from "meltos_ts_lib/src/scm/changes/ScmToWebMessage";
+import { SourceControlMetaMessage } from "meltos_ts_lib/src/scm/changes/ScmToWebMessage";
 import { VscodeNodeFs } from "../fs/VscodeNodeFs";
 import { MemFS } from "../fs/MemFs";
 import { SessionConfigs, WasmTvcClient } from "../../wasm";
@@ -11,8 +11,8 @@ import { TvcHistoryWebView } from "./TvcHistoryWebView";
 
 export class TvcProvider {
     private readonly _history: TvcChangeHistory;
-    private _emitter = new vscode.EventEmitter<InitialMessage>();
-    readonly onUpdateScm: vscode.Event<InitialMessage> = this._emitter.event;
+    private _emitter = new vscode.EventEmitter<SourceControlMetaMessage>();
+    readonly onUpdateScm: vscode.Event<SourceControlMetaMessage> = this._emitter.event;
 
     constructor(
         private readonly tvc: WasmTvcClient,
@@ -28,9 +28,10 @@ export class TvcProvider {
         this.view.postMessage();
     };
 
-    readonly scmMetas = (): InitialMessage => {
+    readonly scmMetas = (): SourceControlMetaMessage => {
         return {
             type: "initial",
+            canPush: this.tvc.can_push(),
             changes: this._history.loadChanges(),
             stages: this._history.loadStages(),
         };

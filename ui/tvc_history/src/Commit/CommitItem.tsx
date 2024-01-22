@@ -82,7 +82,8 @@ const MergeButton: FC<{
         <Tooltip title={"merge"}>
             <IconButton
                 sx={{padding: 0}}
-                onClick={() => {
+                onClick={(e) => {
+                    e.stopPropagation();
                     vscodeApi.merge(commit.hash);
                 }}>
                 <Merge

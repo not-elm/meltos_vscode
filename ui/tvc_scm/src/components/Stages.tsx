@@ -18,7 +18,7 @@ export const Stages: FC = () => {
     return (
         <TreeItem
             nodeId={"stages"}
-            label={<StagesLabel/>}
+            label={<StagesLabel showUnstageButton={0 < stages.length}/>}
             key={"stages"}
         >
             <></>
@@ -33,11 +33,13 @@ export const Stages: FC = () => {
 }
 
 
-const StagesLabel = () => {
+const StagesLabel: FC<{
+    showUnstageButton: boolean
+}> = ({showUnstageButton}) => {
     return (
         <div className={"stage-label"}>
             <p>stages</p>
-            <UnStageButton/>
+            {showUnstageButton && <UnStageButton/>}
         </div>
     )
 }
