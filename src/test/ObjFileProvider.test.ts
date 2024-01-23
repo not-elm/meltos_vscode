@@ -1,14 +1,13 @@
-import {MemFS} from "../fs/MemFs";
-import {WasmTvcClient} from "../../wasm";
-import {ObjFileProvider} from "../tvc/ObjFileProvider";
+import { MemFS } from "../fs/MemFs";
+import { WasmTvcClient } from "../../wasm";
+import { ObjFileProvider } from "../tvc/ObjFileProvider";
 import vscode from "vscode";
-import {deepStrictEqual} from "node:assert";
+import { deepStrictEqual } from "node:assert";
 
 suite("ObjFileProvider", () => {
-
     // test("ファイルが読み取れること", () => {
     //     const memFs = new MemFS("meltos");
-    //     const tvc = new WasmTvcClient("owner", memFs);
+    //     const tvc = new WasmTvcClient(memFs);
     //     const provider = new ObjFileProvider(tvc);
     //     tvc.init_repository();
     //     memFs.writeFileApi("workspace/hello.txt", "hello");

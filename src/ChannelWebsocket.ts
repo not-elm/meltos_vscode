@@ -6,6 +6,7 @@ import { SessionConfigs } from "../wasm";
 import { DiscussionProvider } from "./discussion/DiscussionProvider";
 import { TvcProvider } from "./tvc/TvcProvider";
 import { BundleType } from "meltos_ts_lib/src/tvc/Bundle";
+import {HttpRoomClient} from "./http";
 
 export class ChannelWebsocket implements vscode.Disposable {
 	private _ws: WebSocket | undefined;
@@ -17,6 +18,8 @@ export class ChannelWebsocket implements vscode.Disposable {
 	) {}
 
 	connectChannel(roomId: string, sessionId: string) {
+		const statusBar = vscode.window.createStatusBarItem();
+
 		const ws = new WebSocket(`ws://localhost:3000/room/${roomId}/channel`, {
 			headers: {
 				"set-cookie": `session_id=${sessionId}`,
@@ -24,7 +27,10 @@ export class ChannelWebsocket implements vscode.Disposable {
 		});
 
 		ws.on("open", async () => {
-			await vscode.window.showInformationMessage(`open room`);
+			console.log("room channel opened");
+			statusBar.text = "$(broadcast) room";
+			statusBar.tooltip = "room connecting";
+			statusBar.show();
 		});
 
 		ws.on("error", async (message) => {
@@ -32,6 +38,18 @@ export class ChannelWebsocket implements vscode.Disposable {
 		});
 
 		ws.on("message", this.onMessage);
+
+		ws.on("close", async () => {
+			console.log("close room channel");
+			const http = new HttpRoomClient({
+				room_id: this.sessionConfigs.room_id[0],
+				session_id: this.sessionConfigs.session_id[0],
+				user_id: this.sessionConfigs.user_id[0]
+			});
+			await http.leave();
+			statusBar.hide();
+		});
+
 		this._ws = ws;
 	}
 

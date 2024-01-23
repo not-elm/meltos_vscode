@@ -1,21 +1,25 @@
 // noinspection DuplicatedCode
 
-import {MemFS} from "../fs/MemFs";
-import {TvcProvider} from "../tvc/TvcProvider";
+import { MemFS } from "../fs/MemFs";
+import { TvcProvider } from "../tvc/TvcProvider";
 
-import {deepStrictEqual, strictEqual} from "node:assert";
-import {sleep} from "./util";
-import {SourceControlMetaMessage} from "meltos_ts_lib/src/scm/changes/ScmToWebMessage";
-import {ChangeMeta} from "meltos_ts_lib/src/scm/changes/ChangeMeta";
-import {WasmTvcClient} from "../../wasm";
-import {TvcHistoryWebView} from "../tvc/TvcHistoryWebView";
+import { deepStrictEqual, strictEqual } from "node:assert";
+import { sleep } from "./util";
+import { SourceControlMetaMessage } from "meltos_ts_lib/src/scm/changes/ScmToWebMessage";
+import { ChangeMeta } from "meltos_ts_lib/src/scm/changes/ChangeMeta";
+import { WasmTvcClient } from "../../wasm";
+import { TvcHistoryWebView } from "../tvc/TvcHistoryWebView";
 
 suite("Tvc Provider", async () => {
     test("ワークスペース内のファイルが作成された場合イベントが発火されること", async () => {
         const memFs = new MemFS("meltos");
-        const tvc = new WasmTvcClient("owner", memFs);
+        const tvc = new WasmTvcClient(memFs);
         tvc.init_repository();
-        const provider = new TvcProvider(tvc, new TvcHistoryWebView(tvc), memFs);
+        const provider = new TvcProvider(
+            tvc,
+            new TvcHistoryWebView(tvc),
+            memFs
+        );
         const messages = [];
         provider.onUpdateScm((message) => {
             messages.push(message);
@@ -27,9 +31,13 @@ suite("Tvc Provider", async () => {
 
     test("ワークスペース内のファイルが更新された場合イベントが発火されること", async () => {
         const memFs = new MemFS("meltos");
-        const tvc = new WasmTvcClient("owner", memFs);
+        const tvc = new WasmTvcClient(memFs);
         tvc.init_repository();
-        const provider = new TvcProvider(tvc, new TvcHistoryWebView(tvc), memFs);
+        const provider = new TvcProvider(
+            tvc,
+            new TvcHistoryWebView(tvc),
+            memFs
+        );
         const messages: SourceControlMetaMessage[] = [];
         provider.onUpdateScm((message) => {
             messages.push(message);
@@ -55,9 +63,13 @@ suite("Tvc Provider", async () => {
 
     test("ワークスペース外のファイルが更新されてもイベントは検出されないこと", async () => {
         const memFs = new MemFS("meltos");
-        const tvc = new WasmTvcClient("owner", memFs);
+        const tvc = new WasmTvcClient(memFs);
         tvc.init_repository();
-        const provider = new TvcProvider(tvc, new TvcHistoryWebView(tvc), memFs);
+        const provider = new TvcProvider(
+            tvc,
+            new TvcHistoryWebView(tvc),
+            memFs
+        );
         const messages: SourceControlMetaMessage[] = [];
         provider.onUpdateScm((message) => {
             messages.push(message);
@@ -71,9 +83,13 @@ suite("Tvc Provider", async () => {
 
     test("Stageされた際にイベントが発火されること", async () => {
         const memFs = new MemFS("meltos");
-        const tvc = new WasmTvcClient("owner", memFs);
+        const tvc = new WasmTvcClient(memFs);
         tvc.init_repository();
-        const provider = new TvcProvider(tvc, new TvcHistoryWebView(tvc), memFs);
+        const provider = new TvcProvider(
+            tvc,
+            new TvcHistoryWebView(tvc),
+            memFs
+        );
         const messages: SourceControlMetaMessage[] = [];
         provider.onUpdateScm((message) => {
             messages.push(message);
@@ -89,16 +105,20 @@ suite("Tvc Provider", async () => {
             {
                 changeType: "create",
                 filePath: "workspace/hello.txt",
-                trace_obj_hash: null
+                trace_obj_hash: null,
             } as ChangeMeta,
         ]);
     });
 
     test("Commitされた際にStagesが削除されること。", async () => {
         const memFs = new MemFS("meltos");
-        const tvc = new WasmTvcClient("owner", memFs);
+        const tvc = new WasmTvcClient(memFs);
         tvc.init_repository();
-        const provider = new TvcProvider(tvc, new TvcHistoryWebView(tvc), memFs);
+        const provider = new TvcProvider(
+            tvc,
+            new TvcHistoryWebView(tvc),
+            memFs
+        );
         const messages: SourceControlMetaMessage[] = [];
         provider.onUpdateScm((message) => {
             messages.push(message);
@@ -116,9 +136,13 @@ suite("Tvc Provider", async () => {
 
     test("Pushできること", async () => {
         const memFs = new MemFS("meltos");
-        const tvc = new WasmTvcClient("owner", memFs);
+        const tvc = new WasmTvcClient(memFs);
         const sessionConfigs = await tvc.open_room();
-        const provider = new TvcProvider(tvc, new TvcHistoryWebView(tvc), memFs);
+        const provider = new TvcProvider(
+            tvc,
+            new TvcHistoryWebView(tvc),
+            memFs
+        );
         memFs.writeFileApi("workspace/hello.txt", "hello");
         await sleep(10);
         provider.stage(".");
@@ -130,11 +154,15 @@ suite("Tvc Provider", async () => {
 
     test("unstageされた際にchangesに対象が移動されること", async () => {
         const memFs = new MemFS("meltos");
-        const tvc = new WasmTvcClient("owner", memFs);
+        const tvc = new WasmTvcClient(memFs);
         tvc.init_repository();
 
         const messages: SourceControlMetaMessage[] = [];
-        const provider = new TvcProvider(tvc, new TvcHistoryWebView(tvc), memFs);
+        const provider = new TvcProvider(
+            tvc,
+            new TvcHistoryWebView(tvc),
+            memFs
+        );
         provider.onUpdateScm((message) => {
             messages.push(message);
         });
@@ -150,21 +178,27 @@ suite("Tvc Provider", async () => {
             type: "initial",
             canPush: true,
             stages: [],
-            changes: [{
-                changeType: "create",
-                filePath: "workspace/hello.txt",
-                trace_obj_hash: null
-            }]
+            changes: [
+                {
+                    changeType: "create",
+                    filePath: "workspace/hello.txt",
+                    trace_obj_hash: null,
+                },
+            ],
         } as SourceControlMetaMessage);
     });
 
     test("unstage後に再びstageできること", async () => {
         const memFs = new MemFS("meltos");
-        const tvc = new WasmTvcClient("owner", memFs);
+        const tvc = new WasmTvcClient(memFs);
         tvc.init_repository();
 
         const messages: SourceControlMetaMessage[] = [];
-        const provider = new TvcProvider(tvc, new TvcHistoryWebView(tvc), memFs);
+        const provider = new TvcProvider(
+            tvc,
+            new TvcHistoryWebView(tvc),
+            memFs
+        );
         provider.onUpdateScm((message) => {
             messages.push(message);
         });
@@ -180,20 +214,26 @@ suite("Tvc Provider", async () => {
         deepStrictEqual(messages[3], {
             type: "initial",
             canPush: true,
-            stages: [{
-                changeType: "create",
-                filePath: "workspace/hello.txt",
-                trace_obj_hash: null
-            }],
-            changes: []
+            stages: [
+                {
+                    changeType: "create",
+                    filePath: "workspace/hello.txt",
+                    trace_obj_hash: null,
+                },
+            ],
+            changes: [],
         } as SourceControlMetaMessage);
     });
 
     test("既にTracesに存在している状態でdeleteし、再度同名ファイルを作成した際にchangeの状態になること", async () => {
         const memFs = new MemFS("meltos");
-        const tvc = new WasmTvcClient("owner", memFs);
+        const tvc = new WasmTvcClient(memFs);
         tvc.init_repository();
-        const provider = new TvcProvider(tvc, new TvcHistoryWebView(tvc), memFs);
+        const provider = new TvcProvider(
+            tvc,
+            new TvcHistoryWebView(tvc),
+            memFs
+        );
         const messages: SourceControlMetaMessage[] = [];
         provider.onUpdateScm((message) => {
             messages.push(message);
@@ -212,19 +252,26 @@ suite("Tvc Provider", async () => {
             type: "initial",
             stages: [],
             canPush: true,
-            changes: [{
-                changeType: "change",
-                filePath: "workspace/hello.txt",
-                trace_obj_hash: tvc.find_obj_hash_from_traces("workspace/hello.txt")![0]
-            }]
+            changes: [
+                {
+                    changeType: "change",
+                    filePath: "workspace/hello.txt",
+                    trace_obj_hash: tvc.find_obj_hash_from_traces(
+                        "workspace/hello.txt"
+                    )![0],
+                },
+            ],
         } as SourceControlMetaMessage);
     });
 
-
     test("ファイルを変更したときにトレースの状態と同じならばchangesから消えること", async () => {
         const memFs = new MemFS("meltos");
-        const tvc = new WasmTvcClient("owner", memFs);
-        const provider = new TvcProvider(tvc, new TvcHistoryWebView(tvc), memFs);
+        const tvc = new WasmTvcClient(memFs);
+        const provider = new TvcProvider(
+            tvc,
+            new TvcHistoryWebView(tvc),
+            memFs
+        );
         tvc.init_repository();
         const messages: SourceControlMetaMessage[] = [];
         provider.onUpdateScm((message) => {
@@ -244,7 +291,7 @@ suite("Tvc Provider", async () => {
             type: "initial",
             canPush: true,
             stages: [],
-            changes: []
+            changes: [],
         } as SourceControlMetaMessage);
     });
 });

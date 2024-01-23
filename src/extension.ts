@@ -1,12 +1,19 @@
 import * as vscode from "vscode";
 import { Uri } from "vscode";
 import { copyRealWorkspaceToVirtual, openWorkspacePathDialog } from "./fs/util";
-import { createOwnerArgs, createUserArgs, isOwner, loadArgs } from "./args";
+import {
+    createOwnerArgs,
+    createUserArgs,
+    isOwner,
+    loadArgs,
+    OwnerArgs,
+    UserArgs,
+} from "./args";
 
 import { VscodeNodeFs } from "./fs/VscodeNodeFs";
 
 import { MemFS } from "./fs/MemFs";
-import { Bundle, SessionConfigs } from "../wasm";
+import { Bundle, SessionConfigs, WasmTvcClient } from "../wasm";
 
 import { DiscussionTreeProvider } from "./discussion/DiscussionTreeProvider";
 import { InMemoryDiscussionIo } from "./discussion/io/InMemory";
@@ -30,24 +37,20 @@ let discussionWebviewManager: DiscussionWebViewManager | undefined;
 let httpRoomClient: HttpRoomClient | undefined;
 const fileSystem = new VscodeNodeFs();
 
-export function activate(context: vscode.ExtensionContext) {
+export async function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(
         vscode.workspace.registerFileSystemProvider("meltos", fileSystem, {
             isCaseSensitive: true,
         })
     );
 
+    const meltos = await import("../wasm/index.js");
+    const tvc = new meltos.WasmTvcClient(fileSystem);
+    const view = new TvcHistoryWebView(tvc);
+    const provider = new TvcProvider(tvc, view, fileSystem);
     registerOpenRoomCommand(context, fileSystem);
-    registerWorkspaceInitCommand(context, fileSystem);
+    registerWorkspaceInitCommand(context, tvc);
     registerJoinRoomCommand(context);
-
-    const folder = vscode.workspace.getWorkspaceFolder(
-        vscode.Uri.parse("meltos:/")
-    );
-
-    if (folder) {
-        vscode.commands.executeCommand("meltos.init");
-    }
 }
 
 export async function deactivate() {
@@ -61,40 +64,6 @@ export async function deactivate() {
     );
 }
 
-const registerWorkspaceInitCommand = (
-    context: vscode.ExtensionContext,
-    fileSystem: MemFS | VscodeNodeFs
-) => {
-    const command = vscode.commands.registerCommand("meltos.init", async () => {
-        fileSystem.deleteApi(".");
-
-        const args = loadArgs(context);
-        console.log(args);
-        const meltos = await import("../wasm/index.js");
-        const tvc = new meltos.WasmTvcClient(args.userId, fileSystem);
-        const view = new TvcHistoryWebView(tvc);
-        const provider = new TvcProvider(tvc, view, fileSystem);
-        let sessionConfigs: SessionConfigs;
-        if (isOwner(args)) {
-            copyRealWorkspaceToVirtual(args.workspaceSource, fileSystem);
-            sessionConfigs = await tvc.open_room(BigInt(60 * 60));
-        } else {
-            sessionConfigs = await tvc.join_room(args.roomId!, args.userId);
-        }
-        registerShowHistoryCommand(context, view);
-        registerScmView(context, sessionConfigs, provider);
-        registerDiscussion(context, sessionConfigs, provider, meltos);
-        registerClipboardRoomIdCommand(context, sessionConfigs.room_id[0]);
-
-        const objProvider = new ObjFileProvider(tvc);
-        vscode.workspace.registerTextDocumentContentProvider(
-            "tvc",
-            objProvider
-        );
-    });
-    context.subscriptions.push(command);
-};
-
 const registerOpenRoomCommand = (
     context: vscode.ExtensionContext,
     fileSystem: vscode.FileSystemProvider
@@ -107,14 +76,7 @@ const registerOpenRoomCommand = (
             }
 
             const args = createOwnerArgs(workspaceSource.fsPath);
-            await context.globalState.update("args", args);
-
-            vscode.workspace.updateWorkspaceFolders(0, null, {
-                uri: Uri.parse(`meltos:/`),
-                name: args.userId,
-            });
-
-            // await vscode.commands.executeCommand("meltos.init");
+            await vscode.commands.executeCommand("meltos.init", args);
         })
     );
 };
@@ -123,20 +85,51 @@ const registerJoinRoomCommand = (context: vscode.ExtensionContext) => {
     context.subscriptions.push(
         vscode.commands.registerCommand("meltos.joinRoom", async () => {
             const userInput = await vscode.window.showInputBox({
-                placeHolder: "userName@roomId",
+                placeHolder: "roomId or roomId@userName",
             });
             if (!userInput) {
                 return;
             }
 
             const args = createUserArgs(userInput);
-            context.globalState.update("args", args);
-            vscode.workspace.updateWorkspaceFolders(0, null, {
-                uri: Uri.parse(`meltos:/`),
-                name: args.userId,
-            });
+            await vscode.commands.executeCommand("meltos.init", args);
         })
     );
+};
+
+const registerWorkspaceInitCommand = (
+    context: vscode.ExtensionContext,
+    tvc: WasmTvcClient
+) => {
+    const command = vscode.commands.registerCommand(
+        "meltos.init",
+        async (args: UserArgs | OwnerArgs) => {
+            fileSystem.deleteApi(".");
+
+            let sessionConfigs: SessionConfigs;
+            if (isOwner(args)) {
+                copyRealWorkspaceToVirtual(args.workspaceSource, fileSystem);
+                sessionConfigs = await tvc.open_room();
+            } else {
+                sessionConfigs = await tvc.join_room(args.roomId!, args.userId);
+            }
+            // registerShowHistoryCommand(context, view);
+            // registerScmView(context, sessionConfigs, provider);
+            // registerDiscussion(context, sessionConfigs, provider, meltos);
+            // registerClipboardRoomIdCommand(context, sessionConfigs.room_id[0]);
+
+            const objProvider = new ObjFileProvider(tvc);
+            vscode.workspace.registerTextDocumentContentProvider(
+                "tvc",
+                objProvider
+            );
+            vscode.workspace.updateWorkspaceFolders(0, null, {
+                uri: Uri.parse(`meltos:/`),
+                name: sessionConfigs.user_id[0],
+            });
+        }
+    );
+    context.subscriptions.push(command);
 };
 
 const registerScmView = (

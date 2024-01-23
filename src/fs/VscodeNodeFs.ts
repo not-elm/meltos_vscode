@@ -2,7 +2,7 @@ import vscode from "vscode";
 import * as fs from "fs";
 import * as path from "node:path";
 import { backslashToSlash } from "./util";
-import {loadArgs} from "../args";
+import { loadArgs } from "../args";
 
 export class VscodeNodeFs
     implements vscode.FileSystemProvider, vscode.Disposable
@@ -13,9 +13,8 @@ export class VscodeNodeFs
     onDidChangeFile: vscode.Event<vscode.FileChangeEvent[]> =
         this._emitter.event;
 
-    constructor() {
-
-        const dir = path.join(process.env.APPDATA!, "meltos");
+    constructor(private readonly roomId?: string) {
+        const dir = path.join(process.env.APPDATA!, "meltos", roomId || "");
         if (!fs.existsSync(dir)) {
             fs.mkdirSync(dir);
         }
@@ -288,6 +287,8 @@ export class VscodeNodeFs
         } else {
             p = uri.fsPath;
         }
-        return path.join(process.env.APPDATA!, "meltos", p).replaceAll("\\", "/");
+        return path
+            .join(process.env.APPDATA!, "meltos", this.roomId || "", p)
+            .replaceAll("\\", "/");
     }
 }

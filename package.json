@@ -9,9 +9,6 @@
   "categories": [
     "Other"
   ],
-  "activationEvents": [
-    "onFileSystem:meltos"
-  ],
   "main": "./dist/extension.js",
   "contributes": {
     "viewsContainers": {

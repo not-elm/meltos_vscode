@@ -2,7 +2,9 @@ import * as vscode from "vscode";
 
 export type ClientType = "user" | "owner";
 
-export const loadArgs = (context: vscode.ExtensionContext): OwnerArgs | UserArgs => {
+export const loadArgs = (
+    context: vscode.ExtensionContext
+): OwnerArgs | UserArgs => {
     const args = context.globalState.get("args");
     if (typeof args === "object" && args && "clientType" in args) {
         switch (args["clientType"]) {
@@ -13,46 +15,40 @@ export const loadArgs = (context: vscode.ExtensionContext): OwnerArgs | UserArgs
             default:
                 throw new Error("invalid args type");
         }
-
     } else {
         throw new Error("invalid args type");
     }
-
 };
 
-export const createOwnerArgs = (
-    workspaceSource: string
-): OwnerArgs => {
+export const createOwnerArgs = (workspaceSource: string): OwnerArgs => {
     return {
         userId: "owner",
         workspaceSource,
-        clientType: "owner"
+        clientType: "owner",
     };
 };
 
-export const createUserArgs = (
-    userInput: string,
-): UserArgs => {
-    const [userId, roomId] = userInput.split("@");
+export const createUserArgs = (userInput: string): UserArgs => {
+    const [roomId, userId] = userInput.split("@");
     return {
         roomId,
-        userId,
-        clientType: "user"
+        userId: userId === "" || userId === undefined ? undefined : userId,
+        clientType: "user",
     };
 };
 
 export const isOwner = (args: OwnerArgs | UserArgs): args is OwnerArgs => {
     return args.clientType === "owner";
-}
+};
 
 export interface OwnerArgs {
-    clientType: "user" | "owner",
-    userId: string,
-    workspaceSource: string,
+    clientType: "user" | "owner";
+    userId: string;
+    workspaceSource: string;
 }
 
 export interface UserArgs {
-    userId: string,
-    roomId?: string,
-    clientType: "user" | "owner",
+    userId: string | undefined;
+    roomId: string;
+    clientType: "user" | "owner";
 }

@@ -1,17 +1,17 @@
 // noinspection DuplicatedCode
 
-import {TvcChangeHistory} from "../tvc/TvcChangeHistory";
-import {WasmTvcClient} from "../../wasm";
-import {MemFS} from "../fs/MemFs";
+import { TvcChangeHistory } from "../tvc/TvcChangeHistory";
+import { WasmTvcClient } from "../../wasm";
+import { MemFS } from "../fs/MemFs";
 import * as vscode from "vscode";
-import {FileChangeType} from "vscode";
-import {deepStrictEqual, strictEqual} from "assert";
-import {ChangeMeta} from "meltos_ts_lib/src/scm/changes/ChangeMeta";
+import { FileChangeType } from "vscode";
+import { deepStrictEqual, strictEqual } from "assert";
+import { ChangeMeta } from "meltos_ts_lib/src/scm/changes/ChangeMeta";
 
 suite("TvcChangeHistory", () => {
     test("Changesが1つの要素を持つこと", async () => {
         const memFs = new MemFS("meltos");
-        const tvc = new WasmTvcClient("owner", memFs);
+        const tvc = new WasmTvcClient(memFs);
         tvc.init_repository();
 
         const history = new TvcChangeHistory(memFs, tvc);
@@ -33,7 +33,7 @@ suite("TvcChangeHistory", () => {
 
     test("2つファイルが新規作成された際にChangesが2つになること", async () => {
         const memFs = new MemFS("meltos");
-        const tvc = new WasmTvcClient("owner", memFs);
+        const tvc = new WasmTvcClient(memFs);
         tvc.init_repository();
 
         const history = new TvcChangeHistory(memFs, tvc);
@@ -64,7 +64,7 @@ suite("TvcChangeHistory", () => {
 
     test("ファイル新規作成後、そのファイルが更新された際にChangesの要素数が変わらないこと", async () => {
         const memFs = new MemFS("meltos");
-        const tvc = new WasmTvcClient("owner", memFs);
+        const tvc = new WasmTvcClient(memFs);
         tvc.init_repository();
         memFs.writeFileApi("workspace/hello.txt", Buffer.from("hello"));
 
@@ -90,7 +90,7 @@ suite("TvcChangeHistory", () => {
 
     test("Trace内に対象ファイルが存在していない状態からファイルが新規作成され削除された場合、Changesから消えること", async () => {
         const memFs = new MemFS("meltos");
-        const tvc = new WasmTvcClient("owner", memFs);
+        const tvc = new WasmTvcClient(memFs);
         tvc.init_repository();
 
         const history = new TvcChangeHistory(memFs, tvc);
@@ -111,7 +111,7 @@ suite("TvcChangeHistory", () => {
 
     test("Trace内にファイルが存在する場合、ファイルが新規作成され削除された際にChangesにDeleteが追加されること", async () => {
         const memFs = new MemFS("meltos");
-        const tvc = new WasmTvcClient("owner", memFs);
+        const tvc = new WasmTvcClient(memFs);
         tvc.init_repository();
 
         memFs.writeFileApi("workspace/hello.txt", Buffer.from("hello"));
@@ -142,7 +142,7 @@ suite("TvcChangeHistory", () => {
 
     test("unStageされた際にstagesからchangesへ対象が移動されること", async () => {
         const memFs = new MemFS("meltos");
-        const tvc = new WasmTvcClient("owner", memFs);
+        const tvc = new WasmTvcClient(memFs);
         tvc.init_repository();
 
         memFs.writeFileApi("workspace/hello.txt", Buffer.from("hello"));
@@ -169,7 +169,7 @@ suite("TvcChangeHistory", () => {
 
     test("ファイルが変更されたときにトレース情報と同じハッシュ値ならばchangesから消えること", async () => {
         const memFs = new MemFS("meltos");
-        const tvc = new WasmTvcClient("owner", memFs);
+        const tvc = new WasmTvcClient(memFs);
         tvc.init_repository();
 
         memFs.writeFileApi("workspace/hello.txt", Buffer.from("hello"));
