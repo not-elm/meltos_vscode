@@ -1,30 +1,36 @@
 import vscode from "vscode";
 
-import { TvcChangeHistory } from "./TvcChangeHistory";
-import { SourceControlMetaMessage } from "meltos_ts_lib/src/scm/changes/ScmToWebMessage";
-import { VscodeNodeFs } from "../fs/VscodeNodeFs";
-import { MemFS } from "../fs/MemFs";
-import { SessionConfigs, WasmTvcClient } from "../../wasm";
-import { BundleType } from "meltos_ts_lib/src/tvc/Bundle";
-import { convertToWasmBundle } from "../extension";
-import { TvcHistoryWebView } from "./TvcHistoryWebView";
+import {TvcChangeHistory} from "./TvcChangeHistory";
+import {SourceControlMetaMessage} from "meltos_ts_lib/src/scm/changes/ScmToWebMessage";
+import {SessionConfigs, WasmTvcClient} from "../../wasm";
+import {BundleType} from "meltos_ts_lib/src/tvc/Bundle";
+import {TvcHistoryWebView} from "./TvcHistoryWebView";
+import {TvcFileSystem} from "../fs/TvcFileSystem";
+import {RootFileSystem} from "../fs/RootFileSystem";
 
 export class TvcProvider {
     private readonly _history: TvcChangeHistory;
     private _emitter = new vscode.EventEmitter<SourceControlMetaMessage>();
-    readonly onUpdateScm: vscode.Event<SourceControlMetaMessage> = this._emitter.event;
+    readonly onUpdateScm: vscode.Event<SourceControlMetaMessage> =
+        this._emitter.event;
 
     constructor(
         private readonly tvc: WasmTvcClient,
         private readonly view: TvcHistoryWebView,
-        private readonly fileSystem: VscodeNodeFs | MemFS
+        private readonly fileSystem: RootFileSystem
     ) {
-        this._history = new TvcChangeHistory(fileSystem, tvc);
+        this._history = new TvcChangeHistory(fileSystem.fs, tvc);
         this.registerChangeFileEvents();
     }
 
     readonly saveBundle = async (bundle: BundleType) => {
-        this.tvc.save_bundle(await convertToWasmBundle(bundle));
+        this.tvc.sync_bundle(
+            JSON.stringify({
+                traces: bundle.traces,
+                objs: bundle.objs,
+                branches: bundle.branches,
+            } as BundleType)
+        );
         this.view.postMessage();
     };
 
@@ -41,31 +47,31 @@ export class TvcProvider {
         await this.tvc.fetch(sessionConfigs);
     };
 
-    readonly stage = (filePath: string | null) => {
+    readonly stage = async (filePath: string | null) => {
         if (filePath) {
             this.tvc.stage(filePath.replace("workspace/", ""));
-            this._history.moveToStagesFromChanges(filePath);
+            await this._history.moveToStagesFromChanges(filePath);
         } else {
             this.tvc.stage(".");
-            this._history.allMoveToStagesFromChanges();
+            await this._history.allMoveToStagesFromChanges();
         }
         this.fireUpdateScm();
     };
 
-    readonly unStage = (filePath: string | null) => {
+    readonly unStage = async (filePath: string | null) => {
         if (filePath) {
             this.tvc.un_stage(filePath);
-            this._history.moveToChangesFromStages(filePath);
+            await this._history.moveToChangesFromStages(filePath);
         } else {
             this.tvc.un_stage_all();
-            this._history.allMoveToChangesFromStages();
+            await this._history.allMoveToChangesFromStages();
         }
         this.fireUpdateScm();
     };
 
-    readonly commit = (text: string) => {
+    readonly commit = async (text: string) => {
         this.tvc.commit(text);
-        this._history.clearStages();
+        await this._history.clearStages();
         this.fireUpdateScm();
         vscode.window.showInformationMessage("committed success");
     };

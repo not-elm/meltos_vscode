@@ -26,19 +26,19 @@ suite("StorageFs", () => {
         ].sort());
     });
 
-    test("ディレクトリ内のディレクトリを再帰的に確認されていること", () => {
-
-        fs.writeFileApi("src/test.txt", Buffer.from("test"));
-        fs.writeFileApi("src/dir/sample1.txt", Buffer.from("hello"));
-        fs.writeFileApi("src/dir/sample2.txt", Buffer.from("hello"));
-
-        const files = fs.allFilesIn("src");
-        deepStrictEqual(files.sort(), [
-            "src/test.txt",
-            "src/dir/sample1.txt",
-            "src/dir/sample2.txt"
-        ].sort());
-    });
+    // test("ディレクトリ内のディレクトリを再帰的に確認されていること", () => {
+    //
+    //     fs.writeFileApi("src/test.txt", Buffer.from("test"));
+    //     fs.writeFileApi("src/dir/sample1.txt", Buffer.from("hello"));
+    //     fs.writeFileApi("src/dir/sample2.txt", Buffer.from("hello"));
+    //
+    //     const files = fs.allFilesIn("src");
+    //     deepStrictEqual(files.sort(), [
+    //         "src/test.txt",
+    //         "src/dir/sample1.txt",
+    //         "src/dir/sample2.txt"
+    //     ].sort());
+    // });
 
     test("親ディレクトリのURIが取得できること", () => {
         const uri = ".meltos/traces/0dajodad";

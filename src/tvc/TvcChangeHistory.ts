@@ -1,12 +1,11 @@
 import vscode, {FileChangeEvent, FileChangeType} from "vscode";
 import {ChangeMeta} from "meltos_ts_lib/src/scm/changes/ChangeMeta";
-import {VscodeNodeFs} from "../fs/VscodeNodeFs";
-import {MemFS} from "../fs/MemFs";
 import {WasmTvcClient} from "../../wasm";
+import {TvcFileSystem} from "../fs/TvcFileSystem";
 
 export class TvcChangeHistory {
     constructor(
-        private readonly fileSystem: VscodeNodeFs | MemFS,
+        private readonly fileSystem: TvcFileSystem,
         private readonly tvc: WasmTvcClient
     ) {
     }
@@ -15,19 +14,19 @@ export class TvcChangeHistory {
         event: vscode.FileChangeEvent
     ): Promise<ChangeMeta[]> {
         const changes = await this.nextChanges(event);
-        this.saveChanges(changes);
+        await this.saveChanges(changes);
         return changes;
     }
 
-    readonly clearStages = () => {
-        this.saveStages([]);
+    readonly clearStages =async () => {
+        await this.saveStages([]);
     };
 
-    readonly moveToStagesFromChanges = (filePath: string) => {
+    readonly moveToStagesFromChanges = async (filePath: string) => {
         let changes = this.loadChanges();
         const stages: ChangeMeta[] = this.loadStages();
 
-        for (let file of this.fileSystem.allFilesIn(filePath)) {
+        for (let file of await this.fileSystem.all_files_in(filePath)) {
             file = trimStartSlash(file);
             const meta = changes.find((c) => c.filePath === file);
             if (meta) {
@@ -35,30 +34,30 @@ export class TvcChangeHistory {
                 stages.push(meta);
             }
         }
-        this.saveStages(distinct(stages));
-        this.saveChanges(changes);
+        await this.saveStages(distinct(stages));
+        await this.saveChanges(changes);
     };
 
-    readonly allMoveToStagesFromChanges = () => {
+    readonly allMoveToStagesFromChanges = async () => {
         const stages = this.loadStages();
         const changes = this
             .loadChanges()
             .filter(m => !stages.some(c => c.filePath !== m.filePath));
 
-        this.saveStages([
+        await this.saveStages([
             ...stages,
             ...changes
         ]);
-        this.saveChanges([]);
+        await this.saveChanges([]);
     };
 
-    readonly moveToChangesFromStages = (filePath: string) => {
+    readonly moveToChangesFromStages = async (filePath: string) => {
         const changes = this.loadChanges();
         const stages = this.loadStages();
         const targetMeta = stages.find(m => m.filePath === filePath);
         if (targetMeta) {
-            this.saveStages([...stages.filter(m => m.filePath !== filePath)]);
-            this.saveChanges([
+            await this.saveStages([...stages.filter(m => m.filePath !== filePath)]);
+            await this.saveChanges([
                 ...changes.filter(m => m.filePath !== filePath),
                 targetMeta
             ]);
@@ -66,13 +65,13 @@ export class TvcChangeHistory {
     };
 
 
-    readonly allMoveToChangesFromStages = () => {
+    readonly allMoveToChangesFromStages = async () => {
         const changes = this.loadChanges();
         const stages = this
             .loadStages()
             .filter(m => !changes.some(c => c.filePath !== m.filePath));
-        this.saveStages([]);
-        this.saveChanges([
+        await this.saveStages([]);
+        await this.saveChanges([
             ...stages,
             ...changes
         ]);
@@ -80,7 +79,7 @@ export class TvcChangeHistory {
 
     readonly loadStages = (): ChangeMeta[] => {
         try {
-            const buf = this.fileSystem.readFile(vscode.Uri.parse(".stages"));
+            const buf = this.fileSystem.read_file(".stages");
             return JSON.parse(buf.toString()) || [];
         } catch (e) {
             return [];
@@ -89,7 +88,7 @@ export class TvcChangeHistory {
 
     readonly loadChanges = (): ChangeMeta[] => {
         try {
-            const buf = this.fileSystem.readFile(vscode.Uri.parse(".changes"));
+            const buf = this.fileSystem.read_file(".changes");
             return JSON.parse(buf.toString());
         } catch (e) {
             return [];
@@ -106,7 +105,7 @@ export class TvcChangeHistory {
 
         if (!this.tvc.is_change(filePath)) {
             return [...oldChanges.filter((c) => c.filePath !== filePath)];
-        } else if(notExistsInTraces && event.type === FileChangeType.Deleted) {
+        } else if (notExistsInTraces && event.type === FileChangeType.Deleted) {
             return [...oldChanges.filter((c) => c.filePath !== filePath)];
         } else {
             return [
@@ -120,25 +119,17 @@ export class TvcChangeHistory {
         }
     };
 
-    private readonly saveStages = (stages: ChangeMeta[]) => {
-        this.fileSystem.writeFile(
-            vscode.Uri.parse(".stages"),
+    private readonly saveStages = async (stages: ChangeMeta[]) => {
+        await this.fileSystem.write_file(
+            ".stages",
             Buffer.from(JSON.stringify(stages)),
-            {
-                create: true,
-                overwrite: true,
-            }
         );
     };
 
-    private readonly saveChanges = (changes: ChangeMeta[]) => {
-        this.fileSystem.writeFile(
-            vscode.Uri.parse(".changes"),
-            Buffer.from(JSON.stringify(changes)),
-            {
-                create: true,
-                overwrite: true,
-            }
+    private readonly saveChanges = async (changes: ChangeMeta[]) => {
+        await this.fileSystem.write_file(
+            ".changes",
+            Buffer.from(JSON.stringify(changes))
         );
     };
 

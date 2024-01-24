@@ -1,19 +1,10 @@
 import * as vscode from "vscode";
 import { Uri } from "vscode";
 import { copyRealWorkspaceToVirtual, openWorkspacePathDialog } from "./fs/util";
-import {
-    createOwnerArgs,
-    createUserArgs,
-    isOwner,
-    loadArgs,
-    OwnerArgs,
-    UserArgs,
-} from "./args";
+import { createOwnerArgs, createUserArgs } from "./args";
 
 import { VscodeNodeFs } from "./fs/VscodeNodeFs";
-
-import { MemFS } from "./fs/MemFs";
-import { Bundle, SessionConfigs, WasmTvcClient } from "../wasm";
+import { Bundle, SessionConfigs } from "../wasm";
 
 import { DiscussionTreeProvider } from "./discussion/DiscussionTreeProvider";
 import { InMemoryDiscussionIo } from "./discussion/io/InMemory";
@@ -31,11 +22,14 @@ import { copy } from "copy-paste";
 import { DiscussionProvider } from "./discussion/DiscussionProvider";
 import { BundleType } from "meltos_ts_lib/src/tvc/Bundle";
 import { TvcProvider } from "./tvc/TvcProvider";
+import { MemFS } from "./fs/MemFs";
+import { SessionConfigsType } from "meltos_ts_lib/dist/SessionConfigs";
+import { RootFileSystem } from "./fs/RootFileSystem";
 
 let websocket: ChannelWebsocket | undefined;
 let discussionWebviewManager: DiscussionWebViewManager | undefined;
 let httpRoomClient: HttpRoomClient | undefined;
-const fileSystem = new VscodeNodeFs();
+const fileSystem = new RootFileSystem();
 
 export async function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(
@@ -44,13 +38,38 @@ export async function activate(context: vscode.ExtensionContext) {
         })
     );
 
-    const meltos = await import("../wasm/index.js");
-    const tvc = new meltos.WasmTvcClient(fileSystem);
-    const view = new TvcHistoryWebView(tvc);
-    const provider = new TvcProvider(tvc, view, fileSystem);
     registerOpenRoomCommand(context, fileSystem);
-    registerWorkspaceInitCommand(context, tvc);
     registerJoinRoomCommand(context);
+
+    const s: SessionConfigsType | undefined =
+        context.globalState.get("session");
+    if (s) {
+        try {
+            await context.globalState.update("session", undefined);
+            const meltos = await import("../wasm/index.js");
+
+            const tvc = new meltos.WasmTvcClient(fileSystem, s.user_id);
+            const view = new TvcHistoryWebView(tvc);
+            const provider = new TvcProvider(tvc, view, fileSystem);
+            registerShowHistoryCommand(context, view);
+            const sessionConfigs = new meltos.SessionConfigs(
+                s.session_id,
+                s.room_id,
+                s.user_id
+            );
+            registerScmView(context, sessionConfigs, provider);
+            registerDiscussion(context, sessionConfigs, provider, meltos);
+            registerClipboardRoomIdCommand(context, sessionConfigs.room_id[0]);
+
+            const objProvider = new ObjFileProvider(tvc);
+            vscode.workspace.registerTextDocumentContentProvider(
+                "tvc",
+                objProvider
+            );
+        } catch (e) {
+            console.error(e);
+        }
+    }
 }
 
 export async function deactivate() {
@@ -66,17 +85,34 @@ export async function deactivate() {
 
 const registerOpenRoomCommand = (
     context: vscode.ExtensionContext,
-    fileSystem: vscode.FileSystemProvider
+    fileSystem: RootFileSystem
 ) => {
     context.subscriptions.push(
         vscode.commands.registerCommand("meltos.openRoom", async () => {
-            const workspaceSource = await openWorkspacePathDialog();
-            if (!workspaceSource) {
-                return;
-            }
+            // const workspaceSource = await openWorkspacePathDialog();
+            // if (!workspaceSource) {
+            //     return;
+            // }
+            const workspaceSource = "D://tmp";
 
-            const args = createOwnerArgs(workspaceSource.fsPath);
-            await vscode.commands.executeCommand("meltos.init", args);
+            const meltos = await import("../wasm/index.js");
+            const tvc = new meltos.WasmTvcClient(fileSystem.fs.owner());
+            const args = createOwnerArgs(workspaceSource);
+
+            let sessionConfigs: SessionConfigs;
+            // copyRealWorkspaceToVirtual(args.workspaceSource, fileSystem);
+            sessionConfigs = await tvc.open_room();
+            await context.globalState.update("session", {
+                room_id: sessionConfigs.room_id[0],
+                user_id: sessionConfigs.user_id[0],
+                session_id: sessionConfigs.session_id[0],
+            });
+            const folderCount =
+                vscode.workspace.workspaceFolders?.length || null;
+            vscode.workspace.updateWorkspaceFolders(0, folderCount, {
+                uri: Uri.parse(`meltos:/owner/`),
+                name: sessionConfigs!.user_id[0],
+            });
         })
     );
 };
@@ -95,41 +131,6 @@ const registerJoinRoomCommand = (context: vscode.ExtensionContext) => {
             await vscode.commands.executeCommand("meltos.init", args);
         })
     );
-};
-
-const registerWorkspaceInitCommand = (
-    context: vscode.ExtensionContext,
-    tvc: WasmTvcClient
-) => {
-    const command = vscode.commands.registerCommand(
-        "meltos.init",
-        async (args: UserArgs | OwnerArgs) => {
-            fileSystem.deleteApi(".");
-
-            let sessionConfigs: SessionConfigs;
-            if (isOwner(args)) {
-                copyRealWorkspaceToVirtual(args.workspaceSource, fileSystem);
-                sessionConfigs = await tvc.open_room();
-            } else {
-                sessionConfigs = await tvc.join_room(args.roomId!, args.userId);
-            }
-            // registerShowHistoryCommand(context, view);
-            // registerScmView(context, sessionConfigs, provider);
-            // registerDiscussion(context, sessionConfigs, provider, meltos);
-            // registerClipboardRoomIdCommand(context, sessionConfigs.room_id[0]);
-
-            const objProvider = new ObjFileProvider(tvc);
-            vscode.workspace.registerTextDocumentContentProvider(
-                "tvc",
-                objProvider
-            );
-            vscode.workspace.updateWorkspaceFolders(0, null, {
-                uri: Uri.parse(`meltos:/`),
-                name: sessionConfigs.user_id[0],
-            });
-        }
-    );
-    context.subscriptions.push(command);
 };
 
 const registerScmView = (

@@ -5,6 +5,7 @@
 
 import * as path from "path";
 import * as vscode from "vscode";
+import {FileType} from "vscode";
 import {backslashToSlash, parseParentPath} from "./util";
 
 export class File implements vscode.FileStat {
@@ -15,13 +16,19 @@ export class File implements vscode.FileStat {
 
     name: string;
     data?: Uint8Array;
+    parentDir?: Directory;
 
-    constructor(name: string) {
+    constructor(name: string, parentDir?: Directory) {
         this.type = vscode.FileType.File;
         this.ctime = Date.now();
         this.mtime = Date.now();
         this.size = 0;
         this.name = name;
+        this.parentDir = parentDir;
+    }
+
+    parent() {
+        return this.parentDir;
     }
 
     toString() {
@@ -38,38 +45,121 @@ export class Directory implements vscode.FileStat {
     name: string;
     entries: Map<string, File | Directory>;
 
-    constructor(name: string) {
+    constructor(name: string, parent?: Directory) {
         this.type = vscode.FileType.Directory;
         this.ctime = Date.now();
         this.mtime = Date.now();
         this.size = 0;
         this.name = name;
         this.entries = new Map();
+        this.entries.set(".", this);
+        if (parent) {
+            this.entries.set("..", parent);
+        }
     }
 
-    children_path(parent: string = ""): string[] {
+    readonly readAsDirectory = (dirUri: string): Directory | undefined => {
+        const entry = this.read(dirUri.split("/"));
+        if (entry) {
+            if (entry instanceof Directory) {
+                return entry;
+            } else {
+                throw vscode.FileSystemError.FileIsADirectory(dirUri);
+            }
+        } else {
+            return undefined;
+        }
+    };
+
+
+    readonly read = (uriSchemes: string[], createOption?: {
+        type: vscode.FileType,
+    }): Entry | undefined => {
+        if (uriSchemes.length <= 0) {
+            return undefined;
+        }
+
+        const name = uriSchemes[0];
+
+        let entry = this.entries.get(name);
+        if (!entry) {
+            if (createOption && 1 === uriSchemes.length) {
+                entry = createOption.type === vscode.FileType.File ? new File(name, this) : new Directory(name, this);
+                this.entries.set(name, entry);
+            } else if (createOption && 1 < uriSchemes.length) {
+                entry = new Directory(name, this);
+                this.entries.set(name, entry);
+            } else {
+                return undefined;
+            }
+        }
+        if (1 === uriSchemes.length) {
+            return entry;
+        }
+        if (entry instanceof Directory) {
+            return entry.read(uriSchemes.splice(1), createOption);
+        } else {
+            return undefined;
+        }
+    };
+
+    readonly writeFile = (uriSchemes: string[], buf: Uint8Array) => {
+        const entry = this.read(uriSchemes, {type: FileType.File});
+
+        if (!entry) {
+            throw vscode.FileSystemError.FileNotFound(uriSchemes.join("/"));
+        }
+        if (entry instanceof File) {
+            entry.data = buf;
+        } else {
+            throw vscode.FileSystemError.FileIsADirectory(uriSchemes.join("/"));
+        }
+    };
+
+    allFiles = (): string[] => {
         const ps = [];
-        for (const [uri, entry] of this.entries) {
+
+        for (const name of this.entries.keys()) {
+            if (name === "." || name === "..") {
+                continue;
+            }
+            const entry = this.entries.get(name);
             if (entry instanceof File) {
-                ps.push(path.join(parent, this.name, uri));
+                ps.push(path.join(this.parentAbsoluteUri() || ".", this.name, name));
             }
             if (entry instanceof Directory) {
-                ps.push(...entry.children_path(path.join(parent, this.name)));
+                ps.push(...entry.allFiles());
             }
         }
         return ps.map(backslashToSlash);
+    };
+
+
+    parent() {
+        const parent = this.entries.get("..");
+        if (!parent) {
+            return undefined;
+        }
+        if (parent instanceof Directory) {
+            return parent;
+        } else {
+            throw vscode.FileSystemError.FileNotADirectory(parent.name);
+        }
     }
 
-    toString(): string {
-        const str = [];
-        for (const entry of this.entries) {
-            if (entry[1] instanceof File) {
-                str.push(`${entry[0]}`);
-            } else {
-                str.push(entry.toString());
-            }
+    private parentAbsoluteUri() {
+        let parent = this.parent();
+        const schemes = [];
+        while (parent) {
+            schemes.push(parent.name);
+            parent = parent.parent();
         }
-        return str.join("\n");
+        return schemes.length === 0 ? null : schemes.reverse().join("/");
+    }
+
+
+    toString(): string {
+        return this.allFiles().join("\n");
     }
 }
 
@@ -94,14 +184,13 @@ export class MemFS implements vscode.FileSystemProvider, vscode.Disposable {
     allFilesIn(path: string) {
         try {
             if (path === ".") {
-                return this.root.children_path();
+                return this.root.allFiles();
             }
 
             const parent = parseParentPath(path, 1);
             const dir = this._lookupAsDirectory(this.asUri(path), false);
-            const files = dir.children_path(parent);
 
-            return files;
+            return dir.allFiles();
         } catch {
             let file = this.readFileApi(path);
 
