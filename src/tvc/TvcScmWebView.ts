@@ -1,17 +1,14 @@
 import * as vscode from "vscode";
-import { Uri, Webview } from "vscode";
+import {Uri, Webview} from "vscode";
 
-import { StageMessage } from "meltos_ts_lib/src/scm/changes/ScmFromWebMessage";
+import {StageMessage} from "meltos_ts_lib/src/scm/changes/ScmFromWebMessage";
 
-import { VscodeNodeFs } from "../fs/VscodeNodeFs";
-
-import { TvcProvider } from "./TvcProvider";
-import { MemFS } from "../fs/MemFs";
-import { SessionConfigs } from "../../wasm";
-import { codiconsCssDir, codiconsCssPath, getNonce } from "../webviewUtil";
-import { toMeltosUri } from "../fs/util";
-import { openObjDiff } from "./ObjFileProvider";
-import { sleep } from "../test/util";
+import {TvcProvider} from "./TvcProvider";
+import {SessionConfigs} from "../../wasm";
+import {codiconsCssDir, codiconsCssPath, getNonce} from "../webviewUtil";
+import {toMeltosUri} from "../fs/util";
+import {openObjDiff} from "./ObjFileProvider";
+import {sleep} from "../test/util";
 
 export class TvcScmWebView implements vscode.WebviewViewProvider {
     private _webView: Webview | undefined;
@@ -65,12 +62,12 @@ export class TvcScmWebView implements vscode.WebviewViewProvider {
         webviewView.webview.onDidReceiveMessage(async (message) => {
             switch (message.type) {
                 case "stage":
-                    this._provider.stage(
+                    await this._provider.stage(
                         (message as StageMessage).meta?.filePath || null
                     );
                     break;
                 case "commit":
-                    this._provider.commit(message.commitText);
+                    await this._provider.commit(message.commitText);
                     await this._webView?.postMessage(this._provider.scmMetas());
                     break;
                 case "push":
@@ -87,7 +84,7 @@ export class TvcScmWebView implements vscode.WebviewViewProvider {
                     );
                     break;
                 case "unStage":
-                    this._provider.unStage(message.filePath);
+                    await this._provider.unStage(message.filePath);
                     break;
             }
         });

@@ -31,14 +31,14 @@ export class ObjFileProvider implements vscode.TextDocumentContentProvider {
     constructor(private readonly tvc: WasmTvcClient) {
     }
 
-    provideTextDocumentContent(
+    async provideTextDocumentContent(
         uri: vscode.Uri,
         token: vscode.CancellationToken
-    ): string {
-        return this.tvc.read_file_from_hash(path.basename(uri.path)) || "";
+    ) {
+        return (await this.tvc.read_file_from_hash(path.basename(uri.path))) || "";
     }
 
-    open(uri: vscode.Uri) {
-        return this.tvc.read_file_from_hash(path.basename(uri.path));
+    async open(uri: vscode.Uri) {
+        return await this.tvc.read_file_from_hash(path.basename(uri.path));
     }
 }

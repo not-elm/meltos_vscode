@@ -5,8 +5,8 @@
 
 import * as path from "path";
 import * as vscode from "vscode";
-import {FileType} from "vscode";
-import {backslashToSlash, parseParentPath} from "./util";
+import { FileType } from "vscode";
+import { backslashToSlash, parseParentPath } from "./util";
 
 export class File implements vscode.FileStat {
     type: vscode.FileType;
@@ -59,7 +59,7 @@ export class Directory implements vscode.FileStat {
     }
 
     readonly readAsDirectory = (dirUri: string): Directory | undefined => {
-        const entry = this.read(dirUri.split("/"));
+        const entry = this.read(this.asSchemes(dirUri));
         if (entry) {
             if (entry instanceof Directory) {
                 return entry;
@@ -71,10 +71,16 @@ export class Directory implements vscode.FileStat {
         }
     };
 
+    private asSchemes(uri: string) {
+        return ["/", ...uri.split("/")].filter((u) => 0 < u.length);
+    }
 
-    readonly read = (uriSchemes: string[], createOption?: {
-        type: vscode.FileType,
-    }): Entry | undefined => {
+    readonly read = (
+        uriSchemes: string[],
+        createOption?: {
+            type: vscode.FileType;
+        }
+    ): Entry | undefined => {
         if (uriSchemes.length <= 0) {
             return undefined;
         }
@@ -84,7 +90,10 @@ export class Directory implements vscode.FileStat {
         let entry = this.entries.get(name);
         if (!entry) {
             if (createOption && 1 === uriSchemes.length) {
-                entry = createOption.type === vscode.FileType.File ? new File(name, this) : new Directory(name, this);
+                entry =
+                    createOption.type === vscode.FileType.File
+                        ? new File(name, this)
+                        : new Directory(name, this);
                 this.entries.set(name, entry);
             } else if (createOption && 1 < uriSchemes.length) {
                 entry = new Directory(name, this);
@@ -104,7 +113,7 @@ export class Directory implements vscode.FileStat {
     };
 
     readonly writeFile = (uriSchemes: string[], buf: Uint8Array) => {
-        const entry = this.read(uriSchemes, {type: FileType.File});
+        const entry = this.read(uriSchemes, { type: FileType.File });
 
         if (!entry) {
             throw vscode.FileSystemError.FileNotFound(uriSchemes.join("/"));
@@ -125,7 +134,9 @@ export class Directory implements vscode.FileStat {
             }
             const entry = this.entries.get(name);
             if (entry instanceof File) {
-                ps.push(path.join(this.parentAbsoluteUri() || ".", this.name, name));
+                ps.push(
+                    path.join(this.parentAbsoluteUri() || ".", this.name, name)
+                );
             }
             if (entry instanceof Directory) {
                 ps.push(...entry.allFiles());
@@ -133,7 +144,6 @@ export class Directory implements vscode.FileStat {
         }
         return ps.map(backslashToSlash);
     };
-
 
     parent() {
         const parent = this.entries.get("..");
@@ -157,7 +167,6 @@ export class Directory implements vscode.FileStat {
         return schemes.length === 0 ? null : schemes.reverse().join("/");
     }
 
-
     toString(): string {
         return this.allFiles().join("\n");
     }
@@ -174,8 +183,7 @@ export class MemFS implements vscode.FileSystemProvider, vscode.Disposable {
     private _bufferedEvents: vscode.FileChangeEvent[] = [];
     private _fireSoonHandle?: NodeJS.Timer;
 
-    constructor(private readonly scheme: string) {
-    }
+    constructor(private readonly scheme: string) {}
 
     stat(uri: vscode.Uri): vscode.FileStat {
         return this._lookup(uri, false);
@@ -267,7 +275,7 @@ export class MemFS implements vscode.FileSystemProvider, vscode.Disposable {
         options: { create: boolean; overwrite: boolean }
     ): void {
         const basename = path.posix.basename(uri.path);
-        const dirname = uri.with({path: path.posix.dirname(uri.path)});
+        const dirname = uri.with({ path: path.posix.dirname(uri.path) });
 
         const parent = this._lookupParentDirectory(uri);
         let entry = parent.entries.get(basename);
@@ -287,12 +295,12 @@ export class MemFS implements vscode.FileSystemProvider, vscode.Disposable {
             entry.mtime = Date.now();
             entry.size = content.byteLength;
             entry.data = content;
-            this._fireSoon({type: vscode.FileChangeType.Created, uri});
+            this._fireSoon({ type: vscode.FileChangeType.Created, uri });
         } else {
             entry.mtime = Date.now();
             entry.size = content.byteLength;
             entry.data = content;
-            this._fireSoon({type: vscode.FileChangeType.Changed, uri});
+            this._fireSoon({ type: vscode.FileChangeType.Changed, uri });
         }
     }
 
@@ -316,8 +324,8 @@ export class MemFS implements vscode.FileSystemProvider, vscode.Disposable {
         newParent.entries.set(newName, entry);
 
         this._fireSoon(
-            {type: vscode.FileChangeType.Deleted, uri: oldUri},
-            {type: vscode.FileChangeType.Created, uri: newUri}
+            { type: vscode.FileChangeType.Deleted, uri: oldUri },
+            { type: vscode.FileChangeType.Created, uri: newUri }
         );
     }
 
@@ -327,7 +335,7 @@ export class MemFS implements vscode.FileSystemProvider, vscode.Disposable {
             return;
         }
 
-        const dirname = uri.with({path: path.posix.dirname(uri.path)});
+        const dirname = uri.with({ path: path.posix.dirname(uri.path) });
         const basename = path.posix.basename(uri.path);
         const parent = this._lookupAsDirectory(dirname, false);
         if (!parent.entries.has(basename)) {
@@ -337,8 +345,8 @@ export class MemFS implements vscode.FileSystemProvider, vscode.Disposable {
         parent.mtime = Date.now();
         parent.size -= 1;
         this._fireSoon(
-            {type: vscode.FileChangeType.Changed, uri: dirname},
-            {uri, type: vscode.FileChangeType.Deleted}
+            { type: vscode.FileChangeType.Changed, uri: dirname },
+            { uri, type: vscode.FileChangeType.Deleted }
         );
     }
 
@@ -349,8 +357,7 @@ export class MemFS implements vscode.FileSystemProvider, vscode.Disposable {
 
     watch(_resource: vscode.Uri): vscode.Disposable {
         // ignore, fires for all changes...
-        return new vscode.Disposable(() => {
-        });
+        return new vscode.Disposable(() => {});
     }
 
     dispose() {
@@ -359,7 +366,7 @@ export class MemFS implements vscode.FileSystemProvider, vscode.Disposable {
 
     private _createDirectory(uri: vscode.Uri) {
         const basename = path.posix.basename(uri.path);
-        const dirname = uri.with({path: path.posix.dirname(uri.path)});
+        const dirname = uri.with({ path: path.posix.dirname(uri.path) });
         const parent = this._lookupAsDirectory(dirname, false, true);
 
         const entry = new Directory(basename);
@@ -370,8 +377,8 @@ export class MemFS implements vscode.FileSystemProvider, vscode.Disposable {
         return {
             entry,
             events: [
-                {type: vscode.FileChangeType.Changed, uri: dirname},
-                {type: vscode.FileChangeType.Created, uri},
+                { type: vscode.FileChangeType.Changed, uri: dirname },
+                { type: vscode.FileChangeType.Created, uri },
             ],
         };
     }
@@ -398,7 +405,7 @@ export class MemFS implements vscode.FileSystemProvider, vscode.Disposable {
             }
             if (!child) {
                 if (create) {
-                    const {entry, events} = this._createDirectory(
+                    const { entry, events } = this._createDirectory(
                         vscode.Uri.parse(uris.join("/"))
                     );
                     child = entry;
@@ -434,7 +441,7 @@ export class MemFS implements vscode.FileSystemProvider, vscode.Disposable {
                     child = entry.entries.get(part);
                 }
                 if (!child) {
-                    const {entry, events} = this._createDirectory(
+                    const { entry, events } = this._createDirectory(
                         vscode.Uri.parse(uris.join("/"))
                     );
                     child = entry;
@@ -474,7 +481,7 @@ export class MemFS implements vscode.FileSystemProvider, vscode.Disposable {
     }
 
     private _lookupParentDirectory(uri: vscode.Uri): Directory {
-        const dirname = uri.with({path: path.posix.dirname(uri.path)});
+        const dirname = uri.with({ path: path.posix.dirname(uri.path) });
         try {
             return this._lookupAsDirectory(dirname, true);
         } catch {

@@ -1,9 +1,6 @@
 import * as vscode from "vscode";
 import { Uri } from "vscode";
-import { copyRealWorkspaceToVirtual, openWorkspacePathDialog } from "./fs/util";
 import { createOwnerArgs, createUserArgs } from "./args";
-
-import { VscodeNodeFs } from "./fs/VscodeNodeFs";
 import { Bundle, SessionConfigs } from "../wasm";
 
 import { DiscussionTreeProvider } from "./discussion/DiscussionTreeProvider";
@@ -22,9 +19,9 @@ import { copy } from "copy-paste";
 import { DiscussionProvider } from "./discussion/DiscussionProvider";
 import { BundleType } from "meltos_ts_lib/src/tvc/Bundle";
 import { TvcProvider } from "./tvc/TvcProvider";
-import { MemFS } from "./fs/MemFs";
 import { SessionConfigsType } from "meltos_ts_lib/dist/SessionConfigs";
 import { RootFileSystem } from "./fs/RootFileSystem";
+import { NodeJsFileSystem } from "./fs/NodeJsFileSystem";
 
 let websocket: ChannelWebsocket | undefined;
 let discussionWebviewManager: DiscussionWebViewManager | undefined;
@@ -32,6 +29,7 @@ let httpRoomClient: HttpRoomClient | undefined;
 const fileSystem = new RootFileSystem();
 
 export async function activate(context: vscode.ExtensionContext) {
+    console.debug("========= activate =========");
     context.subscriptions.push(
         vscode.workspace.registerFileSystemProvider("meltos", fileSystem, {
             isCaseSensitive: true,
@@ -48,7 +46,9 @@ export async function activate(context: vscode.ExtensionContext) {
             await context.globalState.update("session", undefined);
             const meltos = await import("../wasm/index.js");
 
-            const tvc = new meltos.WasmTvcClient(fileSystem, s.user_id);
+            const tvc = new meltos.WasmTvcClient(fileSystem.fs, s.user_id);
+            await tvc.unzip();
+
             const view = new TvcHistoryWebView(tvc);
             const provider = new TvcProvider(tvc, view, fileSystem);
             registerShowHistoryCommand(context, view);
@@ -94,9 +94,10 @@ const registerOpenRoomCommand = (
             //     return;
             // }
             const workspaceSource = "D://tmp";
+            await new NodeJsFileSystem().delete(".meltos");
 
             const meltos = await import("../wasm/index.js");
-            const tvc = new meltos.WasmTvcClient(fileSystem.fs.owner());
+            const tvc = new meltos.WasmTvcClient(fileSystem.fs);
             const args = createOwnerArgs(workspaceSource);
 
             let sessionConfigs: SessionConfigs;
@@ -109,8 +110,9 @@ const registerOpenRoomCommand = (
             });
             const folderCount =
                 vscode.workspace.workspaceFolders?.length || null;
+
             vscode.workspace.updateWorkspaceFolders(0, folderCount, {
-                uri: Uri.parse(`meltos:/owner/`),
+                uri: Uri.parse("meltos:/"),
                 name: sessionConfigs!.user_id[0],
             });
         })

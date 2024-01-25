@@ -1,7 +1,7 @@
 import vscode from "vscode";
-import {TvcFileSystem} from "./TvcFileSystem";
-import {MemoryFileSystem} from "./MemoryFileSystem";
-import {NodeJsFileSystem} from "./NodeJsFileSystem";
+import { TvcFileSystem } from "./TvcFileSystem";
+import { MemoryFileSystem } from "./MemoryFileSystem";
+import { NodeJsFileSystem } from "./NodeJsFileSystem";
 
 export class BranchFileSystem implements TvcFileSystem {
     private readonly repository: TvcFileSystem = new NodeJsFileSystem();
@@ -15,7 +15,7 @@ export class BranchFileSystem implements TvcFileSystem {
         return await this.fileSystem(path).write_file(path, buf);
     }
 
-    async read_dir(dirUri: string){
+    async read_dir(dirUri: string) {
         return await this.fileSystem(dirUri).read_dir(dirUri);
     }
 
@@ -44,8 +44,10 @@ export class BranchFileSystem implements TvcFileSystem {
     }
 
     private isRepositoryUri(uri: string) {
-        return uri.startsWith(".meltos") ||
+        return (
+            uri.startsWith(".meltos") ||
             uri.startsWith("/.meltos") ||
-            uri.startsWith("./.meltos");
+            uri.startsWith("./.meltos")
+        );
     }
 }

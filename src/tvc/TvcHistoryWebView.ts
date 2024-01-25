@@ -28,13 +28,13 @@ export class TvcHistoryWebView {
         if (this.panel) {
             this.panel.reveal();
             await sleep(300);
-            this.postMessage();
+            await this.postMessage();
         } else {
             this.panel = this.createWebviewPanel(context);
             this.onDidChangeViewState();
             this.onReceiveMessage();
             await sleep(300);
-            this.postMessage();
+            await this.postMessage();
             this.panel.onDidDispose(() => {
                 this.panel = undefined;
             });
@@ -69,9 +69,9 @@ export class TvcHistoryWebView {
     }
 
     private onDidChangeViewState() {
-        this.panel?.onDidChangeViewState((v) => {
+        this.panel?.onDidChangeViewState(async (v) => {
             if (v.webviewPanel.visible) {
-                this.postMessage();
+                await this.postMessage();
             }
         });
     }
@@ -86,7 +86,7 @@ export class TvcHistoryWebView {
                     await this.showDiffFromWorkspace(message.meta);
                     break;
                 case "merge":
-                    this.merge((message as MergeMessage).commitHash);
+                    await this.merge((message as MergeMessage).commitHash);
                     break;
             }
         });
@@ -101,19 +101,19 @@ export class TvcHistoryWebView {
         );
     };
 
-    private readonly merge = (commitHash: string) => {
+    private readonly merge = async (commitHash: string) => {
         try {
-            this.tvc.merge(commitHash);
-            this.postMessage();
+            await this.tvc.merge(commitHash);
+            await this.postMessage();
             vscode.window.showInformationMessage("merge succeed");
         } catch (e) {
             vscode.window.showErrorMessage(`merge failed! ${e}`);
         }
     };
 
-    postMessage() {
-        const branchCommits = this.tvc.all_branch_commit_metas();
-        const branches = branchCommits.map((b) => ({
+    async postMessage() {
+        const branchCommits = await this.tvc.all_branch_commit_metas();
+        const branches = branchCommits["0"].map((b) => ({
             name: b.name,
             commits: b.commits.map((c) => ({
                 hash: c.hash,

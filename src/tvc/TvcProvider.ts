@@ -1,12 +1,11 @@
 import vscode from "vscode";
 
-import {TvcChangeHistory} from "./TvcChangeHistory";
-import {SourceControlMetaMessage} from "meltos_ts_lib/src/scm/changes/ScmToWebMessage";
-import {SessionConfigs, WasmTvcClient} from "../../wasm";
-import {BundleType} from "meltos_ts_lib/src/tvc/Bundle";
-import {TvcHistoryWebView} from "./TvcHistoryWebView";
-import {TvcFileSystem} from "../fs/TvcFileSystem";
-import {RootFileSystem} from "../fs/RootFileSystem";
+import { TvcChangeHistory } from "./TvcChangeHistory";
+import { SourceControlMetaMessage } from "meltos_ts_lib/src/scm/changes/ScmToWebMessage";
+import { SessionConfigs, WasmTvcClient } from "../../wasm";
+import { BundleType } from "meltos_ts_lib/src/tvc/Bundle";
+import { TvcHistoryWebView } from "./TvcHistoryWebView";
+import { RootFileSystem } from "../fs/RootFileSystem";
 
 export class TvcProvider {
     private readonly _history: TvcChangeHistory;
@@ -24,22 +23,23 @@ export class TvcProvider {
     }
 
     readonly saveBundle = async (bundle: BundleType) => {
-        this.tvc.sync_bundle(
+        await this.tvc.sync_bundle(
             JSON.stringify({
                 traces: bundle.traces,
                 objs: bundle.objs,
                 branches: bundle.branches,
             } as BundleType)
         );
-        this.view.postMessage();
+        await this.view.postMessage();
     };
 
-    readonly scmMetas = (): SourceControlMetaMessage => {
+    readonly scmMetas = async (): Promise<SourceControlMetaMessage> => {
+        console.log(this._history.loadChanges());
         return {
             type: "initial",
-            canPush: this.tvc.can_push(),
-            changes: this._history.loadChanges(),
-            stages: this._history.loadStages(),
+            canPush: await this.tvc.can_push(),
+            changes: await this._history.loadChanges(),
+            stages: await this._history.loadStages(),
         };
     };
 
@@ -49,30 +49,30 @@ export class TvcProvider {
 
     readonly stage = async (filePath: string | null) => {
         if (filePath) {
-            this.tvc.stage(filePath.replace("workspace/", ""));
+            await this.tvc.stage(filePath.replace("/workspace/", ""));
             await this._history.moveToStagesFromChanges(filePath);
         } else {
-            this.tvc.stage(".");
+            await this.tvc.stage(".");
             await this._history.allMoveToStagesFromChanges();
         }
-        this.fireUpdateScm();
+        await this.fireUpdateScm();
     };
 
     readonly unStage = async (filePath: string | null) => {
         if (filePath) {
-            this.tvc.un_stage(filePath);
+            await this.tvc.un_stage(filePath);
             await this._history.moveToChangesFromStages(filePath);
         } else {
-            this.tvc.un_stage_all();
+            await this.tvc.un_stage_all();
             await this._history.allMoveToChangesFromStages();
         }
-        this.fireUpdateScm();
+        await this.fireUpdateScm();
     };
 
     readonly commit = async (text: string) => {
-        this.tvc.commit(text);
+        await this.tvc.commit(text);
         await this._history.clearStages();
-        this.fireUpdateScm();
+        await this.fireUpdateScm();
         vscode.window.showInformationMessage("committed success");
     };
 
@@ -81,8 +81,8 @@ export class TvcProvider {
         vscode.window.showInformationMessage("pushed success");
     };
 
-    private readonly fireUpdateScm = () => {
-        this._emitter.fire(this.scmMetas());
+    private readonly fireUpdateScm = async () => {
+        this._emitter.fire(await this.scmMetas());
     };
 
     private registerChangeFileEvents() {
@@ -91,7 +91,7 @@ export class TvcProvider {
                 c.uri.path.startsWith("/workspace/")
             )) {
                 await this._history.feed(event);
-                this.fireUpdateScm();
+                await this.fireUpdateScm();
             }
         });
     }
