@@ -2,9 +2,9 @@ import vscode from "vscode";
 
 import { TvcChangeHistory } from "./TvcChangeHistory";
 import { SourceControlMetaMessage } from "meltos_ts_lib/src/scm/changes/ScmToWebMessage";
-import { SessionConfigs, WasmTvcClient } from "../../wasm";
+import { SessionConfigs, WasmFileSystem, WasmTvcClient } from "../../wasm";
 import { BundleType } from "meltos_ts_lib/src/tvc/Bundle";
-import { TvcHistoryWebView } from "./TvcHistoryWebView";
+import { CommitHistoryWebView } from "./CommitHistoryWebView";
 import { RootFileSystem } from "../fs/RootFileSystem";
 
 export class TvcProvider {
@@ -14,11 +14,12 @@ export class TvcProvider {
         this._emitter.event;
 
     constructor(
+        private readonly branchName: string,
+        private readonly rootFs: RootFileSystem,
         private readonly tvc: WasmTvcClient,
-        private readonly view: TvcHistoryWebView,
-        private readonly fileSystem: RootFileSystem
+        private readonly view: CommitHistoryWebView
     ) {
-        this._history = new TvcChangeHistory(fileSystem.fs, tvc);
+        this._history = new TvcChangeHistory(branchName, tvc);
         this.registerChangeFileEvents();
     }
 
@@ -34,10 +35,10 @@ export class TvcProvider {
     };
 
     readonly scmMetas = async (): Promise<SourceControlMetaMessage> => {
-        console.log(this._history.loadChanges());
+        console.log(await this._history.loadChanges());
         return {
             type: "initial",
-            canPush: await this.tvc.can_push(),
+            canPush: await this.tvc.can_push(this.branchName),
             changes: await this._history.loadChanges(),
             stages: await this._history.loadStages(),
         };
@@ -49,10 +50,13 @@ export class TvcProvider {
 
     readonly stage = async (filePath: string | null) => {
         if (filePath) {
-            await this.tvc.stage(filePath.replace("/workspace/", ""));
+            await this.tvc.stage(
+                this.branchName,
+                filePath.replace("/workspace/", "")
+            );
             await this._history.moveToStagesFromChanges(filePath);
         } else {
-            await this.tvc.stage(".");
+            await this.tvc.stage(this.branchName, ".");
             await this._history.allMoveToStagesFromChanges();
         }
         await this.fireUpdateScm();
@@ -70,7 +74,7 @@ export class TvcProvider {
     };
 
     readonly commit = async (text: string) => {
-        await this.tvc.commit(text);
+        await this.tvc.commit(this.branchName, text);
         await this._history.clearStages();
         await this.fireUpdateScm();
         vscode.window.showInformationMessage("committed success");
@@ -86,7 +90,7 @@ export class TvcProvider {
     };
 
     private registerChangeFileEvents() {
-        this.fileSystem.onDidChangeFile(async (changes) => {
+        this.rootFs.onDidChangeFile(async (changes) => {
             for (const event of changes.filter((c) =>
                 c.uri.path.startsWith("/workspace/")
             )) {

@@ -3,6 +3,7 @@ import vscode from "vscode";
 import * as path from "node:path";
 import {MemFS} from "./MemFs";
 import {VscodeNodeFs} from "./VscodeNodeFs";
+import {WasmFileSystem} from "../../wasm";
 
 export const parseParentPath = (uri: string, ignoreCount: number = 0) => {
     const ps = backslashToSlash(uri).split("/");
@@ -32,14 +33,14 @@ export const openWorkspacePathDialog = async () => {
     }
 };
 
-export const copyRealWorkspaceToVirtual = (
+export const copyRealWorkspaceToVirtual = async (
     realDirPath: string,
-    fileSystem: MemFS | VscodeNodeFs
+    fileSystem: WasmFileSystem
 ) => {
     const virtualRootDir = vscode.Uri.parse("meltos:/");
 
     for (const entry of fs.readdirSync(realDirPath)) {
-        _copyRealWorkspaceToVirtual(
+        await _copyRealWorkspaceToVirtual(
             realDirPath,
             vscode.Uri.joinPath(virtualRootDir, "workspace", entry),
             path.join(realDirPath, entry),
@@ -48,19 +49,19 @@ export const copyRealWorkspaceToVirtual = (
     }
 };
 
-const _copyRealWorkspaceToVirtual = (
+const _copyRealWorkspaceToVirtual = async (
     rootDirPath: string,
     virtualPath: vscode.Uri,
     realPath: string,
-    fileSystem: MemFS | VscodeNodeFs
+    fileSystem: WasmFileSystem
 ) => {
     if (fs.statSync(realPath).isFile()) {
         const buf = fs.readFileSync(realPath);
-        fileSystem.writeFileApi(virtualPath.path, Uint8Array.from(buf));
+        await fileSystem.write_file_api(virtualPath.path, Uint8Array.from(buf));
     } else {
-        fileSystem.createDirApi(virtualPath.path);
+        await fileSystem.create_dir_api(virtualPath.path);
         for (const entry of fs.readdirSync(realPath)) {
-            _copyRealWorkspaceToVirtual(
+            await _copyRealWorkspaceToVirtual(
                 rootDirPath,
                 vscode.Uri.joinPath(virtualPath, entry),
                 path.join(realPath, entry),

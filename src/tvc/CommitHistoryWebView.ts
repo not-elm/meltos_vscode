@@ -10,7 +10,7 @@ import { sleep } from "../test/util";
 
 export const registerShowHistoryCommand = (
     context: vscode.ExtensionContext,
-    view: TvcHistoryWebView
+    view: CommitHistoryWebView
 ) => {
     context.subscriptions.push(
         vscode.commands.registerCommand("meltos.tvc.showHistory", async () => {
@@ -19,10 +19,13 @@ export const registerShowHistoryCommand = (
     );
 };
 
-export class TvcHistoryWebView {
+export class CommitHistoryWebView {
     private panel: WebviewPanel | undefined;
 
-    constructor(private readonly tvc: WasmTvcClient) {}
+    constructor(
+        private readonly branchName: string,
+        private readonly tvc: WasmTvcClient
+    ) {}
 
     async show(context: vscode.ExtensionContext) {
         if (this.panel) {
@@ -103,7 +106,7 @@ export class TvcHistoryWebView {
 
     private readonly merge = async (commitHash: string) => {
         try {
-            await this.tvc.merge(commitHash);
+            await this.tvc.merge(this.branchName, commitHash);
             await this.postMessage();
             vscode.window.showInformationMessage("merge succeed");
         } catch (e) {

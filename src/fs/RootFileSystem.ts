@@ -1,14 +1,15 @@
 import vscode, { FileChangeType } from "vscode";
-import { BranchesFileSystem } from "./BranchesFileSystem";
-import { MemoryFileSystem } from "./MemoryFileSystem";
-import { BranchFileSystem } from "./BranchFileSystem";
+import { StatType, WasmFileSystem } from "../../wasm";
+import { json } from "stream/consumers";
+import { FileChangeEventEmitter } from "../tvc/FileChangeEventEmitter";
 
 export class RootFileSystem implements vscode.FileSystemProvider {
-    readonly fs = new BranchFileSystem();
-    private _emitter = new vscode.EventEmitter<vscode.FileChangeEvent[]>();
+    onDidChangeFile: vscode.Event<vscode.FileChangeEvent[]>;
 
-    onDidChangeFile: vscode.Event<vscode.FileChangeEvent[]> =
-        this._emitter.event;
+    constructor(readonly fs: WasmFileSystem, emitter: FileChangeEventEmitter) {
+        fs.create_dir_api("/");
+        this.onDidChangeFile = emitter.Event;
+    }
 
     watch(
         uri: vscode.Uri,
@@ -20,44 +21,52 @@ export class RootFileSystem implements vscode.FileSystemProvider {
         return new vscode.Disposable(() => {});
     }
 
-    async stat(uri: vscode.Uri) {
-        const stat = await this.fs.stat(this.asUri(uri));
+    async stat(uri: vscode.Uri): Promise<vscode.FileStat> {
+        const stat = await this.fs?.stat_api(this.asUri(uri));
+
         if (stat) {
-            return stat;
+            return {
+                ctime: Number(stat.create_time),
+                mtime: Number(stat.update_time),
+                type:
+                    stat?.ty === 1
+                        ? vscode.FileType.Directory
+                        : vscode.FileType.File,
+                size: Number(stat.size),
+            };
         } else {
             throw vscode.FileSystemError.FileNotFound(uri.path);
         }
     }
 
     async readDirectory(uri: vscode.Uri) {
-        const entries = (await this.fs.read_dir(this.asUri(uri))) || [];
+        const entries =
+            (await this.fs?.read_dir_api(this.asUri(uri)))?.["0"] || [];
         const en: [string, vscode.FileType][] = [];
-        for (const entry of entries.filter((e) => e !== "." && e !== "..")) {
-            console.log(`entry = ${entry}`);
-            const stat = await this.fs.stat(entry);
-            en.push([entry, stat!.type]);
+        for (const entry of entries) {
+            const stat = await this.fs.stat_api(
+                this.asUri(vscode.Uri.joinPath(uri, entry))
+            );
+
+            en.push([
+                entry,
+                stat?.ty === 1
+                    ? vscode.FileType.Directory
+                    : vscode.FileType.File,
+            ]);
         }
         return en;
     }
 
     async createDirectory(uri: vscode.Uri) {
         const p = this.asUri(uri);
-        if (await this.fs.read_dir(p)) {
-            return;
-        }
-        await this.fs.create_dir(p);
-        this._emitter.fire([
-            {
-                type: FileChangeType.Created,
-                uri,
-            },
-        ]);
+        await this.fs?.create_dir_api(p);
     }
 
     async readFile(uri: vscode.Uri) {
-        const buf = await this.fs.read_file(this.asUri(uri));
+        const buf = await this.fs?.read_file_api(this.asUri(uri));
         if (buf) {
-            return buf;
+            return buf[0];
         }
         throw vscode.FileSystemError.FileNotFound(uri);
     }
@@ -70,18 +79,11 @@ export class RootFileSystem implements vscode.FileSystemProvider {
             readonly overwrite: boolean;
         }
     ) {
-        const exists = (await this.fs.read_file(this.asUri(uri))) !== undefined;
-        await this.fs.write_file(this.asUri(uri), content);
-        this._emitter.fire([
-            {
-                type: exists ? FileChangeType.Changed : FileChangeType.Created,
-                uri,
-            },
-        ]);
+        await this.fs?.write_file_api(this.asUri(uri), content);
     }
 
     async delete(uri: vscode.Uri, options: { readonly recursive: boolean }) {
-        await this.fs.delete(uri.path);
+        await this.fs.delete_api(uri.path);
     }
 
     async rename(
@@ -89,9 +91,13 @@ export class RootFileSystem implements vscode.FileSystemProvider {
         newUri: vscode.Uri,
         options: { readonly overwrite: boolean }
     ) {
-        const buf = await this.fs.read_file(this.asUri(oldUri));
-        await this.fs.delete(this.asUri(oldUri));
-        await this.fs.write_file(this.asUri(newUri), buf || "");
+        const jsBuf = await this.fs?.read_file_api(this.asUri(oldUri));
+        if (!jsBuf) {
+            return;
+        }
+        const buf = jsBuf[0];
+        await this.fs.delete_api(this.asUri(oldUri));
+        await this.fs?.write_file_api(this.asUri(newUri), buf);
     }
 
     asUri(uri: vscode.Uri) {

@@ -8,7 +8,7 @@ import { sleep } from "./util";
 import { SourceControlMetaMessage } from "meltos_ts_lib/src/scm/changes/ScmToWebMessage";
 import { ChangeMeta } from "meltos_ts_lib/src/scm/changes/ChangeMeta";
 import { WasmTvcClient } from "../../wasm";
-import { TvcHistoryWebView } from "../tvc/TvcHistoryWebView";
+import { CommitHistoryWebView } from "../tvc/CommitHistoryWebView";
 
 // suite("Tvc Provider", async () => {
 //     test("ワークスペース内のファイルが作成された場合イベントが発火されること", async () => {

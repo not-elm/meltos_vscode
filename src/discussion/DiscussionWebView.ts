@@ -85,7 +85,7 @@ export class DiscussionWebView implements vscode.Disposable {
 
     async notify() {
         const data = this.io.discussion(this.meta.id);
-        console.log(data);
+
         await this._panel.webview.postMessage({
             type: "discussion",
             data,

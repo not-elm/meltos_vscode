@@ -5,7 +5,7 @@ import { TvcFileSystem } from "../fs/TvcFileSystem";
 
 export class TvcChangeHistory {
     constructor(
-        private readonly fileSystem: TvcFileSystem,
+        private branchName: string,
         private readonly tvc: WasmTvcClient
     ) {}
 
@@ -23,7 +23,7 @@ export class TvcChangeHistory {
         let changes = await this.loadChanges();
         const stages: ChangeMeta[] = await this.loadStages();
 
-        for (let file of await this.fileSystem.all_files_in(filePath)) {
+        for (let file of (await this.tvc.fs().all_files_in_api(filePath))[0]) {
             file = trimStartSlash(file);
             const meta = changes.find((c) => c.filePath === file);
             if (meta) {
@@ -71,8 +71,8 @@ export class TvcChangeHistory {
 
     readonly loadStages = async (): Promise<ChangeMeta[]> => {
         try {
-            const buf = await this.fileSystem.read_file("/.stages");
-            return JSON.parse(buf?.toString() || "[]") || [];
+            const buf = (await this.tvc.fs().read_file_api(".stages"))?.[0];
+            return JSON.parse(Buffer.from(buf || []).toString());
         } catch (e) {
             return [];
         }
@@ -80,8 +80,8 @@ export class TvcChangeHistory {
 
     readonly loadChanges = async (): Promise<ChangeMeta[]> => {
         try {
-            const buf = await this.fileSystem.read_file("/.changes");
-            return JSON.parse(buf?.toString() || "[]");
+            const buf = (await this.tvc.fs().read_file_api(".changes"))?.[0];
+            return JSON.parse(Buffer.from(buf || []).toString());
         } catch (e) {
             return [];
         }
@@ -92,9 +92,12 @@ export class TvcChangeHistory {
     ): Promise<ChangeMeta[]> => {
         const filePath = trimStartSlash(event.uri.path);
         const oldChanges = await this.loadChanges();
-        const objHash = await this.tvc.find_obj_hash_from_traces(filePath);
+        const objHash = await this.tvc.find_obj_hash_from_traces(
+            this.branchName,
+            filePath
+        );
         const notExistsInTraces = objHash === undefined;
-        const isChange = await this.tvc.is_change(filePath);
+        const isChange = await this.tvc.is_change(this.branchName, filePath);
         if (!isChange) {
             return [...oldChanges.filter((c) => c.filePath !== filePath)];
         } else if (notExistsInTraces && event.type === FileChangeType.Deleted) {
@@ -115,17 +118,15 @@ export class TvcChangeHistory {
     };
 
     private readonly saveStages = async (stages: ChangeMeta[]) => {
-        await this.fileSystem.write_file(
-            "/.stages",
-            Buffer.from(JSON.stringify(stages))
-        );
+        await this.tvc
+            .fs()
+            .write_file_api(".stages", Buffer.from(JSON.stringify(stages)));
     };
 
     private readonly saveChanges = async (changes: ChangeMeta[]) => {
-        await this.fileSystem.write_file(
-            "/.changes",
-            Buffer.from(JSON.stringify(changes))
-        );
+        await this.tvc
+            .fs()
+            .write_file_api(".changes", Buffer.from(JSON.stringify(changes)));
     };
 
     private readonly fromFileChangeType = (
