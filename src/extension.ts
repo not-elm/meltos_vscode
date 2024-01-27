@@ -46,7 +46,7 @@ export async function activate(context: vscode.ExtensionContext) {
         context.globalState.get("session");
     if (s) {
         await context.globalState.update("session", undefined);
-        await tvc.fs().create_dir_api("/workspace");
+        await tvc.fs().create_dir_api("workspace");
         await tvc.unzip(s.user_id);
 
         const commitHistoryView = new CommitHistoryWebView(s.user_id, tvc);

@@ -10,7 +10,7 @@ suite("ObjFileProvider", () => {
     //     const tvc = new WasmTvcClient(memFs);
     //     const provider = new ObjFileProvider(tvc);
     //     tvc.init_repository();
-    //     memFs.writeFileApi("/workspace/hello.txt", "hello");
+    //     memFs.writeFileApi("workspace/hello.txt", "hello");
     //     tvc.stage(".");
     //     tvc.commit("text");
     //     const commits = tvc.all_commit_metas();

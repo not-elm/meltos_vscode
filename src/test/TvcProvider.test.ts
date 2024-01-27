@@ -24,7 +24,7 @@ import { CommitHistoryWebView } from "../tvc/CommitHistoryWebView";
 //         provider.onUpdateScm((message) => {
 //             messages.push(message);
 //         });
-//         memFs.writeFileApi("/workspace/hello.txt", "hello");
+//         memFs.writeFileApi("workspace/hello.txt", "hello");
 //         await sleep(10);
 //         strictEqual(messages.length, 1);
 //     });
@@ -42,8 +42,8 @@ import { CommitHistoryWebView } from "../tvc/CommitHistoryWebView";
 //         provider.onUpdateScm((message) => {
 //             messages.push(message);
 //         });
-//         memFs.writeFileApi("/workspace/hello.txt", "hello");
-//         memFs.writeFileApi("/workspace/hello.txt", "hello world");
+//         memFs.writeFileApi("workspace/hello.txt", "hello");
+//         memFs.writeFileApi("workspace/hello.txt", "hello world");
 //         await sleep(300);
 //         strictEqual(messages.length, 2);
 //
@@ -53,7 +53,7 @@ import { CommitHistoryWebView } from "../tvc/CommitHistoryWebView";
 //             changes: [
 //                 {
 //                     changeType: "create",
-//                     filePath: "/workspace/hello.txt",
+//                     filePath: "workspace/hello.txt",
 //                     trace_obj_hash: null,
 //                 },
 //             ],
@@ -76,7 +76,7 @@ import { CommitHistoryWebView } from "../tvc/CommitHistoryWebView";
 //         });
 //
 //         memFs.writeFileApi("hello.txt", "hello");
-//         memFs.writeFileApi("/.meltos/hello.txt", "hello");
+//         memFs.writeFileApi(".meltos/hello.txt", "hello");
 //         await sleep(10);
 //         strictEqual(messages.length, 0);
 //     });
@@ -94,7 +94,7 @@ import { CommitHistoryWebView } from "../tvc/CommitHistoryWebView";
 //         provider.onUpdateScm((message) => {
 //             messages.push(message);
 //         });
-//         memFs.writeFileApi("/workspace/hello.txt", "hello");
+//         memFs.writeFileApi("workspace/hello.txt", "hello");
 //         await sleep(10);
 //         provider.stage(".");
 //
@@ -104,7 +104,7 @@ import { CommitHistoryWebView } from "../tvc/CommitHistoryWebView";
 //         deepStrictEqual(messages[1].stages, [
 //             {
 //                 changeType: "create",
-//                 filePath: "/workspace/hello.txt",
+//                 filePath: "workspace/hello.txt",
 //                 trace_obj_hash: null,
 //             } as ChangeMeta,
 //         ]);
@@ -123,7 +123,7 @@ import { CommitHistoryWebView } from "../tvc/CommitHistoryWebView";
 //         provider.onUpdateScm((message) => {
 //             messages.push(message);
 //         });
-//         memFs.writeFileApi("/workspace/hello.txt", "hello");
+//         memFs.writeFileApi("workspace/hello.txt", "hello");
 //         await sleep(10);
 //         provider.stage(".");
 //         provider.commit(".");
@@ -143,7 +143,7 @@ import { CommitHistoryWebView } from "../tvc/CommitHistoryWebView";
 //             new TvcHistoryWebView(tvc),
 //             memFs
 //         );
-//         memFs.writeFileApi("/workspace/hello.txt", "hello");
+//         memFs.writeFileApi("workspace/hello.txt", "hello");
 //         await sleep(10);
 //         provider.stage(".");
 //         provider.commit(".");
@@ -167,10 +167,10 @@ import { CommitHistoryWebView } from "../tvc/CommitHistoryWebView";
 //             messages.push(message);
 //         });
 //
-//         memFs.writeFileApi("/workspace/hello.txt", "hello");
+//         memFs.writeFileApi("workspace/hello.txt", "hello");
 //         await sleep(10);
 //         provider.stage(".");
-//         provider.unStage("/workspace/hello.txt");
+//         provider.unStage("workspace/hello.txt");
 //
 //         await sleep(10);
 //         strictEqual(messages.length, 3);
@@ -181,7 +181,7 @@ import { CommitHistoryWebView } from "../tvc/CommitHistoryWebView";
 //             changes: [
 //                 {
 //                     changeType: "create",
-//                     filePath: "/workspace/hello.txt",
+//                     filePath: "workspace/hello.txt",
 //                     trace_obj_hash: null,
 //                 },
 //             ],
@@ -203,12 +203,12 @@ import { CommitHistoryWebView } from "../tvc/CommitHistoryWebView";
 //             messages.push(message);
 //         });
 //
-//         memFs.writeFileApi("/workspace/hello.txt", "hello");
+//         memFs.writeFileApi("workspace/hello.txt", "hello");
 //         await sleep(10);
 //         provider.stage(".");
-//         provider.unStage("/workspace/hello.txt");
+//         provider.unStage("workspace/hello.txt");
 //         await sleep(10);
-//         provider.stage("/workspace/hello.txt");
+//         provider.stage("workspace/hello.txt");
 //         await sleep(10);
 //         strictEqual(messages.length, 4);
 //         deepStrictEqual(messages[3], {
@@ -217,7 +217,7 @@ import { CommitHistoryWebView } from "../tvc/CommitHistoryWebView";
 //             stages: [
 //                 {
 //                     changeType: "create",
-//                     filePath: "/workspace/hello.txt",
+//                     filePath: "workspace/hello.txt",
 //                     trace_obj_hash: null,
 //                 },
 //             ],
@@ -239,13 +239,13 @@ import { CommitHistoryWebView } from "../tvc/CommitHistoryWebView";
 //             messages.push(message);
 //         });
 //
-//         memFs.writeFileApi("/workspace/hello.txt", Buffer.from("hello"));
+//         memFs.writeFileApi("workspace/hello.txt", Buffer.from("hello"));
 //         tvc.stage(".");
 //         tvc.commit("commit text");
-//         memFs.deleteApi("/workspace/hello.txt");
+//         memFs.deleteApi("workspace/hello.txt");
 //
 //         await sleep(10);
-//         memFs.writeFileApi("/workspace/hello.txt", "");
+//         memFs.writeFileApi("workspace/hello.txt", "");
 //         await sleep(10);
 //         const lastMessage = messages[messages.length - 1];
 //         deepStrictEqual(lastMessage, {
@@ -255,9 +255,9 @@ import { CommitHistoryWebView } from "../tvc/CommitHistoryWebView";
 //             changes: [
 //                 {
 //                     changeType: "change",
-//                     filePath: "/workspace/hello.txt",
+//                     filePath: "workspace/hello.txt",
 //                     trace_obj_hash: tvc.find_obj_hash_from_traces(
-//                         "/workspace/hello.txt"
+//                         "workspace/hello.txt"
 //                     )![0],
 //                 },
 //             ],
@@ -277,13 +277,13 @@ import { CommitHistoryWebView } from "../tvc/CommitHistoryWebView";
 //         provider.onUpdateScm((message) => {
 //             messages.push(message);
 //         });
-//         memFs.writeFileApi("/workspace/hello.txt", Buffer.from("hello"));
+//         memFs.writeFileApi("workspace/hello.txt", Buffer.from("hello"));
 //         tvc.stage(".");
 //         tvc.commit("commit text");
 //
-//         memFs.deleteApi("/workspace/hello.txt");
+//         memFs.deleteApi("workspace/hello.txt");
 //         await sleep(10);
-//         memFs.writeFileApi("/workspace/hello.txt", Buffer.from("hello"));
+//         memFs.writeFileApi("workspace/hello.txt", Buffer.from("hello"));
 //         await sleep(10);
 //
 //         const lastMessage = messages[messages.length - 1];

@@ -15,7 +15,7 @@ import { ChangeMeta } from "meltos_ts_lib/src/scm/changes/ChangeMeta";
 //         tvc.init_repository();
 //
 //         const history = new TvcChangeHistory(memFs, tvc);
-//         memFs.writeFileApi("/workspace/hello.txt", Buffer.from("hello"));
+//         memFs.writeFileApi("workspace/hello.txt", Buffer.from("hello"));
 //         tvc.stage("hello.txt");
 //
 //         const changes = await history.feed({
@@ -26,7 +26,7 @@ import { ChangeMeta } from "meltos_ts_lib/src/scm/changes/ChangeMeta";
 //         strictEqual(changes.length, 1);
 //         deepStrictEqual(changes[0], {
 //             changeType: "create",
-//             filePath: "/workspace/hello.txt",
+//             filePath: "workspace/hello.txt",
 //             trace_obj_hash: null,
 //         } as ChangeMeta);
 //     });
@@ -37,8 +37,8 @@ import { ChangeMeta } from "meltos_ts_lib/src/scm/changes/ChangeMeta";
 //         tvc.init_repository();
 //
 //         const history = new TvcChangeHistory(memFs, tvc);
-//         memFs.writeFileApi("/workspace/hello.txt", Buffer.from("hello"));
-//         memFs.writeFileApi("/workspace/hello2.txt", Buffer.from("hello"));
+//         memFs.writeFileApi("workspace/hello.txt", Buffer.from("hello"));
+//         memFs.writeFileApi("workspace/hello2.txt", Buffer.from("hello"));
 //
 //         await history.feed({
 //             type: FileChangeType.Created,
@@ -52,12 +52,12 @@ import { ChangeMeta } from "meltos_ts_lib/src/scm/changes/ChangeMeta";
 //         strictEqual(changes.length, 2);
 //         deepStrictEqual(changes[0], {
 //             changeType: "create",
-//             filePath: "/workspace/hello.txt",
+//             filePath: "workspace/hello.txt",
 //             trace_obj_hash: null,
 //         } as ChangeMeta);
 //         deepStrictEqual(changes[1], {
 //             changeType: "create",
-//             filePath: "/workspace/hello2.txt",
+//             filePath: "workspace/hello2.txt",
 //             trace_obj_hash: null,
 //         } as ChangeMeta);
 //     });
@@ -66,7 +66,7 @@ import { ChangeMeta } from "meltos_ts_lib/src/scm/changes/ChangeMeta";
 //         const memFs = new MemFS("meltos");
 //         const tvc = new WasmTvcClient(memFs);
 //         tvc.init_repository();
-//         memFs.writeFileApi("/workspace/hello.txt", Buffer.from("hello"));
+//         memFs.writeFileApi("workspace/hello.txt", Buffer.from("hello"));
 //
 //         const history = new TvcChangeHistory(memFs, tvc);
 //         await history.feed({
@@ -74,7 +74,7 @@ import { ChangeMeta } from "meltos_ts_lib/src/scm/changes/ChangeMeta";
 //             uri: vscode.Uri.parse("meltos:/workspace/hello.txt"),
 //         });
 //
-//         memFs.writeFileApi("/workspace/hello.txt", Buffer.from("hello2"));
+//         memFs.writeFileApi("workspace/hello.txt", Buffer.from("hello2"));
 //         const changes = await history.feed({
 //             type: FileChangeType.Changed,
 //             uri: vscode.Uri.parse("meltos:/workspace/hello.txt"),
@@ -83,7 +83,7 @@ import { ChangeMeta } from "meltos_ts_lib/src/scm/changes/ChangeMeta";
 //         strictEqual(changes.length, 1);
 //         deepStrictEqual(changes[0], {
 //             changeType: "create",
-//             filePath: "/workspace/hello.txt",
+//             filePath: "workspace/hello.txt",
 //             trace_obj_hash: null,
 //         } as ChangeMeta);
 //     });
@@ -94,13 +94,13 @@ import { ChangeMeta } from "meltos_ts_lib/src/scm/changes/ChangeMeta";
 //         tvc.init_repository();
 //
 //         const history = new TvcChangeHistory(memFs, tvc);
-//         memFs.writeFileApi("/workspace/hello.txt", Buffer.from("hello"));
+//         memFs.writeFileApi("workspace/hello.txt", Buffer.from("hello"));
 //         await history.feed({
 //             type: FileChangeType.Created,
 //             uri: vscode.Uri.parse("meltos:/workspace/hello.txt"),
 //         });
 //
-//         memFs.deleteApi("/workspace/hello.txt");
+//         memFs.deleteApi("workspace/hello.txt");
 //         const changes = await history.feed({
 //             type: FileChangeType.Deleted,
 //             uri: vscode.Uri.parse("meltos:/workspace/hello.txt"),
@@ -114,7 +114,7 @@ import { ChangeMeta } from "meltos_ts_lib/src/scm/changes/ChangeMeta";
 //         const tvc = new WasmTvcClient(memFs);
 //         tvc.init_repository();
 //
-//         memFs.writeFileApi("/workspace/hello.txt", Buffer.from("hello"));
+//         memFs.writeFileApi("workspace/hello.txt", Buffer.from("hello"));
 //
 //         const history = new TvcChangeHistory(memFs, tvc);
 //         await history.feed({
@@ -124,7 +124,7 @@ import { ChangeMeta } from "meltos_ts_lib/src/scm/changes/ChangeMeta";
 //         tvc.stage(".");
 //         tvc.commit("commit");
 //
-//         memFs.deleteApi("/workspace/hello.txt");
+//         memFs.deleteApi("workspace/hello.txt");
 //         const changes = await history.feed({
 //             type: FileChangeType.Deleted,
 //             uri: vscode.Uri.parse("meltos:/workspace/hello.txt"),
@@ -133,9 +133,9 @@ import { ChangeMeta } from "meltos_ts_lib/src/scm/changes/ChangeMeta";
 //         strictEqual(changes.length, 1);
 //         deepStrictEqual(changes[0], {
 //             changeType: "delete",
-//             filePath: "/workspace/hello.txt",
+//             filePath: "workspace/hello.txt",
 //             trace_obj_hash:
-//                 tvc.find_obj_hash_from_traces("/workspace/hello.txt")?.["0"] ||
+//                 tvc.find_obj_hash_from_traces("workspace/hello.txt")?.["0"] ||
 //                 null,
 //         } as ChangeMeta);
 //     });
@@ -145,7 +145,7 @@ import { ChangeMeta } from "meltos_ts_lib/src/scm/changes/ChangeMeta";
 //         const tvc = new WasmTvcClient(memFs);
 //         tvc.init_repository();
 //
-//         memFs.writeFileApi("/workspace/hello.txt", Buffer.from("hello"));
+//         memFs.writeFileApi("workspace/hello.txt", Buffer.from("hello"));
 //
 //         const history = new TvcChangeHistory(memFs, tvc);
 //         await history.feed({
@@ -153,15 +153,15 @@ import { ChangeMeta } from "meltos_ts_lib/src/scm/changes/ChangeMeta";
 //             uri: vscode.Uri.parse("meltos:/workspace/hello.txt"),
 //         });
 //         tvc.stage(".");
-//         history.moveToStagesFromChanges("/workspace/hello.txt");
-//         tvc.un_stage("/workspace/hello.txt");
-//         history.moveToChangesFromStages("/workspace/hello.txt");
+//         history.moveToStagesFromChanges("workspace/hello.txt");
+//         tvc.un_stage("workspace/hello.txt");
+//         history.moveToChangesFromStages("workspace/hello.txt");
 //
 //         strictEqual(history.loadStages().length, 0);
 //         deepStrictEqual(history.loadChanges(), [
 //             {
 //                 changeType: "create",
-//                 filePath: "/workspace/hello.txt",
+//                 filePath: "workspace/hello.txt",
 //                 trace_obj_hash: null,
 //             } as ChangeMeta,
 //         ]);
@@ -172,25 +172,25 @@ import { ChangeMeta } from "meltos_ts_lib/src/scm/changes/ChangeMeta";
 //         const tvc = new WasmTvcClient(memFs);
 //         tvc.init_repository();
 //
-//         memFs.writeFileApi("/workspace/hello.txt", Buffer.from("hello"));
+//         memFs.writeFileApi("workspace/hello.txt", Buffer.from("hello"));
 //
 //         const history = new TvcChangeHistory(memFs, tvc);
 //         await history.feed({
 //             type: FileChangeType.Created,
 //             uri: vscode.Uri.parse("meltos:/workspace/hello.txt"),
 //         });
-//         history.moveToStagesFromChanges("/workspace/hello.txt");
+//         history.moveToStagesFromChanges("workspace/hello.txt");
 //         tvc.stage(".");
 //         tvc.commit(".");
 //
-//         tvc.un_stage("/workspace/hello.txt");
-//         history.moveToChangesFromStages("/workspace/hello.txt");
+//         tvc.un_stage("workspace/hello.txt");
+//         history.moveToChangesFromStages("workspace/hello.txt");
 //
 //         strictEqual(history.loadStages().length, 0);
 //         deepStrictEqual(history.loadChanges(), [
 //             {
 //                 changeType: "create",
-//                 filePath: "/workspace/hello.txt",
+//                 filePath: "workspace/hello.txt",
 //                 trace_obj_hash: null,
 //             } as ChangeMeta,
 //         ]);

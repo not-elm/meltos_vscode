@@ -115,8 +115,9 @@ export class CommitHistoryWebView {
     };
 
     async postMessage() {
-        const branchCommits = await this.tvc.all_branch_commit_metas();
-        const branches = branchCommits["0"].map((b) => ({
+        const branchCommits = (await this.tvc.all_branch_commit_metas())[0];
+        console.log(branchCommits);
+        const branches = branchCommits.map((b) => ({
             name: b.name,
             commits: b.commits.map((c) => ({
                 hash: c.hash,

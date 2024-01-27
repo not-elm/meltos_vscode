@@ -42,7 +42,7 @@ export const copyRealWorkspaceToVirtual = async (
     for (const entry of fs.readdirSync(realDirPath)) {
         await _copyRealWorkspaceToVirtual(
             realDirPath,
-            vscode.Uri.joinPath(virtualRootDir, "/workspace", entry),
+            vscode.Uri.joinPath(virtualRootDir, "workspace", entry),
             path.join(realDirPath, entry),
             fileSystem
         );

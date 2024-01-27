@@ -7,7 +7,6 @@ export class RootFileSystem implements vscode.FileSystemProvider {
     onDidChangeFile: vscode.Event<vscode.FileChangeEvent[]>;
 
     constructor(readonly fs: WasmFileSystem, emitter: FileChangeEventEmitter) {
-        fs.create_dir_api("/");
         this.onDidChangeFile = emitter.Event;
     }
 
@@ -101,6 +100,7 @@ export class RootFileSystem implements vscode.FileSystemProvider {
     }
 
     asUri(uri: vscode.Uri) {
-        return `${uri.path}`;
+        const u = uri.path.startsWith("/") ? uri.path.replace("/", "") : uri.path;
+        return `${u.length === 0 ? "." : u}`;
     }
 }
