@@ -23,7 +23,7 @@ export class VscodeNodeFs
     watchWorkspace(
         f: (event: fs.WatchEventType, fileName: string | null) => void
     ) {
-        const path = this.asPath("workspace");
+        const path = this.asPath("/workspace");
         const watcher = fs.watch(path, {}, (event, filename) => {
             f(event, filename);
         });
@@ -100,11 +100,11 @@ export class VscodeNodeFs
     }
 
     clearMeltosDirs() {
-        fs.rmSync(this.asPath(".meltos"), {
+        fs.rmSync(this.asPath("/.meltos"), {
             recursive: true,
             force: true,
         });
-        fs.rmSync(this.asPath("workspace"), {
+        fs.rmSync(this.asPath("/workspace"), {
             recursive: true,
             force: true,
         });

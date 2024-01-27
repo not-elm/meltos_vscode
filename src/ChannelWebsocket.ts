@@ -20,7 +20,7 @@ export class ChannelWebsocket implements vscode.Disposable {
     connectChannel(roomId: string, sessionId: string) {
         const statusBar = vscode.window.createStatusBarItem();
 
-        const ws = new WebSocket(`ws://localhost:3000/room/${roomId}/channel`, {
+        const ws = new WebSocket(`ws:// 192.168.10.103:3000/room/${roomId}/channel`, {
             headers: {
                 "set-cookie": `session_id=${sessionId}`,
             },

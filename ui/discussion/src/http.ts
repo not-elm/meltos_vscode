@@ -1,5 +1,5 @@
 export const openRoom = async (userId?: string) => {
-    const response = await fetch(`https://localhost:3000/room/open`, {
+    const response = await fetch(`https:// 192.168.10.103:3000/room/open`, {
         method: "POST",
         body: JSON.stringify({
             user_id: userId
@@ -16,7 +16,7 @@ export const speak = async (
     discussionId: string,
     message: string
 ) => {
-    const response = await fetch(`https://localhost:3000/room/${roomId}/discussion/speak`, {
+    const response = await fetch(`https:// 192.168.10.103:3000/room/${roomId}/discussion/speak`, {
         method: "POST",
         headers: {
             "set-cookie": `session_id=${sessionId}`

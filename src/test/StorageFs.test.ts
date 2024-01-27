@@ -41,8 +41,8 @@ suite("StorageFs", () => {
     // });
 
     test("親ディレクトリのURIが取得できること", () => {
-        const uri = ".meltos/traces/0dajodad";
+        const uri = "/.meltos/traces/0dajodad";
         const parent = parseParentPath(uri);
-        strictEqual(parent, ".meltos/traces");
+        strictEqual(parent, "/.meltos/traces");
     });
 });

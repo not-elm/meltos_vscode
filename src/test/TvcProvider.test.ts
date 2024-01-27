@@ -76,7 +76,7 @@ import { CommitHistoryWebView } from "../tvc/CommitHistoryWebView";
 //         });
 //
 //         memFs.writeFileApi("hello.txt", "hello");
-//         memFs.writeFileApi(".meltos/hello.txt", "hello");
+//         memFs.writeFileApi("/.meltos/hello.txt", "hello");
 //         await sleep(10);
 //         strictEqual(messages.length, 0);
 //     });

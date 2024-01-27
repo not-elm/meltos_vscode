@@ -92,7 +92,7 @@ const registerOpenRoomCommand = (context: vscode.ExtensionContext) => {
             // if (!workspaceSource) {
             //     return;
             // }
-            const workspaceSource = "D://user";
+            const workspaceSource = "/home/elm/workspace/test";
             const args = createOwnerArgs(workspaceSource);
             await initFromArgs(context, args);
         })
@@ -120,7 +120,7 @@ const initFromArgs = async (
     args: UserArgs | OwnerArgs
 ) => {
    try {
-        const meltos = await import("../wasm/index.js");
+    const meltos = await import("../wasm/index.js");
     const tvc = new meltos.WasmTvcClient();
 
     let sessionConfigs: SessionConfigs;
