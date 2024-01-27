@@ -1,35 +1,27 @@
 import * as vscode from "vscode";
-import { Uri } from "vscode";
-import {
-    createOwnerArgs,
-    createUserArgs,
-    isOwner,
-    OwnerArgs,
-    UserArgs,
-} from "./args";
-import { Bundle, SessionConfigs } from "../wasm";
+import {Uri} from "vscode";
+import {createOwnerArgs, createUserArgs, isOwner, OwnerArgs, UserArgs,} from "./args";
+import {Bundle, SessionConfigs} from "../wasm";
 
-import { DiscussionTreeProvider } from "./discussion/DiscussionTreeProvider";
-import { InMemoryDiscussionIo } from "./discussion/io/InMemory";
-import { DiscussionIo } from "./discussion/io/DiscussionIo";
-import { DiscussionWebViewManager } from "./discussion/DiscussionWebView";
-import { HttpRoomClient } from "./http";
-import { ChannelWebsocket } from "./ChannelWebsocket";
-import {
-    CommitHistoryWebView,
-    registerShowHistoryCommand,
-} from "./tvc/CommitHistoryWebView";
-import { ObjFileProvider } from "./tvc/ObjFileProvider";
+import {DiscussionTreeProvider} from "./discussion/DiscussionTreeProvider";
+import {InMemoryDiscussionIo} from "./discussion/io/InMemory";
+import {DiscussionIo} from "./discussion/io/DiscussionIo";
+import {DiscussionWebViewManager} from "./discussion/DiscussionWebView";
+import {HttpRoomClient} from "./http";
+import {ChannelWebsocket} from "./ChannelWebsocket";
+import {CommitHistoryWebView, registerShowHistoryCommand,} from "./tvc/CommitHistoryWebView";
+import {ObjFileProvider} from "./tvc/ObjFileProvider";
 
-import { copy } from "copy-paste";
-import { DiscussionProvider } from "./discussion/DiscussionProvider";
-import { BundleType } from "meltos_ts_lib/src/tvc/Bundle";
-import { TvcProvider } from "./tvc/TvcProvider";
-import { SessionConfigsType } from "meltos_ts_lib/dist/SessionConfigs";
-import { RootFileSystem } from "./fs/RootFileSystem";
-import { copyRealWorkspaceToVirtual } from "./fs/util";
-import { TvcScmWebView } from "./scm/TvcScmWebView";
-import { FileChangeEventEmitter } from "./tvc/FileChangeEventEmitter";
+import {copy} from "copy-paste";
+import {DiscussionProvider} from "./discussion/DiscussionProvider";
+import {BundleType} from "meltos_ts_lib/src/tvc/Bundle";
+import {TvcProvider} from "./tvc/TvcProvider";
+import {SessionConfigsType} from "meltos_ts_lib/dist/SessionConfigs";
+import {RootFileSystem} from "./fs/RootFileSystem";
+import {copyRealWorkspaceToVirtual} from "./fs/util";
+import {TvcScmWebView} from "./scm/TvcScmWebView";
+import {FileChangeEventEmitter} from "./tvc/FileChangeEventEmitter";
+import {error} from "./logger";
 
 let websocket: ChannelWebsocket | undefined;
 let discussionWebviewManager: DiscussionWebViewManager | undefined;
@@ -118,7 +110,7 @@ const registerJoinRoomCommand = (context: vscode.ExtensionContext) => {
             }
 
             const args = createUserArgs(userInput);
-            await vscode.commands.executeCommand("meltos.init", args);
+            await initFromArgs(context, args);
         })
     );
 };
@@ -127,7 +119,8 @@ const initFromArgs = async (
     context: vscode.ExtensionContext,
     args: UserArgs | OwnerArgs
 ) => {
-    const meltos = await import("../wasm/index.js");
+   try {
+        const meltos = await import("../wasm/index.js");
     const tvc = new meltos.WasmTvcClient();
 
     let sessionConfigs: SessionConfigs;
@@ -149,6 +142,10 @@ const initFromArgs = async (
         uri: Uri.parse("meltos:/"),
         name: sessionConfigs!.user_id[0],
     });
+   }catch (e) {
+       error(e?.toString() || "failed initialize");
+       throw e;
+   }
 };
 
 const registerScmView = (

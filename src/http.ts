@@ -1,6 +1,8 @@
 import {CreatedType, RepliedType, SpokeType} from "./types/api";
 import {RoomBundleType} from "meltos_ts_lib/src/RoomBundle";
 
+const BASE_URI: string = "http://192.168.10.101:3000";
+
 export class HttpRoomClient {
     constructor(
         private readonly opened: {
@@ -60,7 +62,7 @@ export class HttpRoomClient {
     };
 
     readonly leave = async () => {
-        await fetch(`http://localhost:3000/room/${this.roomId}`, {
+        await fetch(`${BASE_URI}/room/${this.roomId}`, {
             method: "DELETE",
             ...headers(this.sessionId),
         });
@@ -68,13 +70,13 @@ export class HttpRoomClient {
 
     private readonly apiUri = (uri?: string) => {
         return !!uri
-            ? `http://localhost:3000/room/${this.roomId}/${uri}`
-            : `http://localhost:3000/room/${this.roomId}`;
+            ? `${BASE_URI}/room/${this.roomId}/${uri}`
+            : `${BASE_URI}/room/${this.roomId}`;
     };
 }
 
 export const httpOpen = async (userId?: string) => {
-    const response = await fetch(`http://localhost:3000/room/open`, {
+    const response = await fetch(`${BASE_URI}/room/open`, {
         method: "POST",
         headers: {
             "content-type": "application/json",
@@ -97,7 +99,7 @@ export const httpCreate = async (
     title: string
 ) => {
     const response = await fetch(
-        `http://localhost:3000/room/${roomId}/discussion/global/create`,
+        `${BASE_URI}/room/${roomId}/discussion/global/create`,
         {
             method: "POST",
             ...headers(sessionId),
@@ -117,7 +119,7 @@ export const httpSpeak = async (
     text: string
 ) => {
     const response = await fetch(
-        `http://localhost:3000/room/${roomId}/discussion/global/speak`,
+        `${BASE_URI}/room/${roomId}/discussion/global/speak`,
         {
             method: "POST",
             ...headers(sessionId),
@@ -139,7 +141,7 @@ export const httpReply = async (
     message: string
 ) => {
     const response = await fetch(
-        `http://localhost:3000/room/${roomId}/discussion/global/reply`,
+        `${BASE_URI}/room/${roomId}/discussion/global/reply`,
         {
             method: "POST",
             ...headers(sessionId),
