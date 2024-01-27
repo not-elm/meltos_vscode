@@ -20,7 +20,7 @@ const mockRandomBranches = (): BranchCommit[] => {
                             objs: [...Array(10)].map(
                                 () =>
                                     ({
-                                        file_path: "workspace/hello.txt",
+                                        file_path: "/workspace/hello.txt",
                                         hash: (Math.random() * Math.pow(10, 50))
                                             .toString()
                                             .slice(0, 40),
