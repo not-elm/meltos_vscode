@@ -1,13 +1,13 @@
-import vscode, { FileChangeEvent, FileChangeType } from "vscode";
-import { ChangeMeta } from "meltos_ts_lib/src/scm/changes/ChangeMeta";
-import { WasmTvcClient } from "../../wasm";
-import { TvcFileSystem } from "../fs/TvcFileSystem";
+import vscode, {FileChangeEvent, FileChangeType} from "vscode";
+import {ChangeMeta} from "meltos_ts_lib/src/scm/changes/ChangeMeta";
+import {WasmTvcClient} from "../../wasm";
 
 export class TvcChangeHistory {
     constructor(
         private branchName: string,
         private readonly tvc: WasmTvcClient
-    ) {}
+    ) {
+    }
 
     async feed(event: vscode.FileChangeEvent): Promise<ChangeMeta[]> {
         const changes = await this.nextChanges(event);
@@ -163,4 +163,5 @@ const distinct = (metas: ChangeMeta[]) =>
         );
     });
 
-const trimStartSlash = (filePath: string) => filePath;
+const trimStartSlash = (filePath: string) => filePath.startsWith("/") ?
+    filePath.replace("/", "") : filePath;

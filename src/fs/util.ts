@@ -57,7 +57,7 @@ const _copyRealWorkspaceToVirtual = async (
 ) => {
     if (fs.statSync(realPath).isFile()) {
         const buf = fs.readFileSync(realPath);
-        await fileSystem.write_file_api(virtualPath.path, Uint8Array.from(buf));
+        await fileSystem.write_file_api(virtualPath.path.replace("/", ""), Uint8Array.from(buf));
     } else {
         await fileSystem.create_dir_api(virtualPath.path);
         for (const entry of fs.readdirSync(realPath)) {

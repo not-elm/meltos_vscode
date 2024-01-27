@@ -92,7 +92,7 @@ export class TvcProvider {
     private registerChangeFileEvents() {
         this.rootFs.onDidChangeFile(async (changes) => {
             for (const event of changes.filter((c) =>
-                c.uri.path.startsWith("workspace/")
+                c.uri.path.startsWith("/workspace/")
             )) {
                 await this._history.feed(event);
                 await this.fireUpdateScm();
