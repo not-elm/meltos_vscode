@@ -1,5 +1,5 @@
 import vscode, { FileChangeType } from "vscode";
-import { StatType, WasmFileSystem } from "../../wasm";
+import { Stat, StatType, WasmFileSystem } from "../../wasm";
 import { json } from "stream/consumers";
 import { FileChangeEventEmitter } from "../tvc/FileChangeEventEmitter";
 
@@ -22,15 +22,18 @@ export class RootFileSystem implements vscode.FileSystemProvider {
 
     async stat(uri: vscode.Uri): Promise<vscode.FileStat> {
         const stat = await this.fs?.stat_api(this.asUri(uri));
-
+       
         if (stat) {
+            console.log(`uri = ${uri.path}, ${JSON.stringify({
+                ctime: Number(stat.create_time),
+                mtime: Number(stat.update_time),
+                type: convertToFileType(stat),
+                size: Number(stat.size),
+            })}`);
             return {
                 ctime: Number(stat.create_time),
                 mtime: Number(stat.update_time),
-                type:
-                    stat?.ty === 1
-                        ? vscode.FileType.Directory
-                        : vscode.FileType.File,
+                type: convertToFileType(stat),
                 size: Number(stat.size),
             };
         } else {
@@ -42,16 +45,12 @@ export class RootFileSystem implements vscode.FileSystemProvider {
         const entries =
             (await this.fs?.read_dir_api(this.asUri(uri)))?.["0"] || [];
         const en: [string, vscode.FileType][] = [];
-        for (const entry of entries) {
-            const stat = await this.fs.stat_api(
-                this.asUri(vscode.Uri.joinPath(uri, entry))
-            );
+        for (const entryUri of entries) {
+            const stat = await this.fs.stat_api(entryUri);
 
             en.push([
-                entry,
-                stat?.ty === 1
-                    ? vscode.FileType.Directory
-                    : vscode.FileType.File,
+                entryUri,
+                convertToFileType(stat),
             ]);
         }
         return en;
@@ -102,5 +101,22 @@ export class RootFileSystem implements vscode.FileSystemProvider {
     asUri(uri: vscode.Uri) {
         const u = uri.path.startsWith("/") ? uri.path.replace("/", "") : uri.path;
         return `${u.length === 0 ? "." : u}`;
+    }
+}
+
+
+
+const convertToFileType =  (stat: Stat | undefined) => {
+    if(!stat){
+        return vscode.FileType.Unknown;
+    }
+   
+    switch(stat.ty){
+        case 0:
+            return vscode.FileType.File;
+        case 1:
+            return vscode.FileType.Directory;
+        default:
+            return vscode.FileType.Unknown;
     }
 }
