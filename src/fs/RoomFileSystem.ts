@@ -5,6 +5,7 @@ import { FileChangeEventEmitter } from "../tvc/FileChangeEventEmitter";
 import { wasm } from "../wasm";
 import { FileChangeObserver } from "../tvc/FileChangeObserver";
 import path from "path";
+import { NodeJsFileSystem } from "./NodeJsFileSystem";
 
 export class RoomFileSystem implements vscode.FileSystemProvider {
     onDidChangeFile: vscode.Event<vscode.FileChangeEvent[]>;
@@ -16,8 +17,27 @@ export class RoomFileSystem implements vscode.FileSystemProvider {
         this.onDidChangeFile = observer.onDidChangeFile;
     }
 
+
+    async copyWorkspace(branch: string, distDirPath: string){
+        const fs = this.fileSystems.get(branch)!.fs();
+        const nodeJs = new NodeJsFileSystem();
+        for(const fileUri of (await fs.all_files_in_api("workspace"))[0]){
+            const buf = await fs.read_file_api(fileUri);
+            await nodeJs.write_file(path.join(distDirPath, fileUri), buf![0]);
+        }
+    }
+
+
+    get(branch: string){
+        return this.fileSystems.get(branch);
+    }
+
     set(branch: string, tvc: WasmTvcClient) {
         this.fileSystems.set(branch, tvc);
+    }
+
+    remove(branch: string){
+        this.fileSystems.delete(branch);
     }
 
     watch(

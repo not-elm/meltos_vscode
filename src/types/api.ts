@@ -9,6 +9,10 @@ export interface JoinedType{
     user_id: string
 }
 
+export interface LeftType{
+    user_id: string
+}
+
 export interface Open {
     user_id: string,
     lifetime_secs?: number

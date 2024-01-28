@@ -1,15 +1,15 @@
 import WebSocket from "ws";
 import * as vscode from "vscode";
 
-import {ClosedType, CreatedType, JoinedType, RepliedType, SpokeType} from "./types/api";
+import { ClosedType, CreatedType, JoinedType, LeftType, RepliedType, SpokeType } from "./types/api";
 import { SessionConfigs } from "../wasm";
 import { DiscussionProvider } from "./discussion/DiscussionProvider";
 import { TvcProvider } from "./tvc/TvcProvider";
 import { BundleType } from "meltos_ts_lib/src/tvc/Bundle";
 import { HttpRoomClient } from "./http";
-import {RoomUsersTreeProvider} from "./RoomUsersTreeProvider";
-import {RoomFileSystem} from "./fs/RoomFileSystem";
-import {wasm} from "./wasm";
+import { RoomUsersTreeProvider } from "./RoomUsersTreeProvider";
+import { RoomFileSystem } from "./fs/RoomFileSystem";
+import { wasm } from "./wasm";
 
 export class ChannelWebsocket implements vscode.Disposable {
     private _ws: WebSocket | undefined;
@@ -20,7 +20,7 @@ export class ChannelWebsocket implements vscode.Disposable {
         private readonly roomFs: RoomFileSystem,
         private readonly tvc: TvcProvider,
         private readonly sessionConfigs: SessionConfigs
-    ) {}
+    ) { }
 
     connectChannel(roomId: string, sessionId: string) {
         const statusBar = vscode.window.createStatusBarItem();
@@ -46,6 +46,8 @@ export class ChannelWebsocket implements vscode.Disposable {
 
         ws.on("close", async () => {
             console.log("close room channel");
+            await vscode.window.showWarningMessage("Room closed");
+
             const http = new HttpRoomClient({
                 room_id: this.sessionConfigs.room_id[0],
                 session_id: this.sessionConfigs.session_id[0],
@@ -53,6 +55,8 @@ export class ChannelWebsocket implements vscode.Disposable {
             });
             await http.leave();
             statusBar.hide();
+            const folders = vscode.workspace.workspaceFolders?.length;
+            vscode.workspace.updateWorkspaceFolders(0, folders);
         });
 
         this._ws = ws;
@@ -63,13 +67,14 @@ export class ChannelWebsocket implements vscode.Disposable {
     }
 
     onMessage = async (message: WebSocket.RawData) => {
-        console.log(`message = ${message.toString()}`);
         const json: RoomMessage = JSON.parse(message.toString());
         const ty = json.message["type"];
         switch (ty) {
             case "joined":
-                const joined = json.message as Joined;
-                await this.onJoined(joined);
+                await this.onJoined(json.message as JoinedType);
+                break;
+            case "left":
+                await this.onLeft(json.message as LeftType);
                 break;
             case "discussionCreated":
                 await this.onCreated(json.message as CreatedType);
@@ -86,13 +91,16 @@ export class ChannelWebsocket implements vscode.Disposable {
             case "pushed":
                 await this.onPushed(json.from, json.message);
                 break;
+            case "closedRoom":
+                await this.onClosedRoom();
+                break;
         }
     };
 
     private onJoined = async (joined: JoinedType) => {
         this.users.pushUser(joined.user_id);
         vscode.window.showInformationMessage(
-            `Joined user id=${joined.user_id}`
+            `Joined ${joined.user_id}`
         );
         const meltos = await wasm;
         const fs = new meltos.WasmFileSystem();
@@ -107,20 +115,38 @@ export class ChannelWebsocket implements vscode.Disposable {
             name: joined.user_id
         });
         await tvc.unzip(joined.user_id);
-
     };
 
-    onCreated = async (created: CreatedType) => {
+    private onLeft = async (left: LeftType) => {
+        const leftUser = left.user_id;
+        this.users.deleteUser(leftUser);
+        const index = vscode.workspace.workspaceFolders?.findIndex(w => w.name === leftUser);
+        if (index && 0 <= index) {
+            this.roomFs.remove(leftUser);
+            vscode.workspace.updateWorkspaceFolders(index, 1);
+            vscode.window.showInformationMessage(`left ${leftUser}`);
+        }
+    };
+
+
+    private onClosedRoom = async () => {
+        vscode.window.showInformationMessage("Room closed by owner");
+        this._ws?.close();
+    };
+
+    private onCreated = async (created: CreatedType) => {
         await this.withTryCatch(async () => {
-            vscode.window.showInformationMessage(`created discussion\n
-                 creator=${created.meta.creator}\n
-                 id=${created.meta.id}
-            `);
+            this.showComingMessageIfFromOthers(
+                created.meta.creator,
+                `Created discussion(${created.meta.title})` ,
+                created.meta.id
+            );
+
             await this.discussion.created(created);
         });
     };
 
-    onSpoke = async (from: string, spoke: SpokeType) => {
+    private onSpoke = async (from: string, spoke: SpokeType) => {
         await this.withTryCatch(async () => {
             this.showComingMessageIfFromOthers(
                 from,
@@ -131,7 +157,7 @@ export class ChannelWebsocket implements vscode.Disposable {
         });
     };
 
-    onReplied = async (from: string, replied: RepliedType) => {
+    private onReplied = async (from: string, replied: RepliedType) => {
         await this.withTryCatch(async () => {
             this.showComingMessageIfFromOthers(
                 from,
@@ -144,7 +170,7 @@ export class ChannelWebsocket implements vscode.Disposable {
 
     async onClosed(closed: ClosedType) {
         vscode.window.showInformationMessage(
-            `closed discussion id=${closed.discussion_id}`
+            `Closed discussion(${closed.discussion_id})`
         );
         await this.withTryCatch(async () => {
             await this.discussion.closed(closed);
@@ -152,9 +178,17 @@ export class ChannelWebsocket implements vscode.Disposable {
     }
 
     private readonly onPushed = async (from: string, bundle: BundleType) => {
-        await this.tvc.saveBundle(bundle);
-        if (this.fromOthers(from)) {
-            vscode.window.showInformationMessage(`pushed from ${from}`);
+        try {
+            await this.tvc.saveBundle(bundle);
+            if (this.fromOthers(from)) {
+                vscode.window.showInformationMessage(`Pushed from ${from}`);
+                const userTvc = this.roomFs.get(from);
+                if (userTvc) {
+                    await userTvc.unzip(from);
+                }
+            }
+        } catch (e) {
+            vscode.window.showErrorMessage(`onPushed:${e}`);
         }
     };
 
@@ -165,7 +199,7 @@ export class ChannelWebsocket implements vscode.Disposable {
     ) => {
         if (this.fromOthers(from)) {
             vscode.window
-                .showInformationMessage(message, "open discussion")
+                .showInformationMessage(message, "Open discussion")
                 .then(async (item) => {
                     if (item) {
                         await vscode.commands.executeCommand(
@@ -179,10 +213,6 @@ export class ChannelWebsocket implements vscode.Disposable {
 
     private readonly fromOthers = (userId: string) => {
         return this.sessionConfigs.user_id[0] !== userId;
-    };
-
-    private readonly ownedMessage = (userId: string) => {
-        return this.sessionConfigs.user_id[0] === userId;
     };
 
     private async withTryCatch<T>(f: () => Promise<T>) {
@@ -199,8 +229,4 @@ export class ChannelWebsocket implements vscode.Disposable {
 export interface RoomMessage {
     from: string;
     message: any;
-}
-
-export interface Joined {
-    user_id: string;
 }
