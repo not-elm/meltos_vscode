@@ -6,13 +6,13 @@ import {openDiffCommand} from "../apiWrapper";
 import {toMeltosUri} from "../fs/util";
 
 
-export const openObjDiff = async (changeMeta: ChangeMeta) => {
+export const openObjDiff = async (changeMeta: ChangeMeta, userId: string) => {
     if (changeMeta.changeType === "delete") {
         await openObjFile(changeMeta.trace_obj_hash!);
     } else {
         await openDiffCommand(
             vscode.Uri.parse(`tvc:/${changeMeta.trace_obj_hash || ""}`),
-            toMeltosUri(changeMeta.filePath),
+            toMeltosUri(changeMeta.filePath, userId),
             `diff(tvc ↔ workspace)`
         );
     }
@@ -35,6 +35,9 @@ export class ObjFileProvider implements vscode.TextDocumentContentProvider {
         uri: vscode.Uri,
         token: vscode.CancellationToken
     ) {
+        if(uri.path === "/"){
+            return "";
+        }
         return (await this.tvc.read_file_from_hash(path.basename(uri.path))) || "";
     }
 

@@ -1,11 +1,13 @@
-import vscode, {FileChangeEvent, FileChangeType} from "vscode";
-import {ChangeMeta} from "meltos_ts_lib/src/scm/changes/ChangeMeta";
-import {WasmTvcClient} from "../../wasm";
+import vscode, { FileChangeEvent, FileChangeType } from "vscode";
+import { ChangeMeta } from "meltos_ts_lib/src/scm/changes/ChangeMeta";
+import { WasmTvcClient } from "../../wasm";
+import path from "path";
 
 export class TvcChangeHistory {
     constructor(
         private branchName: string,
-        private readonly tvc: WasmTvcClient
+        private context: vscode.ExtensionContext,
+        private readonly tvc: WasmTvcClient,
     ) {
     }
 
@@ -23,7 +25,7 @@ export class TvcChangeHistory {
         let changes = await this.loadChanges();
         const stages: ChangeMeta[] = await this.loadStages();
 
-        for (let file of (await this.tvc.fs().all_files_in_api(filePath))[0]) {
+        for (let file of (await this.tvc.fs().all_files_in_api(path.join("workspace", filePath).replaceAll("\\", "/")))[0]) {
             file = trimStartSlash(file);
             const meta = changes.find((c) => c.filePath === file);
             if (meta) {
@@ -71,7 +73,7 @@ export class TvcChangeHistory {
 
     readonly loadStages = async (): Promise<ChangeMeta[]> => {
         try {
-            const buf = (await this.tvc.fs().read_file_api(".stages"))?.[0];
+            const buf: Buffer | undefined = this.context.workspaceState.get("stages");
             return JSON.parse(Buffer.from(buf || []).toString());
         } catch (e) {
             return [];
@@ -80,7 +82,7 @@ export class TvcChangeHistory {
 
     readonly loadChanges = async (): Promise<ChangeMeta[]> => {
         try {
-            const buf = (await this.tvc.fs().read_file_api(".changes"))?.[0];
+            const buf: Buffer | undefined = this.context.workspaceState.get("changes");
             return JSON.parse(Buffer.from(buf || []).toString());
         } catch (e) {
             return [];
@@ -118,15 +120,11 @@ export class TvcChangeHistory {
     };
 
     private readonly saveStages = async (stages: ChangeMeta[]) => {
-        await this.tvc
-            .fs()
-            .write_file_api(".stages", Buffer.from(JSON.stringify(stages)));
+        await this.context.workspaceState.update("stages", Buffer.from(JSON.stringify(stages)));
     };
 
     private readonly saveChanges = async (changes: ChangeMeta[]) => {
-        await this.tvc
-            .fs()
-            .write_file_api(".changes", Buffer.from(JSON.stringify(changes)));
+        await this.context.workspaceState.update("changes", Buffer.from(JSON.stringify(changes)));
     };
 
     private readonly fromFileChangeType = (
@@ -163,5 +161,7 @@ const distinct = (metas: ChangeMeta[]) =>
         );
     });
 
-const trimStartSlash = (filePath: string) => filePath.startsWith("/") ?
-    filePath.replace("/", "") : filePath;
+const trimStartSlash = (filePath: string) => {
+    const p = filePath.startsWith("/") ? filePath.replace("/", "") : filePath;
+    return p.replace("workspace/", "");
+};

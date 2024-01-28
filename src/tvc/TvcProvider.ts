@@ -5,7 +5,8 @@ import { SourceControlMetaMessage } from "meltos_ts_lib/src/scm/changes/ScmToWeb
 import { SessionConfigs, WasmFileSystem, WasmTvcClient } from "../../wasm";
 import { BundleType } from "meltos_ts_lib/src/tvc/Bundle";
 import { CommitHistoryWebView } from "./CommitHistoryWebView";
-import { RootFileSystem } from "../fs/RootFileSystem";
+import { RoomFileSystem } from "../fs/RoomFileSystem";
+import path from "path";
 
 export class TvcProvider {
     private readonly _history: TvcChangeHistory;
@@ -14,12 +15,13 @@ export class TvcProvider {
         this._emitter.event;
 
     constructor(
+        context: vscode.ExtensionContext,
         private readonly branchName: string,
-        private readonly rootFs: RootFileSystem,
+        private readonly rootFs: RoomFileSystem,
         private readonly tvc: WasmTvcClient,
         private readonly view: CommitHistoryWebView
     ) {
-        this._history = new TvcChangeHistory(branchName, tvc);
+        this._history = new TvcChangeHistory(branchName, context, tvc);
         this.registerChangeFileEvents();
     }
 
@@ -52,7 +54,7 @@ export class TvcProvider {
         if (filePath) {
             await this.tvc.stage(
                 this.branchName,
-                filePath.replace("workspace/", "")
+                filePath
             );
             await this._history.moveToStagesFromChanges(filePath);
         } else {
@@ -64,7 +66,7 @@ export class TvcProvider {
 
     readonly unStage = async (filePath: string | null) => {
         if (filePath) {
-            await this.tvc.un_stage(filePath);
+            await this.tvc.un_stage(`workspace/${filePath}`);
             await this._history.moveToChangesFromStages(filePath);
         } else {
             await this.tvc.un_stage_all();
@@ -91,9 +93,7 @@ export class TvcProvider {
 
     private registerChangeFileEvents() {
         this.rootFs.onDidChangeFile(async (changes) => {
-            for (const event of changes.filter((c) =>
-                c.uri.path.startsWith("/workspace/")
-            )) {
+            for (const event of changes) {
                 await this._history.feed(event);
                 await this.fireUpdateScm();
             }

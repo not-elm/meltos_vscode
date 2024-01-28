@@ -11,10 +11,14 @@ export class FileChangeEventEmitter {
     ) {}
 
     notify(uri: string, changeType: "create" | "change" | "delete") {
+        if(!uri.startsWith("workspace")){
+            return;
+        }
+
         this._emitter.fire([
             {
                 type: convertToFileChangeType(changeType),
-                uri: vscode.Uri.parse(uri).with({
+                uri: vscode.Uri.parse(uri.replace("workspace/", "")).with({
                     scheme: this.scheme,
                     authority: this.branchName
                 }),

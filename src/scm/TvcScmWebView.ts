@@ -76,12 +76,12 @@ export class TvcScmWebView implements vscode.WebviewViewProvider {
                     await this._webView?.postMessage(this._provider.scmMetas());
                     break;
                 case "showDiff":
-                    await openObjDiff(message.meta);
+                    await openObjDiff(message.meta, this.sessionConfigs.user_id[0]);
                     break;
                 case "openFile":
                     await vscode.commands.executeCommand(
                         "vscode.open",
-                        toMeltosUri(message.filePath)
+                        toMeltosUri(message.filePath, this.sessionConfigs.user_id[0])
                     );
                     break;
                 case "unStage":
@@ -92,14 +92,14 @@ export class TvcScmWebView implements vscode.WebviewViewProvider {
 
         webviewView.onDidChangeVisibility(async () => {
             if (webviewView.visible) {
-                const message = this._provider.scmMetas();
+                const message = await this._provider.scmMetas();
                 await this._webView?.postMessage(message);
             }
         });
         this._webView = webviewView.webview;
         this.registerOnUpdateScm();
-        await sleep(800);
-        await this._webView?.postMessage(this._provider.scmMetas());
+        await sleep(500);
+        await this._webView?.postMessage(await this._provider.scmMetas());
     }
 
     private registerOnUpdateScm = () => {

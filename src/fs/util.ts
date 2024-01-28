@@ -10,9 +10,10 @@ export const parseParentPath = (uri: string, ignoreCount: number = 0) => {
     return 1 < ps.length ? ps.slice(0, ps.length - 1 - ignoreCount).join("/") : "";
 };
 
-export const toMeltosUri = (uri: string) => {
+export const toMeltosUri = (uri: string, userId: string) => {
     return vscode.Uri.parse(backslashToSlash(uri)).with({
         scheme: "meltos",
+        authority: userId
     });
 };
 

@@ -6,7 +6,7 @@ import { wasm } from "../wasm";
 import { FileChangeObserver } from "../tvc/FileChangeObserver";
 import path from "path";
 
-export class RootFileSystem implements vscode.FileSystemProvider {
+export class RoomFileSystem implements vscode.FileSystemProvider {
     onDidChangeFile: vscode.Event<vscode.FileChangeEvent[]>;
     private readonly fileSystems: Map<string, WasmFileSystem>;
     constructor(
@@ -14,11 +14,6 @@ export class RootFileSystem implements vscode.FileSystemProvider {
     ) {
         this.fileSystems = new Map();
         this.onDidChangeFile = observer.onDidChangeFile;
-        this.onDidChangeFile(e => {
-            e.forEach((t) => {
-                console.log(`${t.type} $$ ${t.uri}`)
-            });
-        });
     }
 
     set(branch: string, fs: WasmFileSystem) {
@@ -131,7 +126,7 @@ export class RootFileSystem implements vscode.FileSystemProvider {
 
     asUri(uri: vscode.Uri) {
         const u = uri.path.startsWith("/") ? uri.path.replace("/", "") : uri.path;
-        return `${u.length === 0 ? "." : u}`;
+        return `${u.length === 0 ? "workspace" : path.join("workspace", u).replaceAll("\\", "/")}`;
     }
 }
 

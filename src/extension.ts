@@ -17,7 +17,7 @@ import {DiscussionProvider} from "./discussion/DiscussionProvider";
 import {BundleType} from "meltos_ts_lib/src/tvc/Bundle";
 import {TvcProvider} from "./tvc/TvcProvider";
 import {SessionConfigsType} from "meltos_ts_lib/dist/SessionConfigs";
-import {RootFileSystem} from "./fs/RootFileSystem";
+import {RoomFileSystem} from "./fs/RoomFileSystem";
 import {copyRealWorkspaceToVirtual, openWorkspacePathDialog} from "./fs/util";
 import {TvcScmWebView} from "./scm/TvcScmWebView";
 import {FileChangeEventEmitter} from "./tvc/FileChangeEventEmitter";
@@ -33,16 +33,16 @@ export async function activate(context: vscode.ExtensionContext) {
     console.debug("========= activate =========");
     const meltos = await wasm;
 
-    const meltosObserver = new FileChangeObserver();
-    const rootFs = new RootFileSystem(meltosObserver);
+    const fileObserver = new FileChangeObserver();
+    const roomFs = new RoomFileSystem(fileObserver);
 
     context.subscriptions.push(
-        vscode.workspace.registerFileSystemProvider("meltos", rootFs, {
+        vscode.workspace.registerFileSystemProvider("meltos", roomFs, {
             isCaseSensitive: true,
         })
     );
     context.subscriptions.push(
-        vscode.workspace.registerFileSystemProvider("users", rootFs, {
+        vscode.workspace.registerFileSystemProvider("users", roomFs, {
             isCaseSensitive: true,
             isReadonly: true
         })
@@ -55,29 +55,22 @@ export async function activate(context: vscode.ExtensionContext) {
         context.globalState.get("session");
     if (s) {
         const meltosEmitter = new FileChangeEventEmitter("meltos", s.user_id);
-        meltosObserver.register(meltosEmitter);
+        fileObserver.register(meltosEmitter);
         const fs = new meltos.WasmFileSystem(meltosEmitter);
         const tvc = new meltos.WasmTvcClient(fs);
-        rootFs.set(s.user_id, tvc.fs());
+        roomFs.set(s.user_id, tvc.fs());
 
         await context.globalState.update("session", undefined);
         await tvc.fs().create_dir_api("workspace");
         await tvc.unzip(s.user_id);
 
-        const branchNames = (await tvc.branch_names())[0].filter(name => name !== s.user_id);
-        for (const name of branchNames) {
-            const usersEmitter = new FileChangeEventEmitter("users", name);
-            meltosObserver.register(usersEmitter);
-            const f = new meltos.WasmFileSystem(usersEmitter);
-            const t = new meltos.WasmTvcClient(f);
-            rootFs.set(name, f);
-            await t.unzip(name);
-        }
+        await initRoomUserWorkspaces(s.user_id, tvc, roomFs, fileObserver);
 
         const commitHistoryView = new CommitHistoryWebView(s.user_id, tvc);
         const provider = new TvcProvider(
+            context,
             s.user_id,
-            rootFs,
+            roomFs,
             tvc,
             commitHistoryView
         );
@@ -109,6 +102,25 @@ export async function deactivate() {
         vscode.workspace.workspaceFolders?.length
     );
 }
+
+
+const initRoomUserWorkspaces = async (
+    selfUserId: string,
+    tvc: WasmTvcClient,
+    roomFs: RoomFileSystem,
+    fileObserver: FileChangeObserver
+) => {
+    const meltos = await wasm;
+    const branchNames = (await tvc.branch_names())[0].filter(name => name !== selfUserId);
+    for (const name of branchNames) {
+        const usersEmitter = new FileChangeEventEmitter("users", name);
+        fileObserver.register(usersEmitter);
+        const fs = new meltos.WasmFileSystem(usersEmitter);
+        const tvc = new meltos.WasmTvcClient(fs);
+        roomFs.set(name, fs);
+        await tvc.unzip(name);
+    }
+};
 
 const registerOpenRoomCommand = (context: vscode.ExtensionContext) => {
     context.subscriptions.push(
