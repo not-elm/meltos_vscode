@@ -1,5 +1,5 @@
 import vscode, { FileChangeType } from "vscode";
-import { Stat, StatType, WasmFileSystem } from "../../wasm";
+import {Stat, StatType, WasmFileSystem, WasmTvcClient} from "../../wasm";
 import { json } from "stream/consumers";
 import { FileChangeEventEmitter } from "../tvc/FileChangeEventEmitter";
 import { wasm } from "../wasm";
@@ -8,7 +8,7 @@ import path from "path";
 
 export class RoomFileSystem implements vscode.FileSystemProvider {
     onDidChangeFile: vscode.Event<vscode.FileChangeEvent[]>;
-    private readonly fileSystems: Map<string, WasmFileSystem>;
+    private readonly fileSystems: Map<string, WasmTvcClient>;
     constructor(
         observer: FileChangeObserver
     ) {
@@ -16,10 +16,9 @@ export class RoomFileSystem implements vscode.FileSystemProvider {
         this.onDidChangeFile = observer.onDidChangeFile;
     }
 
-    set(branch: string, fs: WasmFileSystem) {
-        this.fileSystems.set(branch, fs);
+    set(branch: string, tvc: WasmTvcClient) {
+        this.fileSystems.set(branch, tvc);
     }
-
 
     watch(
         uri: vscode.Uri,
@@ -116,10 +115,12 @@ export class RoomFileSystem implements vscode.FileSystemProvider {
         const branch = uri.authority;
         const fs = this.fileSystems.get(branch);
         if (fs) {
-            return fs;
+            return fs.fs();
         } else {
-            const newFs = new (await wasm).WasmFileSystem();
-            this.fileSystems.set(branch, newFs);
+            const meltos = await wasm;
+            const newFs = new meltos.WasmFileSystem();
+            const tvc =new meltos.WasmTvcClient(newFs);
+            this.fileSystems.set(branch, tvc);
             return newFs;
         }
     }

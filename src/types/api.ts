@@ -4,6 +4,11 @@ export interface DiscussionMetaType {
     title: string;
 }
 
+
+export interface JoinedType{
+    user_id: string
+}
+
 export interface Open {
     user_id: string,
     lifetime_secs?: number

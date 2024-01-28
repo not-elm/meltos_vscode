@@ -24,6 +24,7 @@ import {FileChangeEventEmitter} from "./tvc/FileChangeEventEmitter";
 import {error} from "./logger";
 import {wasm} from "./wasm";
 import {FileChangeObserver} from "./tvc/FileChangeObserver";
+import {RoomUsersTreeProvider} from "./RoomUsersTreeProvider";
 
 let websocket: ChannelWebsocket | undefined;
 let discussionWebviewManager: DiscussionWebViewManager | undefined;
@@ -58,13 +59,16 @@ export async function activate(context: vscode.ExtensionContext) {
         fileObserver.register(meltosEmitter);
         const fs = new meltos.WasmFileSystem(meltosEmitter);
         const tvc = new meltos.WasmTvcClient(fs);
-        roomFs.set(s.user_id, tvc.fs());
+        roomFs.set(s.user_id, tvc);
 
         await context.globalState.update("session", undefined);
         await tvc.fs().create_dir_api("workspace");
         await tvc.unzip(s.user_id);
+        
+        const users = new RoomUsersTreeProvider();
+        vscode.window.registerTreeDataProvider('meltos.users', users);
 
-        await initRoomUserWorkspaces(s.user_id, tvc, roomFs, fileObserver);
+        await initRoomUserWorkspaces(s.user_id, tvc, users, roomFs, fileObserver);
 
         const commitHistoryView = new CommitHistoryWebView(s.user_id, tvc);
         const provider = new TvcProvider(
@@ -81,7 +85,7 @@ export async function activate(context: vscode.ExtensionContext) {
             s.user_id
         );
         registerScmView(context, sessionConfigs, provider);
-        registerDiscussion(context, sessionConfigs, provider, meltos);
+        registerDiscussion(context, sessionConfigs, users, roomFs, provider);
         registerClipboardRoomIdCommand(context, sessionConfigs.room_id[0]);
 
         const objProvider = new ObjFileProvider(tvc);
@@ -107,17 +111,20 @@ export async function deactivate() {
 const initRoomUserWorkspaces = async (
     selfUserId: string,
     tvc: WasmTvcClient,
+    users: RoomUsersTreeProvider,
     roomFs: RoomFileSystem,
     fileObserver: FileChangeObserver
 ) => {
+    users.pushUser(selfUserId);
     const meltos = await wasm;
     const branchNames = (await tvc.branch_names())[0].filter(name => name !== selfUserId);
     for (const name of branchNames) {
+        users.pushUser(name);
         const usersEmitter = new FileChangeEventEmitter("users", name);
         fileObserver.register(usersEmitter);
         const fs = new meltos.WasmFileSystem(usersEmitter);
         const tvc = new meltos.WasmTvcClient(fs);
-        roomFs.set(name, fs);
+        roomFs.set(name, tvc);
         await tvc.unzip(name);
     }
 };
@@ -212,8 +219,9 @@ const registerScmView = (
 const registerDiscussion = (
     context: vscode.ExtensionContext,
     config: SessionConfigs,
-    tvc: TvcProvider,
-    meltos: any
+    users: RoomUsersTreeProvider,
+    roomFs: RoomFileSystem,
+    tvc: TvcProvider
 ) => {
     const io = new InMemoryDiscussionIo();
     const tree = new DiscussionTreeProvider(io);
@@ -226,13 +234,14 @@ const registerDiscussion = (
     const web = new DiscussionWebViewManager(context, io, http);
     discussionWebviewManager = web;
     const provider = new DiscussionProvider(io, tree, web);
-    websocket = new ChannelWebsocket(provider, tvc, config);
+   
+    websocket = new ChannelWebsocket(provider, users, roomFs, tvc, config);
     websocket.connectChannel(config.room_id[0], config.session_id[0]);
 
     vscode.window.registerTreeDataProvider("meltos.discussions", tree);
     registerCreateDiscussion(context, http);
     registerShowDiscussion(context, web, io);
-    registerSyncCommand(context, http, provider, tvc, meltos);
+    registerSyncCommand(context, http, provider, tvc);
 };
 
 const registerCreateDiscussion = (
@@ -295,8 +304,7 @@ const registerSyncCommand = (
     context: vscode.ExtensionContext,
     http: HttpRoomClient,
     discussion: DiscussionProvider,
-    tvc: TvcProvider,
-    meltos: any
+    tvc: TvcProvider
 ) => {
     context.subscriptions.push(
         vscode.commands.registerCommand("meltos.sync", async () => {

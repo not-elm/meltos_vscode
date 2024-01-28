@@ -1,18 +1,23 @@
 import WebSocket from "ws";
 import * as vscode from "vscode";
 
-import { ClosedType, CreatedType, RepliedType, SpokeType } from "./types/api";
+import {ClosedType, CreatedType, JoinedType, RepliedType, SpokeType} from "./types/api";
 import { SessionConfigs } from "../wasm";
 import { DiscussionProvider } from "./discussion/DiscussionProvider";
 import { TvcProvider } from "./tvc/TvcProvider";
 import { BundleType } from "meltos_ts_lib/src/tvc/Bundle";
 import { HttpRoomClient } from "./http";
+import {RoomUsersTreeProvider} from "./RoomUsersTreeProvider";
+import {RoomFileSystem} from "./fs/RoomFileSystem";
+import {wasm} from "./wasm";
 
 export class ChannelWebsocket implements vscode.Disposable {
     private _ws: WebSocket | undefined;
 
     constructor(
         private readonly discussion: DiscussionProvider,
+        private readonly users: RoomUsersTreeProvider,
+        private readonly roomFs: RoomFileSystem,
         private readonly tvc: TvcProvider,
         private readonly sessionConfigs: SessionConfigs
     ) {}
@@ -64,10 +69,7 @@ export class ChannelWebsocket implements vscode.Disposable {
         switch (ty) {
             case "joined":
                 const joined = json.message as Joined;
-                // this.users.pushUser(joined.user_id);
-                vscode.window.showInformationMessage(
-                    `Joined user id=${joined.user_id}`
-                );
+                await this.onJoined(joined);
                 break;
             case "discussionCreated":
                 await this.onCreated(json.message as CreatedType);
@@ -85,6 +87,27 @@ export class ChannelWebsocket implements vscode.Disposable {
                 await this.onPushed(json.from, json.message);
                 break;
         }
+    };
+
+    private onJoined = async (joined: JoinedType) => {
+        this.users.pushUser(joined.user_id);
+        vscode.window.showInformationMessage(
+            `Joined user id=${joined.user_id}`
+        );
+        const meltos = await wasm;
+        const fs = new meltos.WasmFileSystem();
+        const tvc = new meltos.WasmTvcClient(fs);
+        this.roomFs.set(joined.user_id, tvc);
+
+        const folders = vscode.workspace.workspaceFolders?.length;
+        vscode.workspace.updateWorkspaceFolders(folders || 0, null, {
+            uri: vscode.Uri.parse("users:/").with({
+                authority: joined.user_id
+            }),
+            name: joined.user_id
+        });
+        await tvc.unzip(joined.user_id);
+
     };
 
     onCreated = async (created: CreatedType) => {
