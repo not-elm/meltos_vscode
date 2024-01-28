@@ -1,27 +1,29 @@
 import * as vscode from "vscode";
-import { Uri } from "vscode";
-import { createOwnerArgs, createUserArgs, isOwner, OwnerArgs, UserArgs, } from "./args";
-import { Bundle, SessionConfigs } from "../wasm";
+import {Uri} from "vscode";
+import {createOwnerArgs, createUserArgs, isOwner, OwnerArgs, UserArgs,} from "./args";
+import {Bundle, SessionConfigs, WasmTvcClient} from "../wasm";
 
-import { DiscussionTreeProvider } from "./discussion/DiscussionTreeProvider";
-import { InMemoryDiscussionIo } from "./discussion/io/InMemory";
-import { DiscussionIo } from "./discussion/io/DiscussionIo";
-import { DiscussionWebViewManager } from "./discussion/DiscussionWebView";
-import { HttpRoomClient } from "./http";
-import { ChannelWebsocket } from "./ChannelWebsocket";
-import { CommitHistoryWebView, registerShowHistoryCommand, } from "./tvc/CommitHistoryWebView";
-import { ObjFileProvider } from "./tvc/ObjFileProvider";
+import {DiscussionTreeProvider} from "./discussion/DiscussionTreeProvider";
+import {InMemoryDiscussionIo} from "./discussion/io/InMemory";
+import {DiscussionIo} from "./discussion/io/DiscussionIo";
+import {DiscussionWebViewManager} from "./discussion/DiscussionWebView";
+import {HttpRoomClient} from "./http";
+import {ChannelWebsocket} from "./ChannelWebsocket";
+import {CommitHistoryWebView, registerShowHistoryCommand,} from "./tvc/CommitHistoryWebView";
+import {ObjFileProvider} from "./tvc/ObjFileProvider";
 
-import { copy } from "copy-paste";
-import { DiscussionProvider } from "./discussion/DiscussionProvider";
-import { BundleType } from "meltos_ts_lib/src/tvc/Bundle";
-import { TvcProvider } from "./tvc/TvcProvider";
-import { SessionConfigsType } from "meltos_ts_lib/dist/SessionConfigs";
-import { RootFileSystem } from "./fs/RootFileSystem";
-import { copyRealWorkspaceToVirtual, openWorkspacePathDialog } from "./fs/util";
-import { TvcScmWebView } from "./scm/TvcScmWebView";
-import { FileChangeEventEmitter } from "./tvc/FileChangeEventEmitter";
-import { error } from "./logger";
+import {copy} from "copy-paste";
+import {DiscussionProvider} from "./discussion/DiscussionProvider";
+import {BundleType} from "meltos_ts_lib/src/tvc/Bundle";
+import {TvcProvider} from "./tvc/TvcProvider";
+import {SessionConfigsType} from "meltos_ts_lib/dist/SessionConfigs";
+import {RootFileSystem} from "./fs/RootFileSystem";
+import {copyRealWorkspaceToVirtual, openWorkspacePathDialog} from "./fs/util";
+import {TvcScmWebView} from "./scm/TvcScmWebView";
+import {FileChangeEventEmitter} from "./tvc/FileChangeEventEmitter";
+import {error} from "./logger";
+import {wasm} from "./wasm";
+import {FileChangeObserver} from "./tvc/FileChangeObserver";
 
 let websocket: ChannelWebsocket | undefined;
 let discussionWebviewManager: DiscussionWebViewManager | undefined;
@@ -29,13 +31,20 @@ let httpRoomClient: HttpRoomClient | undefined;
 
 export async function activate(context: vscode.ExtensionContext) {
     console.debug("========= activate =========");
-    const meltos = await import("../wasm/index.js");
-    const emitter = new FileChangeEventEmitter();
-    const tvc = new meltos.WasmTvcClient(emitter);
-    const rootFs = new RootFileSystem(tvc.fs(), emitter);
+    const meltos = await wasm;
+
+    const meltosObserver = new FileChangeObserver();
+    const rootFs = new RootFileSystem(meltosObserver);
+
     context.subscriptions.push(
         vscode.workspace.registerFileSystemProvider("meltos", rootFs, {
             isCaseSensitive: true,
+        })
+    );
+    context.subscriptions.push(
+        vscode.workspace.registerFileSystemProvider("users", rootFs, {
+            isCaseSensitive: true,
+            isReadonly: true
         })
     );
 
@@ -45,9 +54,25 @@ export async function activate(context: vscode.ExtensionContext) {
     const s: SessionConfigsType | undefined =
         context.globalState.get("session");
     if (s) {
+        const meltosEmitter = new FileChangeEventEmitter("meltos", s.user_id);
+        meltosObserver.register(meltosEmitter);
+        const fs = new meltos.WasmFileSystem(meltosEmitter);
+        const tvc = new meltos.WasmTvcClient(fs);
+        rootFs.set(s.user_id, tvc.fs());
+
         await context.globalState.update("session", undefined);
         await tvc.fs().create_dir_api("workspace");
         await tvc.unzip(s.user_id);
+
+        const branchNames = (await tvc.branch_names())[0].filter(name => name !== s.user_id);
+        for (const name of branchNames) {
+            const usersEmitter = new FileChangeEventEmitter("users", name);
+            meltosObserver.register(usersEmitter);
+            const f = new meltos.WasmFileSystem(usersEmitter);
+            const t = new meltos.WasmTvcClient(f);
+            rootFs.set(name, f);
+            await t.unzip(name);
+        }
 
         const commitHistoryView = new CommitHistoryWebView(s.user_id, tvc);
         const provider = new TvcProvider(
@@ -120,8 +145,9 @@ const initFromArgs = async (
     args: UserArgs | OwnerArgs
 ) => {
     try {
-        const meltos = await import("../wasm/index.js");
-        const tvc = new meltos.WasmTvcClient();
+        const meltos = await wasm;
+        const fs = new meltos.WasmFileSystem();
+        const tvc = new meltos.WasmTvcClient(fs);
         await tvc.fs().delete_api(".meltos");
 
         let sessionConfigs: SessionConfigs;
@@ -138,11 +164,20 @@ const initFromArgs = async (
             session_id: sessionConfigs.session_id[0],
         });
         const folderCount = vscode.workspace.workspaceFolders?.length || null;
+        const branchNames = (await tvc.branch_names())[0].filter(name => name !== sessionConfigs.user_id[0]);
+        const roomUsers = branchNames.map(b => ({
+            uri: Uri.parse("users:/").with({
+                authority: b,
+            }),
+            name: b
+        }));
 
         vscode.workspace.updateWorkspaceFolders(0, folderCount, {
-            uri: Uri.parse("meltos:/"),
+            uri: Uri.parse("meltos:/").with({
+                authority: sessionConfigs.user_id[0]
+            }),
             name: sessionConfigs!.user_id[0],
-        });
+        }, ...roomUsers);
     } catch (e) {
         error(e?.toString() || "failed initialize");
         throw e;

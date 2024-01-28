@@ -2,13 +2,29 @@ import vscode, { FileChangeType } from "vscode";
 import { Stat, StatType, WasmFileSystem } from "../../wasm";
 import { json } from "stream/consumers";
 import { FileChangeEventEmitter } from "../tvc/FileChangeEventEmitter";
+import { wasm } from "../wasm";
+import { FileChangeObserver } from "../tvc/FileChangeObserver";
+import path from "path";
 
 export class RootFileSystem implements vscode.FileSystemProvider {
     onDidChangeFile: vscode.Event<vscode.FileChangeEvent[]>;
-
-    constructor(readonly fs: WasmFileSystem, emitter: FileChangeEventEmitter) {
-        this.onDidChangeFile = emitter.Event;
+    private readonly fileSystems: Map<string, WasmFileSystem>;
+    constructor(
+        observer: FileChangeObserver
+    ) {
+        this.fileSystems = new Map();
+        this.onDidChangeFile = observer.onDidChangeFile;
+        this.onDidChangeFile(e => {
+            e.forEach((t) => {
+                console.log(`${t.type} $$ ${t.uri}`)
+            });
+        });
     }
+
+    set(branch: string, fs: WasmFileSystem) {
+        this.fileSystems.set(branch, fs);
+    }
+
 
     watch(
         uri: vscode.Uri,
@@ -17,19 +33,14 @@ export class RootFileSystem implements vscode.FileSystemProvider {
             readonly excludes: readonly string[];
         }
     ): vscode.Disposable {
-        return new vscode.Disposable(() => {});
+        return new vscode.Disposable(() => { });
     }
 
     async stat(uri: vscode.Uri): Promise<vscode.FileStat> {
-        const stat = await this.fs?.stat_api(this.asUri(uri));
-       
+        const fs = await this.fs(uri);
+        const stat = await fs.stat_api(this.asUri(uri));
+
         if (stat) {
-            console.log(`uri = ${uri.path}, ${JSON.stringify({
-                ctime: Number(stat.create_time),
-                mtime: Number(stat.update_time),
-                type: convertToFileType(stat),
-                size: Number(stat.size),
-            })}`);
             return {
                 ctime: Number(stat.create_time),
                 mtime: Number(stat.update_time),
@@ -42,14 +53,14 @@ export class RootFileSystem implements vscode.FileSystemProvider {
     }
 
     async readDirectory(uri: vscode.Uri) {
+        const fs = await this.fs(uri);
         const entries =
-            (await this.fs?.read_dir_api(this.asUri(uri)))?.["0"] || [];
+            (await fs.read_dir_api(this.asUri(uri)))?.["0"] || [];
         const en: [string, vscode.FileType][] = [];
         for (const entryUri of entries) {
-            const stat = await this.fs.stat_api(entryUri);
-
+            const stat = await fs.stat_api(entryUri);
             en.push([
-                entryUri,
+                path.basename(entryUri),
                 convertToFileType(stat),
             ]);
         }
@@ -57,12 +68,14 @@ export class RootFileSystem implements vscode.FileSystemProvider {
     }
 
     async createDirectory(uri: vscode.Uri) {
+        const fs = await this.fs(uri);
         const p = this.asUri(uri);
-        await this.fs?.create_dir_api(p);
+        await fs.create_dir_api(p);
     }
 
     async readFile(uri: vscode.Uri) {
-        const buf = await this.fs?.read_file_api(this.asUri(uri));
+        const fs = await this.fs(uri);
+        const buf = await fs.read_file_api(this.asUri(uri));
         if (buf) {
             return buf[0];
         }
@@ -77,11 +90,13 @@ export class RootFileSystem implements vscode.FileSystemProvider {
             readonly overwrite: boolean;
         }
     ) {
-        await this.fs?.write_file_api(this.asUri(uri), content);
+        const fs = await this.fs(uri);
+        await fs.write_file_api(this.asUri(uri), content);
     }
 
     async delete(uri: vscode.Uri, options: { readonly recursive: boolean }) {
-        await this.fs.delete_api(uri.path);
+        const fs = await this.fs(uri);
+        await fs.delete_api(uri.path);
     }
 
     async rename(
@@ -89,13 +104,29 @@ export class RootFileSystem implements vscode.FileSystemProvider {
         newUri: vscode.Uri,
         options: { readonly overwrite: boolean }
     ) {
-        const jsBuf = await this.fs?.read_file_api(this.asUri(oldUri));
+        const fs = await this.fs(oldUri);
+
+        const jsBuf = await fs.read_file_api(this.asUri(oldUri));
         if (!jsBuf) {
             return;
         }
         const buf = jsBuf[0];
-        await this.fs.delete_api(this.asUri(oldUri));
-        await this.fs?.write_file_api(this.asUri(newUri), buf);
+
+        await fs.delete_api(this.asUri(oldUri));
+        await fs.write_file_api(this.asUri(newUri), buf);
+    }
+
+
+    async fs(uri: vscode.Uri) {
+        const branch = uri.authority;
+        const fs = this.fileSystems.get(branch);
+        if (fs) {
+            return fs;
+        } else {
+            const newFs = new (await wasm).WasmFileSystem();
+            this.fileSystems.set(branch, newFs);
+            return newFs;
+        }
     }
 
     asUri(uri: vscode.Uri) {
@@ -106,12 +137,12 @@ export class RootFileSystem implements vscode.FileSystemProvider {
 
 
 
-const convertToFileType =  (stat: Stat | undefined) => {
-    if(!stat){
+const convertToFileType = (stat: Stat | undefined) => {
+    if (!stat) {
         return vscode.FileType.Unknown;
     }
-   
-    switch(stat.ty){
+
+    switch (stat.ty) {
         case 0:
             return vscode.FileType.File;
         case 1:
@@ -119,4 +150,4 @@ const convertToFileType =  (stat: Stat | undefined) => {
         default:
             return vscode.FileType.Unknown;
     }
-}
+};

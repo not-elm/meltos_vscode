@@ -21,8 +21,9 @@ const extensionConfig = {
 
     experiments: {
         asyncWebAssembly: true,
+        topLevelAwait: true
         // lazyCompilation: true,
-        //  syncWebAssembly: true, topLevelAwait: true
+        //  syncWebAssembly: true, 
     },
     externals: {
         vscode: "commonjs vscode", // the vscode-module is created on-the-fly and must be excluded. Add other modules that cannot be webpack'ed, 📖 -> https://webpack.js.org/configuration/externals/
@@ -40,7 +41,7 @@ const extensionConfig = {
                         loader: "ts-loader",
                     },
                 ],
-            },
+            }
             // {
             // 	test: /\.wasm$/,
             // 	type: "asset/inline",
