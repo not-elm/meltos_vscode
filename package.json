@@ -1,5 +1,6 @@
 {
   "name": "meltos-vscode",
+  "publisher": "elm",
   "displayName": "meltos-vscode",
   "description": "",
   "version": "0.0.1",
@@ -14,6 +15,16 @@
     "onFileSystem:meltos"
   ],
   "contributes": {
+    "configuration": {
+      "title": "meltos",
+      "properties": {
+        "meltos.saveDirPath": {
+          "type": "string",
+          "default": "",
+          "description": "ルームが閉じられた際に、指定のディレクトリに現在のワークスペースの内容を保存します。"
+        }
+      }
+    },
     "viewsContainers": {
       "activitybar": [
         {

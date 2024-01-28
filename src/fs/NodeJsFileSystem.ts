@@ -130,19 +130,14 @@ export class NodeJsFileSystem implements TvcFileSystem {
         });
     }
 
-    private asPath(uri: vscode.Uri | string | null = null) {
+    private asPath(uri: vscode.Uri | string) {
         let p: string;
-        if (!uri) {
-            return path.join(process.env.APPDATA!, "meltos");
-        }
-
+        
         if (typeof uri === "string") {
             p = uri;
         } else {
             p = uri.fsPath;
         }
-        return path
-            .join(process.env.APPDATA!, "meltos", p)
-            .replaceAll("\\", "/");
+        return p;
     }
 }

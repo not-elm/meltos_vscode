@@ -1,15 +1,15 @@
 import WebSocket from "ws";
 import * as vscode from "vscode";
 
-import { ClosedType, CreatedType, JoinedType, LeftType, RepliedType, SpokeType } from "./types/api";
-import { SessionConfigs } from "../wasm";
-import { DiscussionProvider } from "./discussion/DiscussionProvider";
-import { TvcProvider } from "./tvc/TvcProvider";
-import { BundleType } from "meltos_ts_lib/src/tvc/Bundle";
-import { HttpRoomClient } from "./http";
-import { RoomUsersTreeProvider } from "./RoomUsersTreeProvider";
-import { RoomFileSystem } from "./fs/RoomFileSystem";
-import { wasm } from "./wasm";
+import {ClosedType, CreatedType, JoinedType, LeftType, RepliedType, SpokeType} from "./types/api";
+import {SessionConfigs} from "../wasm";
+import {DiscussionProvider} from "./discussion/DiscussionProvider";
+import {TvcProvider} from "./tvc/TvcProvider";
+import {BundleType} from "meltos_ts_lib/src/tvc/Bundle";
+import {HttpRoomClient} from "./http";
+import {RoomUsersTreeProvider} from "./RoomUsersTreeProvider";
+import {RoomFileSystem} from "./fs/RoomFileSystem";
+import {wasm} from "./wasm";
 
 export class ChannelWebsocket implements vscode.Disposable {
     private _ws: WebSocket | undefined;
@@ -20,7 +20,8 @@ export class ChannelWebsocket implements vscode.Disposable {
         private readonly roomFs: RoomFileSystem,
         private readonly tvc: TvcProvider,
         private readonly sessionConfigs: SessionConfigs
-    ) { }
+    ) {
+    }
 
     connectChannel(roomId: string, sessionId: string) {
         const statusBar = vscode.window.createStatusBarItem();
@@ -46,8 +47,8 @@ export class ChannelWebsocket implements vscode.Disposable {
 
         ws.on("close", async () => {
             console.log("close room channel");
-            await vscode.window.showWarningMessage("Room closed");
-
+            vscode.window.showWarningMessage("Room closed");
+            await this.saveWorkspaceIfNeed();
             const http = new HttpRoomClient({
                 room_id: this.sessionConfigs.room_id[0],
                 session_id: this.sessionConfigs.session_id[0],
@@ -66,7 +67,22 @@ export class ChannelWebsocket implements vscode.Disposable {
         this._ws?.close();
     }
 
-    onMessage = async (message: WebSocket.RawData) => {
+    private saveWorkspaceIfNeed = async () => {
+        try {
+            const config = vscode.workspace.getConfiguration('meltos');
+            const saveDirPath: string | null | undefined = config.get("saveDirPath");
+            if (saveDirPath && 0 < saveDirPath.length) {
+                await this.roomFs.copyWorkspace(this.sessionConfigs.user_id[0], saveDirPath);
+            }
+        } catch (e) {
+            console.error(e);
+            if (e instanceof Error) {
+                vscode.window.showErrorMessage(e.message);
+            }
+        }
+    };
+
+    private onMessage = async (message: WebSocket.RawData) => {
         const json: RoomMessage = JSON.parse(message.toString());
         const ty = json.message["type"];
         switch (ty) {
@@ -138,7 +154,7 @@ export class ChannelWebsocket implements vscode.Disposable {
         await this.withTryCatch(async () => {
             this.showComingMessageIfFromOthers(
                 created.meta.creator,
-                `Created discussion(${created.meta.title})` ,
+                `Created discussion(${created.meta.title})`,
                 created.meta.id
             );
 

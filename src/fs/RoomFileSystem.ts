@@ -23,7 +23,7 @@ export class RoomFileSystem implements vscode.FileSystemProvider {
         const nodeJs = new NodeJsFileSystem();
         for(const fileUri of (await fs.all_files_in_api("workspace"))[0]){
             const buf = await fs.read_file_api(fileUri);
-            await nodeJs.write_file(path.join(distDirPath, fileUri), buf![0]);
+            await nodeJs.write_file(path.join(distDirPath, fileUri.replace("workspace/", "")), buf![0]);
         }
     }
 
