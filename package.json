@@ -18,6 +18,16 @@
     "configuration": {
       "title": "meltos",
       "properties": {
+        "meltos.roomLifetimeSecs": {
+          "type": "number",
+          "default": 21600,
+          "description": "ルームの生存時間(秒)"
+        },
+        "meltos.roomCapacity": {
+          "type": "number",
+          "default": 50,
+          "description": "ルームの定員数"
+        },
         "meltos.saveDirPath": {
           "type": "string",
           "default": "",
