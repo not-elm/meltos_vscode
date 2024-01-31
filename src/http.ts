@@ -1,30 +1,35 @@
 import {CreatedType, RepliedType, SpokeType} from "./types/api";
 import {RoomBundleType} from "meltos_ts_lib/src/RoomBundle";
+import {SessionConfigsType} from "meltos_ts_lib/dist/SessionConfigs";
+import WebSocket from "ws";
+import {RoomChannel} from "./RoomChannel";
 
 const BASE_URI: string = "http://192.168.10.103:3000";
 
 export class HttpRoomClient {
     constructor(
-        private readonly opened: {
-            room_id: string;
-            session_id: string;
-            user_id: string;
-        }
+        private readonly configs: SessionConfigsType
     ) {
     }
 
     get roomId() {
-        return this.opened.room_id;
+        return this.configs.room_id;
     }
 
     get sessionId() {
-        return this.opened.session_id;
+        return this.configs.session_id;
     }
 
-    static async open(userId?: string) {
-        const opened = await httpOpen(userId);
+    static async open() {
+        const opened = await httpOpen();
         return new HttpRoomClient(opened);
     }
+
+
+    async connectChannel() {
+        return RoomChannel.connect(this.configs);
+    }
+
 
     readonly sync = async (): Promise<RoomBundleType> => {
         const response = await fetch(this.apiUri(), {
@@ -35,13 +40,13 @@ export class HttpRoomClient {
     };
 
     readonly create = async (title: string) => {
-        return await httpCreate(this.opened.room_id, this.opened.session_id, title);
+        return await httpCreate(this.configs.room_id, this.configs.session_id, title);
     };
 
     readonly speak = async (discussionId: string, message: string) => {
         return await httpSpeak(
-            this.opened.room_id,
-            this.opened.session_id,
+            this.configs.room_id,
+            this.configs.session_id,
             discussionId,
             message
         );
@@ -53,8 +58,8 @@ export class HttpRoomClient {
         message: string
     ) => {
         return await httpReply(
-            this.opened.room_id,
-            this.opened.session_id,
+            this.configs.room_id,
+            this.configs.session_id,
             discussionId,
             to,
             message

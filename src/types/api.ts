@@ -19,6 +19,7 @@ export interface Open {
 }
 
 export interface CreatedType {
+    name: "discussion.global.created"
     meta: DiscussionMetaType;
 }
 
