@@ -1,7 +1,7 @@
 {
-  "name": "meltos-vscode",
+  "name": "meltos",
   "publisher": "elm",
-  "displayName": "meltos-vscode",
+  "displayName": "meltos",
   "description": "",
   "version": "0.0.1",
   "engines": {
@@ -40,82 +40,52 @@
         {
           "id": "meltos",
           "title": "meltos",
-          "icon": "$(add)"
+          "icon": "$(add)",
+          "when" : "scmProvider == meltos"
         }
       ]
     },
     "commands": [
       {
         "command": "meltos.openRoom",
-        "title": "open room",
+        "title": "meltos: Open Room",
         "when": "scmProvider != meltos"
       },
       {
         "command": "meltos.joinRoom",
-        "title": "join room",
+        "title": "meltos: Join Room",
         "when": "scmProvider != meltos"
       },
       {
         "command": "meltos.clipboard.roomId",
-        "title": "copy room id",
+        "title": "meltos: Copy Room Id",
         "when": "scmProvider == meltos"
       },
       {
         "command": "meltos.discussion.create",
-        "title": "create global discussion",
+        "title": "meltos: Create Global Discussion",
         "icon": "$(add)",
         "when": "scmProvider == meltos"
       },
       {
-        "command": "meltos.discussion.speak",
-        "title": "speak",
-        "when": "scmProvider == meltos"
-      },
-      {
-        "command": "meltos.discussion.reply",
-        "title": "reply",
-        "when": "scmProvider == meltos"
-      },
-      {
         "command": "meltos.discussion.show",
-        "title": "show discussion",
-        "when": "scmProvider == meltos"
-      },
-      {
-        "command": "meltos.init",
-        "title": "init",
+        "title": "meltos: Show Discussion",
         "when": "scmProvider == meltos"
       },
       {
         "command": "meltos.sync",
-        "title": "sync room",
+        "title": "meltos: Sync Room",
         "when": "scmProvider == meltos"
       },
       {
         "command": "meltos.fetch",
-        "title": "fetch",
+        "title": "meltos: Fetch Tvc",
         "when": "scmProvider == meltos",
         "icon": "$(refresh)"
       },
       {
-        "command": "meltos.stage",
-        "title": "stage",
-        "icon": "$(refresh)",
-        "when": "scmProvider == meltos"
-      },
-      {
-        "command": "meltos.commit",
-        "title": "commit",
-        "when": "scmProvider == meltos"
-      },
-      {
-        "command": "meltos.push",
-        "title": "push",
-        "when": "scmProvider == meltos"
-      },
-      {
         "command": "meltos.tvc.showHistory",
-        "title": "tvc show history",
+        "title": "meltos: Show Commit History",
         "when": "scmProvider == meltos",
         "icon": "$(history)"
       }
@@ -142,13 +112,6 @@
       ]
     },
     "menus": {
-      "scm/resourceState/context": [
-        {
-          "command": "meltos.stage",
-          "group": "inline",
-          "icon": "$(refresh)"
-        }
-      ],
       "view/title": [
         {
           "command": "meltos.tvc.showHistory",
