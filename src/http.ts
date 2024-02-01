@@ -1,10 +1,8 @@
 import {CreatedType, RepliedType, SpokeType} from "./types/api";
 import {RoomBundleType} from "meltos_ts_lib/src/RoomBundle";
 import {SessionConfigsType} from "meltos_ts_lib/dist/SessionConfigs";
-import WebSocket from "ws";
-import {RoomChannel} from "./RoomChannel";
 
-const BASE_URI: string = "http://192.168.10.103:3000";
+const BASE_URI: string = "http://158.101.90.235:3000";
 
 export class HttpRoomClient {
     constructor(
@@ -24,12 +22,6 @@ export class HttpRoomClient {
         const opened = await httpOpen();
         return new HttpRoomClient(opened);
     }
-
-
-    async connectChannel() {
-        return RoomChannel.connect(this.configs);
-    }
-
 
     readonly sync = async (): Promise<RoomBundleType> => {
         const response = await fetch(this.apiUri(), {

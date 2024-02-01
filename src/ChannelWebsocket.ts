@@ -1,15 +1,22 @@
 import WebSocket from "ws";
 import * as vscode from "vscode";
 
-import {ClosedType, CreatedType, JoinedType, LeftType, RepliedType, SpokeType} from "./types/api";
-import {SessionConfigs} from "../wasm";
-import {DiscussionProvider} from "./discussion/DiscussionProvider";
-import {TvcProvider} from "./tvc/TvcProvider";
-import {BundleType} from "meltos_ts_lib/src/tvc/Bundle";
-import {HttpRoomClient} from "./http";
-import {RoomUsersTreeProvider} from "./RoomUsersTreeProvider";
-import {RoomFileSystem} from "./fs/RoomFileSystem";
-import {wasm} from "./wasm";
+import {
+    ClosedType,
+    CreatedType,
+    JoinedType,
+    LeftType,
+    RepliedType,
+    SpokeType,
+} from "./types/api";
+import { SessionConfigs } from "../wasm";
+import { DiscussionProvider } from "./discussion/DiscussionProvider";
+import { TvcProvider } from "./tvc/TvcProvider";
+import { BundleType } from "meltos_ts_lib/src/tvc/Bundle";
+import { HttpRoomClient } from "./http";
+import { RoomUsersTreeProvider } from "./RoomUsersTreeProvider";
+import { RoomFileSystem } from "./fs/RoomFileSystem";
+import { wasm } from "./wasm";
 
 export class ChannelWebsocket implements vscode.Disposable {
     private _ws: WebSocket | undefined;
@@ -20,17 +27,19 @@ export class ChannelWebsocket implements vscode.Disposable {
         private readonly roomFs: RoomFileSystem,
         private readonly tvc: TvcProvider,
         private readonly sessionConfigs: SessionConfigs
-    ) {
-    }
+    ) {}
 
     connectChannel(roomId: string, sessionId: string) {
         const statusBar = vscode.window.createStatusBarItem();
 
-        const ws = new WebSocket(`ws://192.168.10.103:3000/room/${roomId}/channel`, {
-            headers: {
-                "set-cookie": `session_id=${sessionId}`,
-            },
-        });
+        const ws = new WebSocket(
+            `ws://158.101.90.235:3000/room/${roomId}/channel`,
+            {
+                headers: {
+                    "set-cookie": `session_id=${sessionId}`,
+                },
+            }
+        );
 
         ws.on("open", async () => {
             console.log("room channel opened");
@@ -69,10 +78,14 @@ export class ChannelWebsocket implements vscode.Disposable {
 
     private saveWorkspaceIfNeed = async () => {
         try {
-            const config = vscode.workspace.getConfiguration('meltos');
-            const saveDirPath: string | null | undefined = config.get("saveDirPath");
+            const config = vscode.workspace.getConfiguration("meltos");
+            const saveDirPath: string | null | undefined =
+                config.get("saveDirPath");
             if (saveDirPath && 0 < saveDirPath.length) {
-                await this.roomFs.copyWorkspace(this.sessionConfigs.user_id[0], saveDirPath);
+                await this.roomFs.copyWorkspace(
+                    this.sessionConfigs.user_id[0],
+                    saveDirPath
+                );
             }
         } catch (e) {
             console.error(e);
@@ -115,9 +128,7 @@ export class ChannelWebsocket implements vscode.Disposable {
 
     private onJoined = async (joined: JoinedType) => {
         this.users.pushUser(joined.user_id);
-        vscode.window.showInformationMessage(
-            `Joined ${joined.user_id}`
-        );
+        vscode.window.showInformationMessage(`Joined ${joined.user_id}`);
         const meltos = await wasm;
         const fs = new meltos.WasmFileSystem();
         const tvc = new meltos.WasmTvcClient(fs);
@@ -126,9 +137,9 @@ export class ChannelWebsocket implements vscode.Disposable {
         const folders = vscode.workspace.workspaceFolders?.length;
         vscode.workspace.updateWorkspaceFolders(folders || 0, null, {
             uri: vscode.Uri.parse("users:/").with({
-                authority: joined.user_id
+                authority: joined.user_id,
             }),
-            name: joined.user_id
+            name: joined.user_id,
         });
         await tvc.unzip(joined.user_id);
     };
@@ -136,14 +147,15 @@ export class ChannelWebsocket implements vscode.Disposable {
     private onLeft = async (left: LeftType) => {
         const leftUser = left.user_id;
         this.users.deleteUser(leftUser);
-        const index = vscode.workspace.workspaceFolders?.findIndex(w => w.name === leftUser);
+        const index = vscode.workspace.workspaceFolders?.findIndex(
+            (w) => w.name === leftUser
+        );
         if (index && 0 <= index) {
             this.roomFs.remove(leftUser);
             vscode.workspace.updateWorkspaceFolders(index, 1);
             vscode.window.showInformationMessage(`left ${leftUser}`);
         }
     };
-
 
     private onClosedRoom = async () => {
         vscode.window.showInformationMessage("Room closed by owner");
