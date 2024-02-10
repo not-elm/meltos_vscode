@@ -1,0 +1,910 @@
+├─ @vscode/codicons@0.0.35
+│  ├─ licenses: CC-BY-4.0
+│  ├─ repository: https://github.com/microsoft/vscode-codicons
+│  ├─ publisher: Microsoft Corporation
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\@vscode\codicons
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\@vscode\codicons\LICENSE
+├─ @wasm-tool/wasm-pack-plugin@1.7.0
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/wasm-tool/wasm-pack-plugin
+│  ├─ publisher: Sven Sauleau
+│  ├─ email: sven@sauleau.com
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\@wasm-tool\wasm-pack-plugin
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\@wasm-tool\wasm-pack-plugin\LICENSE
+├─ ansi-styles@3.2.1
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/chalk/ansi-styles
+│  ├─ publisher: Sindre Sorhus
+│  ├─ email: sindresorhus@gmail.com
+│  ├─ url: sindresorhus.com
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\ansi-styles
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\ansi-styles\license
+├─ argparse@2.0.1
+│  ├─ licenses: Python-2.0
+│  ├─ repository: https://github.com/nodeca/argparse
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\argparse
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\argparse\LICENSE
+├─ azure-devops-node-api@11.2.0
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/Microsoft/azure-devops-node-api
+│  ├─ publisher: Microsoft Corporation
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\azure-devops-node-api
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\azure-devops-node-api\LICENSE
+├─ balanced-match@1.0.2
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/juliangruber/balanced-match
+│  ├─ publisher: Julian Gruber
+│  ├─ email: mail@juliangruber.com
+│  ├─ url: http://juliangruber.com
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\balanced-match
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\balanced-match\LICENSE.md
+├─ base64-js@1.5.1
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/beatgammit/base64-js
+│  ├─ publisher: T. Jameson Little
+│  ├─ email: t.jameson.little@gmail.com
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\base64-js
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\base64-js\LICENSE
+├─ bl@4.1.0
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/rvagg/bl
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\bl
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\bl\LICENSE.md
+├─ boolbase@1.0.0
+│  ├─ licenses: ISC
+│  ├─ repository: https://github.com/fb55/boolbase
+│  ├─ publisher: Felix Boehm
+│  ├─ email: me@feedic.com
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\boolbase
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\boolbase\README.md
+├─ brace-expansion@1.1.11
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/juliangruber/brace-expansion
+│  ├─ publisher: Julian Gruber
+│  ├─ email: mail@juliangruber.com
+│  ├─ url: http://juliangruber.com
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\vsce\node_modules\brace-expansion
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\vsce\node_modules\brace-expansion\LICENSE
+├─ buffer-crc32@0.2.13
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/brianloveswords/buffer-crc32
+│  ├─ publisher: Brian J. Brennan
+│  ├─ email: brianloveswords@gmail.com
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\buffer-crc32
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\buffer-crc32\LICENSE
+├─ buffer@5.7.1
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/feross/buffer
+│  ├─ publisher: Feross Aboukhadijeh
+│  ├─ email: feross@feross.org
+│  ├─ url: https://feross.org
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\buffer
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\buffer\LICENSE
+├─ bufferutil@4.0.8
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/websockets/bufferutil
+│  ├─ publisher: Einar Otto Stangvik
+│  ├─ email: einaros@gmail.com
+│  ├─ url: http://2x.io
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\bufferutil
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\bufferutil\LICENSE
+├─ call-bind@1.0.5
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/ljharb/call-bind
+│  ├─ publisher: Jordan Harband
+│  ├─ email: ljharb@gmail.com
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\call-bind
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\call-bind\LICENSE
+├─ chalk@2.4.2
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/chalk/chalk
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\chalk
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\chalk\license
+├─ cheerio-select@2.1.0
+│  ├─ licenses: BSD-2-Clause
+│  ├─ repository: https://github.com/cheeriojs/cheerio-select
+│  ├─ publisher: Felix Boehm
+│  ├─ email: me@feedic.com
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\cheerio-select
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\cheerio-select\LICENSE
+├─ cheerio@1.0.0-rc.12
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/cheeriojs/cheerio
+│  ├─ publisher: Matt Mueller
+│  ├─ email: mattmuelle@gmail.com
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\cheerio
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\cheerio\LICENSE
+├─ chownr@1.1.4
+│  ├─ licenses: ISC
+│  ├─ repository: https://github.com/isaacs/chownr
+│  ├─ publisher: Isaac Z. Schlueter
+│  ├─ email: i@izs.me
+│  ├─ url: http://blog.izs.me/
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\chownr
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\chownr\LICENSE
+├─ color-convert@1.9.3
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/Qix-/color-convert
+│  ├─ publisher: Heather Arthur
+│  ├─ email: fayearthur@gmail.com
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\color-convert
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\color-convert\LICENSE
+├─ color-name@1.1.3
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/dfcreative/color-name
+│  ├─ publisher: DY
+│  ├─ email: dfcreative@gmail.com
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\color-name
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\color-name\LICENSE
+├─ command-exists@1.2.9
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/mathisonian/command-exists
+│  ├─ publisher: Matthew Conlen
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\command-exists
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\command-exists\LICENSE
+├─ commander@6.2.1
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/tj/commander.js
+│  ├─ publisher: TJ Holowaychuk
+│  ├─ email: tj@vision-media.ca
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\vsce\node_modules\commander
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\vsce\node_modules\commander\LICENSE
+├─ concat-map@0.0.1
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/substack/node-concat-map
+│  ├─ publisher: James Halliday
+│  ├─ email: mail@substack.net
+│  ├─ url: http://substack.net
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\concat-map
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\concat-map\LICENSE
+├─ copy-paste@1.5.3
+│  ├─ licenses: MIT*
+│  ├─ repository: https://github.com/xavi-/node-copy-paste
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\copy-paste
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\copy-paste\README.md
+├─ css-select@5.1.0
+│  ├─ licenses: BSD-2-Clause
+│  ├─ repository: https://github.com/fb55/css-select
+│  ├─ publisher: Felix Boehm
+│  ├─ email: me@feedic.com
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\css-select
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\css-select\LICENSE
+├─ css-what@6.1.0
+│  ├─ licenses: BSD-2-Clause
+│  ├─ repository: https://github.com/fb55/css-what
+│  ├─ publisher: Felix Böhm
+│  ├─ email: me@feedic.com
+│  ├─ url: http://feedic.com
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\css-what
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\css-what\LICENSE
+├─ decompress-response@6.0.0
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/sindresorhus/decompress-response
+│  ├─ publisher: Sindre Sorhus
+│  ├─ email: sindresorhus@gmail.com
+│  ├─ url: https://sindresorhus.com
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\decompress-response
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\decompress-response\license
+├─ deep-extend@0.6.0
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/unclechu/node-deep-extend
+│  ├─ publisher: Viacheslav Lotsmanov
+│  ├─ email: lotsmanov89@gmail.com
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\deep-extend
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\deep-extend\LICENSE
+├─ define-data-property@1.1.1
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/ljharb/define-data-property
+│  ├─ publisher: Jordan Harband
+│  ├─ email: ljharb@gmail.com
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\define-data-property
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\define-data-property\LICENSE
+├─ detect-libc@2.0.2
+│  ├─ licenses: Apache-2.0
+│  ├─ repository: https://github.com/lovell/detect-libc
+│  ├─ publisher: Lovell Fuller
+│  ├─ email: npm@lovell.info
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\detect-libc
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\detect-libc\LICENSE
+├─ dom-serializer@2.0.0
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/cheeriojs/dom-serializer
+│  ├─ publisher: Felix Boehm
+│  ├─ email: me@feedic.com
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\dom-serializer
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\dom-serializer\LICENSE
+├─ domelementtype@2.3.0
+│  ├─ licenses: BSD-2-Clause
+│  ├─ repository: https://github.com/fb55/domelementtype
+│  ├─ publisher: Felix Boehm
+│  ├─ email: me@feedic.com
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\domelementtype
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\domelementtype\LICENSE
+├─ domhandler@5.0.3
+│  ├─ licenses: BSD-2-Clause
+│  ├─ repository: https://github.com/fb55/domhandler
+│  ├─ publisher: Felix Boehm
+│  ├─ email: me@feedic.com
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\domhandler
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\domhandler\LICENSE
+├─ domutils@3.1.0
+│  ├─ licenses: BSD-2-Clause
+│  ├─ repository: https://github.com/fb55/domutils
+│  ├─ publisher: Felix Boehm
+│  ├─ email: me@feedic.com
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\domutils
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\domutils\LICENSE
+├─ end-of-stream@1.4.4
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/mafintosh/end-of-stream
+│  ├─ publisher: Mathias Buus
+│  ├─ email: mathiasbuus@gmail.com
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\end-of-stream
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\end-of-stream\LICENSE
+├─ entities@2.1.0
+│  ├─ licenses: BSD-2-Clause
+│  ├─ repository: https://github.com/fb55/entities
+│  ├─ publisher: Felix Boehm
+│  ├─ email: me@feedic.com
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\markdown-it\node_modules\entities
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\markdown-it\node_modules\entities\LICENSE
+├─ entities@4.5.0
+│  ├─ licenses: BSD-2-Clause
+│  ├─ repository: https://github.com/fb55/entities
+│  ├─ publisher: Felix Boehm
+│  ├─ email: me@feedic.com
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\entities
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\entities\LICENSE
+├─ escape-string-regexp@1.0.5
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/sindresorhus/escape-string-regexp
+│  ├─ publisher: Sindre Sorhus
+│  ├─ email: sindresorhus@gmail.com
+│  ├─ url: sindresorhus.com
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\escape-string-regexp
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\escape-string-regexp\license
+├─ expand-template@2.0.3
+│  ├─ licenses: (MIT OR WTFPL)
+│  ├─ repository: https://github.com/ralphtheninja/expand-template
+│  ├─ publisher: LM
+│  ├─ email: ralphtheninja@riseup.net
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\expand-template
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\expand-template\LICENSE
+├─ fd-slicer@1.1.0
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/andrewrk/node-fd-slicer
+│  ├─ publisher: Andrew Kelley
+│  ├─ email: superjoe30@gmail.com
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\fd-slicer
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\fd-slicer\LICENSE
+├─ fs-constants@1.0.0
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/mafintosh/fs-constants
+│  ├─ publisher: Mathias Buus
+│  ├─ url: @mafintosh
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\fs-constants
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\fs-constants\LICENSE
+├─ fs.realpath@1.0.0
+│  ├─ licenses: ISC
+│  ├─ repository: https://github.com/isaacs/fs.realpath
+│  ├─ publisher: Isaac Z. Schlueter
+│  ├─ email: i@izs.me
+│  ├─ url: http://blog.izs.me/
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\fs.realpath
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\fs.realpath\LICENSE
+├─ function-bind@1.1.2
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/Raynos/function-bind
+│  ├─ publisher: Raynos
+│  ├─ email: raynos2@gmail.com
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\function-bind
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\function-bind\LICENSE
+├─ get-intrinsic@1.2.2
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/ljharb/get-intrinsic
+│  ├─ publisher: Jordan Harband
+│  ├─ email: ljharb@gmail.com
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\get-intrinsic
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\get-intrinsic\LICENSE
+├─ github-from-package@0.0.0
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/substack/github-from-package
+│  ├─ publisher: James Halliday
+│  ├─ email: mail@substack.net
+│  ├─ url: http://substack.net
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\github-from-package
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\github-from-package\LICENSE
+├─ glob-to-regexp@0.4.1
+│  ├─ licenses: BSD-2-Clause
+│  ├─ repository: https://github.com/fitzgen/glob-to-regexp
+│  ├─ publisher: Nick Fitzgerald
+│  ├─ email: fitzgen@gmail.com
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\glob-to-regexp
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\glob-to-regexp\README.md
+├─ glob@7.2.3
+│  ├─ licenses: ISC
+│  ├─ repository: https://github.com/isaacs/node-glob
+│  ├─ publisher: Isaac Z. Schlueter
+│  ├─ email: i@izs.me
+│  ├─ url: http://blog.izs.me/
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\vsce\node_modules\glob
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\vsce\node_modules\glob\LICENSE
+├─ gopd@1.0.1
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/ljharb/gopd
+│  ├─ publisher: Jordan Harband
+│  ├─ email: ljharb@gmail.com
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\gopd
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\gopd\LICENSE
+├─ graceful-fs@4.2.11
+│  ├─ licenses: ISC
+│  ├─ repository: https://github.com/isaacs/node-graceful-fs
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\graceful-fs
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\graceful-fs\LICENSE
+├─ has-flag@3.0.0
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/sindresorhus/has-flag
+│  ├─ publisher: Sindre Sorhus
+│  ├─ email: sindresorhus@gmail.com
+│  ├─ url: sindresorhus.com
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\has-flag
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\has-flag\license
+├─ has-property-descriptors@1.0.1
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/inspect-js/has-property-descriptors
+│  ├─ publisher: Jordan Harband
+│  ├─ email: ljharb@gmail.com
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\has-property-descriptors
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\has-property-descriptors\LICENSE
+├─ has-proto@1.0.1
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/inspect-js/has-proto
+│  ├─ publisher: Jordan Harband
+│  ├─ email: ljharb@gmail.com
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\has-proto
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\has-proto\LICENSE
+├─ has-symbols@1.0.3
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/inspect-js/has-symbols
+│  ├─ publisher: Jordan Harband
+│  ├─ email: ljharb@gmail.com
+│  ├─ url: http://ljharb.codes
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\has-symbols
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\has-symbols\LICENSE
+├─ hasown@2.0.0
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/inspect-js/hasOwn
+│  ├─ publisher: Jordan Harband
+│  ├─ email: ljharb@gmail.com
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\hasown
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\hasown\LICENSE
+├─ hosted-git-info@4.1.0
+│  ├─ licenses: ISC
+│  ├─ repository: https://github.com/npm/hosted-git-info
+│  ├─ publisher: Rebecca Turner
+│  ├─ email: me@re-becca.org
+│  ├─ url: http://re-becca.org
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\hosted-git-info
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\hosted-git-info\LICENSE
+├─ htmlparser2@8.0.2
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/fb55/htmlparser2
+│  ├─ publisher: Felix Boehm
+│  ├─ email: me@feedic.com
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\htmlparser2
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\htmlparser2\LICENSE
+├─ iconv-lite@0.4.24
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/ashtuchkin/iconv-lite
+│  ├─ publisher: Alexander Shtuchkin
+│  ├─ email: ashtuchkin@gmail.com
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\iconv-lite
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\iconv-lite\LICENSE
+├─ ieee754@1.2.1
+│  ├─ licenses: BSD-3-Clause
+│  ├─ repository: https://github.com/feross/ieee754
+│  ├─ publisher: Feross Aboukhadijeh
+│  ├─ email: feross@feross.org
+│  ├─ url: https://feross.org
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\ieee754
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\ieee754\LICENSE
+├─ inflight@1.0.6
+│  ├─ licenses: ISC
+│  ├─ repository: https://github.com/npm/inflight
+│  ├─ publisher: Isaac Z. Schlueter
+│  ├─ email: i@izs.me
+│  ├─ url: http://blog.izs.me/
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\inflight
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\inflight\LICENSE
+├─ inherits@2.0.4
+│  ├─ licenses: ISC
+│  ├─ repository: https://github.com/isaacs/inherits
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\inherits
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\inherits\LICENSE
+├─ ini@1.3.8
+│  ├─ licenses: ISC
+│  ├─ repository: https://github.com/isaacs/ini
+│  ├─ publisher: Isaac Z. Schlueter
+│  ├─ email: i@izs.me
+│  ├─ url: http://blog.izs.me/
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\ini
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\ini\LICENSE
+├─ isexe@2.0.0
+│  ├─ licenses: ISC
+│  ├─ repository: https://github.com/isaacs/isexe
+│  ├─ publisher: Isaac Z. Schlueter
+│  ├─ email: i@izs.me
+│  ├─ url: http://blog.izs.me/
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\isexe
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\isexe\LICENSE
+├─ keytar@7.9.0
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/atom/node-keytar
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\keytar
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\keytar\LICENSE.md
+├─ leven@3.1.0
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/sindresorhus/leven
+│  ├─ publisher: Sindre Sorhus
+│  ├─ email: sindresorhus@gmail.com
+│  ├─ url: sindresorhus.com
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\leven
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\leven\license
+├─ linkify-it@3.0.3
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/markdown-it/linkify-it
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\linkify-it
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\linkify-it\LICENSE
+├─ lru-cache@6.0.0
+│  ├─ licenses: ISC
+│  ├─ repository: https://github.com/isaacs/node-lru-cache
+│  ├─ publisher: Isaac Z. Schlueter
+│  ├─ email: i@izs.me
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\hosted-git-info\node_modules\lru-cache
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\hosted-git-info\node_modules\lru-cache\LICENSE
+├─ markdown-it@12.3.2
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/markdown-it/markdown-it
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\markdown-it
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\markdown-it\LICENSE
+├─ mdurl@1.0.1
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/markdown-it/mdurl
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\mdurl
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\mdurl\LICENSE
+├─ meltos@0.0.1
+│  ├─ licenses: MIT*
+│  ├─ repository: https://github.com/not-elm/meltos_vscode
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\LICENSE
+├─ meltos_ts_lib@1.0.0
+│  ├─ licenses: ISC
+│  ├─ publisher: elm
+│  └─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\meltos_ts_lib
+├─ mime@1.6.0
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/broofa/node-mime
+│  ├─ publisher: Robert Kieffer
+│  ├─ email: robert@broofa.com
+│  ├─ url: http://github.com/broofa
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\mime
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\mime\LICENSE
+├─ mimic-response@3.1.0
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/sindresorhus/mimic-response
+│  ├─ publisher: Sindre Sorhus
+│  ├─ email: sindresorhus@gmail.com
+│  ├─ url: https://sindresorhus.com
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\mimic-response
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\mimic-response\license
+├─ minimatch@3.1.2
+│  ├─ licenses: ISC
+│  ├─ repository: https://github.com/isaacs/minimatch
+│  ├─ publisher: Isaac Z. Schlueter
+│  ├─ email: i@izs.me
+│  ├─ url: http://blog.izs.me
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\vsce\node_modules\minimatch
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\vsce\node_modules\minimatch\LICENSE
+├─ minimist@1.2.8
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/minimistjs/minimist
+│  ├─ publisher: James Halliday
+│  ├─ email: mail@substack.net
+│  ├─ url: http://substack.net
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\minimist
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\minimist\LICENSE
+├─ mkdirp-classic@0.5.3
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/mafintosh/mkdirp-classic
+│  ├─ publisher: Mathias Buus
+│  ├─ url: @mafintosh
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\mkdirp-classic
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\mkdirp-classic\LICENSE
+├─ mute-stream@0.0.8
+│  ├─ licenses: ISC
+│  ├─ repository: https://github.com/isaacs/mute-stream
+│  ├─ publisher: Isaac Z. Schlueter
+│  ├─ email: i@izs.me
+│  ├─ url: http://blog.izs.me/
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\mute-stream
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\mute-stream\LICENSE
+├─ napi-build-utils@1.0.2
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/inspiredware/napi-build-utils
+│  ├─ publisher: Jim Schlight
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\napi-build-utils
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\napi-build-utils\LICENSE
+├─ node-abi@3.54.0
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/electron/node-abi
+│  ├─ publisher: Lukas Geiger
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\node-abi
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\node-abi\LICENSE
+├─ node-addon-api@4.3.0
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/nodejs/node-addon-api
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\node-addon-api
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\node-addon-api\LICENSE.md
+├─ node-gyp-build@4.8.0
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/prebuild/node-gyp-build
+│  ├─ publisher: Mathias Buus
+│  ├─ url: @mafintosh
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\node-gyp-build
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\node-gyp-build\LICENSE
+├─ node-wav-player@0.2.0
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/futomi/node-wav-player
+│  ├─ publisher: Futomi Hatano
+│  ├─ email: futomi.hatano@gmail.com
+│  ├─ url: https://github.com/futomi
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\node-wav-player
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\node-wav-player\LICENSE
+├─ nth-check@2.1.1
+│  ├─ licenses: BSD-2-Clause
+│  ├─ repository: https://github.com/fb55/nth-check
+│  ├─ publisher: Felix Boehm
+│  ├─ email: me@feedic.com
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\nth-check
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\nth-check\LICENSE
+├─ object-inspect@1.13.1
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/inspect-js/object-inspect
+│  ├─ publisher: James Halliday
+│  ├─ email: mail@substack.net
+│  ├─ url: http://substack.net
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\object-inspect
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\object-inspect\LICENSE
+├─ once@1.4.0
+│  ├─ licenses: ISC
+│  ├─ repository: https://github.com/isaacs/once
+│  ├─ publisher: Isaac Z. Schlueter
+│  ├─ email: i@izs.me
+│  ├─ url: http://blog.izs.me/
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\once
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\once\LICENSE
+├─ parse-semver@1.1.1
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/tunnckoCore/parse-semver
+│  ├─ publisher: Charlike Mike Reagent
+│  ├─ email: @tunnckoCore
+│  ├─ url: http://www.tunnckocore.tk
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\parse-semver
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\parse-semver\LICENSE.md
+├─ parse5-htmlparser2-tree-adapter@7.0.0
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/inikulin/parse5
+│  ├─ publisher: Ivan Nikulin
+│  ├─ email: ifaaan@gmail.com
+│  ├─ url: https://github.com/inikulin
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\parse5-htmlparser2-tree-adapter
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\parse5-htmlparser2-tree-adapter\LICENSE
+├─ parse5@7.1.2
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/inikulin/parse5
+│  ├─ publisher: Ivan Nikulin
+│  ├─ email: ifaaan@gmail.com
+│  ├─ url: https://github.com/inikulin
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\parse5
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\parse5\LICENSE
+├─ path-is-absolute@1.0.1
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/sindresorhus/path-is-absolute
+│  ├─ publisher: Sindre Sorhus
+│  ├─ email: sindresorhus@gmail.com
+│  ├─ url: sindresorhus.com
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\path-is-absolute
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\path-is-absolute\license
+├─ pend@1.2.0
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/andrewrk/node-pend
+│  ├─ publisher: Andrew Kelley
+│  ├─ email: superjoe30@gmail.com
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\pend
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\pend\LICENSE
+├─ prebuild-install@7.1.1
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/prebuild/prebuild-install
+│  ├─ publisher: Mathias Buus
+│  ├─ url: @mafintosh
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\prebuild-install
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\prebuild-install\LICENSE
+├─ pump@3.0.0
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/mafintosh/pump
+│  ├─ publisher: Mathias Buus Madsen
+│  ├─ email: mathiasbuus@gmail.com
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\pump
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\pump\LICENSE
+├─ qs@6.11.2
+│  ├─ licenses: BSD-3-Clause
+│  ├─ repository: https://github.com/ljharb/qs
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\qs
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\qs\LICENSE.md
+├─ rc@1.2.8
+│  ├─ licenses: (BSD-2-Clause OR MIT OR Apache-2.0)
+│  ├─ repository: https://github.com/dominictarr/rc
+│  ├─ publisher: Dominic Tarr
+│  ├─ email: dominic.tarr@gmail.com
+│  ├─ url: dominictarr.com
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\rc
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\rc\LICENSE.APACHE2
+├─ read@1.0.7
+│  ├─ licenses: ISC
+│  ├─ repository: https://github.com/isaacs/read
+│  ├─ publisher: Isaac Z. Schlueter
+│  ├─ email: i@izs.me
+│  ├─ url: http://blog.izs.me/
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\read
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\read\LICENSE
+├─ readable-stream@3.6.2
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/nodejs/readable-stream
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\bl\node_modules\readable-stream
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\bl\node_modules\readable-stream\LICENSE
+├─ rimraf@3.0.2
+│  ├─ licenses: ISC
+│  ├─ repository: https://github.com/isaacs/rimraf
+│  ├─ publisher: Isaac Z. Schlueter
+│  ├─ email: i@izs.me
+│  ├─ url: http://blog.izs.me/
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\rimraf
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\rimraf\LICENSE
+├─ safe-buffer@5.1.2
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/feross/safe-buffer
+│  ├─ publisher: Feross Aboukhadijeh
+│  ├─ email: feross@feross.org
+│  ├─ url: http://feross.org
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\safe-buffer
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\safe-buffer\LICENSE
+├─ safer-buffer@2.1.2
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/ChALkeR/safer-buffer
+│  ├─ publisher: Nikita Skovoroda
+│  ├─ email: chalkerx@gmail.com
+│  ├─ url: https://github.com/ChALkeR
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\safer-buffer
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\safer-buffer\LICENSE
+├─ sax@1.3.0
+│  ├─ licenses: ISC
+│  ├─ repository: https://github.com/isaacs/sax-js
+│  ├─ publisher: Isaac Z. Schlueter
+│  ├─ email: i@izs.me
+│  ├─ url: http://blog.izs.me/
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\sax
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\sax\LICENSE
+├─ semver@5.7.2
+│  ├─ licenses: ISC
+│  ├─ repository: https://github.com/npm/node-semver
+│  ├─ publisher: GitHub Inc.
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\parse-semver\node_modules\semver
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\parse-semver\node_modules\semver\LICENSE
+├─ semver@7.5.4
+│  ├─ licenses: ISC
+│  ├─ repository: https://github.com/npm/node-semver
+│  ├─ publisher: GitHub Inc.
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\node-abi\node_modules\semver
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\node-abi\node_modules\semver\LICENSE
+├─ set-function-length@1.2.0
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/ljharb/set-function-length
+│  ├─ publisher: Jordan Harband
+│  ├─ email: ljharb@gmail.com
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\set-function-length
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\set-function-length\LICENSE
+├─ side-channel@1.0.4
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/ljharb/side-channel
+│  ├─ publisher: Jordan Harband
+│  ├─ email: ljharb@gmail.com
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\side-channel
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\side-channel\LICENSE
+├─ simple-concat@1.0.1
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/feross/simple-concat
+│  ├─ publisher: Feross Aboukhadijeh
+│  ├─ email: feross@feross.org
+│  ├─ url: https://feross.org
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\simple-concat
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\simple-concat\LICENSE
+├─ simple-get@4.0.1
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/feross/simple-get
+│  ├─ publisher: Feross Aboukhadijeh
+│  ├─ email: feross@feross.org
+│  ├─ url: https://feross.org
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\simple-get
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\simple-get\LICENSE
+├─ string_decoder@1.1.1
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/nodejs/string_decoder
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\string_decoder
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\string_decoder\LICENSE
+├─ strip-json-comments@2.0.1
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/sindresorhus/strip-json-comments
+│  ├─ publisher: Sindre Sorhus
+│  ├─ email: sindresorhus@gmail.com
+│  ├─ url: sindresorhus.com
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\rc\node_modules\strip-json-comments
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\rc\node_modules\strip-json-comments\license
+├─ supports-color@5.5.0
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/chalk/supports-color
+│  ├─ publisher: Sindre Sorhus
+│  ├─ email: sindresorhus@gmail.com
+│  ├─ url: sindresorhus.com
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\chalk\node_modules\supports-color
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\chalk\node_modules\supports-color\license
+├─ tar-fs@2.1.1
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/mafintosh/tar-fs
+│  ├─ publisher: Mathias Buus
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\tar-fs
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\tar-fs\LICENSE
+├─ tar-stream@2.2.0
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/mafintosh/tar-stream
+│  ├─ publisher: Mathias Buus
+│  ├─ email: mathiasbuus@gmail.com
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\tar-stream
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\tar-stream\LICENSE
+├─ tmp@0.2.1
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/raszi/node-tmp
+│  ├─ publisher: KARASZI István
+│  ├─ email: github@spam.raszi.hu
+│  ├─ url: http://raszi.hu/
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\tmp
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\tmp\LICENSE
+├─ tunnel-agent@0.6.0
+│  ├─ licenses: Apache-2.0
+│  ├─ repository: https://github.com/mikeal/tunnel-agent
+│  ├─ publisher: Mikeal Rogers
+│  ├─ email: mikeal.rogers@gmail.com
+│  ├─ url: http://www.futurealoof.com
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\tunnel-agent
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\tunnel-agent\LICENSE
+├─ tunnel@0.0.6
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/koichik/node-tunnel
+│  ├─ publisher: Koichi Kobayashi
+│  ├─ email: koichik@improvement.jp
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\tunnel
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\tunnel\LICENSE
+├─ typed-rest-client@1.8.11
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/Microsoft/typed-rest-client
+│  ├─ publisher: Microsoft Corporation
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\typed-rest-client
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\typed-rest-client\LICENSE
+├─ uc.micro@1.0.6
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/markdown-it/uc.micro
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\uc.micro
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\uc.micro\LICENSE.txt
+├─ underscore@1.13.6
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/jashkenas/underscore
+│  ├─ publisher: Jeremy Ashkenas
+│  ├─ email: jeremy@documentcloud.org
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\underscore
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\underscore\LICENSE
+├─ url-join@4.0.1
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/jfromaniello/url-join
+│  ├─ publisher: José F. Romaniello
+│  ├─ email: jfromaniello@gmail.com
+│  ├─ url: http://joseoncode.com
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\url-join
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\url-join\LICENSE
+├─ utf-8-validate@6.0.3
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/websockets/utf-8-validate
+│  ├─ publisher: Einar Otto Stangvik
+│  ├─ email: einaros@gmail.com
+│  ├─ url: http://2x.io
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\utf-8-validate
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\utf-8-validate\LICENSE
+├─ util-deprecate@1.0.2
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/TooTallNate/util-deprecate
+│  ├─ publisher: Nathan Rajlich
+│  ├─ email: nathan@tootallnate.net
+│  ├─ url: http://n8.io/
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\util-deprecate
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\util-deprecate\LICENSE
+├─ vsce@2.15.0
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/Microsoft/vsce
+│  ├─ publisher: Microsoft Corporation
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\vsce
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\vsce\LICENSE
+├─ watchpack@2.4.0
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/webpack/watchpack
+│  ├─ publisher: Tobias Koppers @sokra
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\watchpack
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\watchpack\LICENSE
+├─ which@2.0.2
+│  ├─ licenses: ISC
+│  ├─ repository: https://github.com/isaacs/node-which
+│  ├─ publisher: Isaac Z. Schlueter
+│  ├─ email: i@izs.me
+│  ├─ url: http://blog.izs.me
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\which
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\which\LICENSE
+├─ wrappy@1.0.2
+│  ├─ licenses: ISC
+│  ├─ repository: https://github.com/npm/wrappy
+│  ├─ publisher: Isaac Z. Schlueter
+│  ├─ email: i@izs.me
+│  ├─ url: http://blog.izs.me/
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\wrappy
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\wrappy\LICENSE
+├─ ws@8.16.0
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/websockets/ws
+│  ├─ publisher: Einar Otto Stangvik
+│  ├─ email: einaros@gmail.com
+│  ├─ url: http://2x.io
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\ws
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\ws\LICENSE
+├─ xml2js@0.4.23
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/Leonidas-from-XIV/node-xml2js
+│  ├─ publisher: Marek Kubica
+│  ├─ email: marek@xivilization.net
+│  ├─ url: https://xivilization.net
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\xml2js
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\xml2js\LICENSE
+├─ xmlbuilder@11.0.1
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/oozcitak/xmlbuilder-js
+│  ├─ publisher: Ozgur Ozcitak
+│  ├─ email: oozcitak@gmail.com
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\xmlbuilder
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\xmlbuilder\LICENSE
+├─ yallist@4.0.0
+│  ├─ licenses: ISC
+│  ├─ repository: https://github.com/isaacs/yallist
+│  ├─ publisher: Isaac Z. Schlueter
+│  ├─ email: i@izs.me
+│  ├─ url: http://blog.izs.me/
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\hosted-git-info\node_modules\yallist
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\hosted-git-info\node_modules\yallist\LICENSE
+├─ yauzl@2.10.0
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/thejoshwolfe/yauzl
+│  ├─ publisher: Josh Wolfe
+│  ├─ email: thejoshwolfe@gmail.com
+│  ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\yauzl
+│  └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\yauzl\LICENSE
+└─ yazl@2.5.1
+   ├─ licenses: MIT
+   ├─ repository: https://github.com/thejoshwolfe/yazl
+   ├─ publisher: Josh Wolfe
+   ├─ email: thejoshwolfe@gmail.com
+   ├─ path: D:\Programing\meltos_project\meltos_vscode\node_modules\yazl
+   └─ licenseFile: D:\Programing\meltos_project\meltos_vscode\node_modules\yazl\LICENSE
