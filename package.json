@@ -3,6 +3,11 @@
   "publisher": "elm",
   "displayName": "meltos",
   "description": "",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/not-elm/meltos_vscode"
+  },
+  "icon": "media/logo.jpg",
   "version": "0.0.1",
   "engines": {
     "vscode": "^1.85.0"
@@ -40,7 +45,7 @@
         {
           "id": "meltos",
           "title": "meltos",
-          "icon": "$(add)",
+          "icon": "media/logo.svg",
           "when" : "scmProvider == meltos"
         }
       ]
