@@ -11,7 +11,7 @@
       "request": "launch",
       "args": [
         "--extensionDevelopmentPath=${workspaceFolder}",
-        // "--extensionDevelopmentPath=D:/Programing/Rust/meltos_project/vscode-meltos-file-system"
+        "--extensionDevelopmentPath=D:/Programing/meltos-core"
       ],
       "outFiles": [
         "${workspaceFolder}/dist/**/*.js"

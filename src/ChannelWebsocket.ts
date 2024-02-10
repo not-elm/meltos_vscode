@@ -33,7 +33,7 @@ export class ChannelWebsocket implements vscode.Disposable {
         const statusBar = vscode.window.createStatusBarItem();
 
         const ws = new WebSocket(
-            `ws://158.101.90.235:3000/room/${roomId}/channel`,
+            `ws://room.meltos.net/room/${roomId}/channel`,
             {
                 headers: {
                     "set-cookie": `session_id=${sessionId}`,
@@ -169,7 +169,7 @@ export class ChannelWebsocket implements vscode.Disposable {
                 `Created discussion(${created.meta.title})`,
                 created.meta.id
             );
-
+            
             await this.discussion.created(created);
         });
     };

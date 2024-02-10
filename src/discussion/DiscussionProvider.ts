@@ -13,7 +13,6 @@ export class DiscussionProvider {
     ) {
     }
 
-
     async sync(discussions: DiscussionBundleType[]) {
         await this.withTryCatch(async () => {
             await this.io.sync(discussions);
@@ -23,10 +22,6 @@ export class DiscussionProvider {
 
     async created(created: CreatedType) {
         await this.withTryCatch(async () => {
-            vscode.window.showInformationMessage(`created discussion\n
-                creator=${created.meta.creator}\n
-                id=${created.meta.id}
-            `);
             await this.io.created(created);
         });
     }
@@ -54,7 +49,6 @@ export class DiscussionProvider {
             await this.viewManager.notify(closed.discussion_id[0]);
         });
     }
-
 
     private async withTryCatch<T>(f: () => Promise<T>) {
         try {

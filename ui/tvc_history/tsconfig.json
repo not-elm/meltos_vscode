@@ -22,9 +22,7 @@
     "noUnusedParameters": false,
     "noImplicitAny": false,
     "noFallthroughCasesInSwitch": true,
-    "typeRoots": [
-      "../../wasm"
-    ]
+
   },
   "include": [
     "src/**/*",

@@ -113,19 +113,6 @@ export class DiscussionWebView implements vscode.Disposable {
                 enableScripts: true,
                 localResourceRoots: [
                     vscode.Uri.joinPath(this.context.extensionUri, "media"),
-                    vscode.Uri.joinPath(
-                        this.context.extensionUri,
-                        "ui",
-                        "discussion",
-                        "build"
-                    ),
-                    vscode.Uri.joinPath(
-                        this.context.extensionUri,
-                        "ui",
-                        "discussion",
-                        "build",
-                        "assets"
-                    ),
                 ],
             }
         );
@@ -148,20 +135,16 @@ export class DiscussionWebView implements vscode.Disposable {
         const stylesUri = webview.asWebviewUri(
             vscode.Uri.joinPath(
                 extensionUri,
-                "ui",
+                "media",
                 "discussion",
-                "build",
-                "assets",
                 "index.css"
             )
         );
         const scriptUri = webview.asWebviewUri(
             vscode.Uri.joinPath(
                 extensionUri,
-                "ui",
+                "media",
                 "discussion",
-                "build",
-                "assets",
                 "index.js"
             )
         );

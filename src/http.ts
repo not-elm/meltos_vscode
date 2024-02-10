@@ -2,7 +2,7 @@ import {CreatedType, RepliedType, SpokeType} from "./types/api";
 import {RoomBundleType} from "meltos_ts_lib/src/RoomBundle";
 import {SessionConfigsType} from "meltos_ts_lib/dist/SessionConfigs";
 
-const BASE_URI: string = "http://158.101.90.235:3000";
+const BASE_URI: string = "http://room.meltos.net";
 
 export class HttpRoomClient {
     constructor(

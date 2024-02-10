@@ -9,3 +9,6 @@ out/
 pkg/
 wasm/
 **/build/
+media/commit_history/
+media/discussion/
+media/tvc_scm/

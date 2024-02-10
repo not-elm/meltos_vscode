@@ -103,7 +103,7 @@ export async function activate(context: vscode.ExtensionContext) {
 }
 
 export async function deactivate() {
-	console.debug("deactivate");
+	console.debug("========= deactive =========");
 	await httpRoomClient?.leave();
 	websocket?.dispose();
 	discussionWebviewManager?.dispose();

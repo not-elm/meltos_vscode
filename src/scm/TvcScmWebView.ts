@@ -47,10 +47,7 @@ export class TvcScmWebView implements vscode.WebviewViewProvider {
                 codiconsCssDir(this.context.extensionUri),
                 vscode.Uri.joinPath(
                     this.context.extensionUri,
-                    "ui",
-                    "tvc_scm",
-                    "build",
-                    "assets"
+                    "media",
                 ),
             ],
         };
@@ -112,20 +109,16 @@ export class TvcScmWebView implements vscode.WebviewViewProvider {
         const stylesUri = webview.asWebviewUri(
             vscode.Uri.joinPath(
                 extensionUri,
-                "ui",
+                "media",
                 "tvc_scm",
-                "build",
-                "assets",
                 "index.css"
             )
         );
         const scriptUri = webview.asWebviewUri(
             vscode.Uri.joinPath(
                 extensionUri,
-                "ui",
+                "media",
                 "tvc_scm",
-                "build",
-                "assets",
                 "index.js"
             )
         );

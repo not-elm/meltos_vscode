@@ -57,10 +57,7 @@ export class CommitHistoryWebView {
                 codiconsCssDir(context.extensionUri),
                 vscode.Uri.joinPath(
                     context.extensionUri,
-                    "ui",
-                    "tvc_history",
-                    "build",
-                    "assets"
+                    "media"
                 ),
             ],
         };
@@ -116,7 +113,7 @@ export class CommitHistoryWebView {
 
     async postMessage() {
         const branchCommits = (await this.tvc.all_branch_commit_metas())[0];
-        console.log(branchCommits);
+
         const branches = branchCommits.map((b) => ({
             name: b.name,
             commits: b.commits.map((c) => ({
@@ -135,20 +132,16 @@ export class CommitHistoryWebView {
         const stylesUri = webview.asWebviewUri(
             vscode.Uri.joinPath(
                 extensionUri,
-                "ui",
-                "tvc_history",
-                "build",
-                "assets",
+                "media",
+                "commit_history",
                 "index.css"
             )
         );
         const scriptUri = webview.asWebviewUri(
             vscode.Uri.joinPath(
                 extensionUri,
-                "ui",
-                "tvc_history",
-                "build",
-                "assets",
+                "media",
+                "commit_history",
                 "index.js"
             )
         );
