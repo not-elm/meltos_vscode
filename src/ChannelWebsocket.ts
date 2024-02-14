@@ -33,7 +33,7 @@ export class ChannelWebsocket implements vscode.Disposable {
         const statusBar = vscode.window.createStatusBarItem();
 
         const ws = new WebSocket(
-            `ws://room.meltos.net/room/${roomId}/channel`,
+            `wss://room.meltos.net/room/${roomId}/channel`,
             {
                 headers: {
                     "set-cookie": `session_id=${sessionId}`,
@@ -57,7 +57,7 @@ export class ChannelWebsocket implements vscode.Disposable {
         ws.on("close", async () => {
             console.log("close room channel");
             vscode.window.showWarningMessage("Room closed");
-            await this.saveWorkspaceIfNeed();
+          
             const http = new HttpRoomClient({
                 room_id: this.sessionConfigs.room_id[0],
                 session_id: this.sessionConfigs.session_id[0],

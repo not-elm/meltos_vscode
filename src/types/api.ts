@@ -4,7 +4,6 @@ export interface DiscussionMetaType {
     title: string;
 }
 
-
 export interface JoinedType{
     user_id: string
 }
@@ -14,7 +13,7 @@ export interface LeftType{
 }
 
 export interface Open {
-    user_id: string,
+    bundle: any,
     lifetime_secs?: number
 }
 

@@ -5,7 +5,6 @@ import {ChangeMeta} from "meltos_ts_lib/src/scm/changes/ChangeMeta";
 import {openDiffCommand} from "../apiWrapper";
 import {toMeltosUri} from "../fs/util";
 
-
 export const openObjDiff = async (changeMeta: ChangeMeta, userId: string) => {
     if (changeMeta.changeType === "delete") {
         await openObjFile(changeMeta.trace_obj_hash!);

@@ -1,9 +1,7 @@
 import * as fs from "fs";
 import vscode from "vscode";
 import * as path from "node:path";
-import {MemFS} from "./MemFs";
-import {VscodeNodeFs} from "./VscodeNodeFs";
-import {WasmFileSystem} from "../../wasm";
+import {WasmFileSystem} from "../../dist";
 
 export const parseParentPath = (uri: string, ignoreCount: number = 0) => {
     const ps = backslashToSlash(uri).split("/");

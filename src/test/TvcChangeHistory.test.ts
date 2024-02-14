@@ -1,7 +1,7 @@
 // noinspection DuplicatedCode
 
 import { TvcChangeHistory } from "../tvc/TvcChangeHistory";
-import { WasmTvcClient } from "../../wasm";
+import { WasmTvcClient } from "../../dist";
 import { MemFS } from "../fs/MemFs";
 import * as vscode from "vscode";
 import { FileChangeType } from "vscode";

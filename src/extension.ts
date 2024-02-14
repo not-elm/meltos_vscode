@@ -25,7 +25,7 @@ import { copy } from "copy-paste";
 import { DiscussionProvider } from "./discussion/DiscussionProvider";
 import { BundleType } from "meltos_ts_lib/src/tvc/Bundle";
 import { TvcProvider } from "./tvc/TvcProvider";
-import { SessionConfigsType } from "meltos_ts_lib/dist/SessionConfigs";
+import {  SessionConfigsType } from "meltos_ts_lib/dist/SessionConfigs";
 import { RoomFileSystem } from "./fs/RoomFileSystem";
 import { copyRealWorkspaceToVirtual, openWorkspacePathDialog } from "./fs/util";
 import { TvcScmWebView } from "./scm/TvcScmWebView";
@@ -66,7 +66,8 @@ export async function activate(context: vscode.ExtensionContext) {
 	if (s) {
 		const meltosEmitter = new FileChangeEventEmitter("meltos", s.user_id);
 		fileObserver.register(meltosEmitter);
-		const fs = new meltos.WasmFileSystem(meltosEmitter);
+		const fs = new meltos.WasmFileSystem(meltosEmitter, context.globalState.get("workspaceSource"));
+		await context.globalState.update("workspaceSource", undefined);
 		const tvc = new meltos.WasmTvcClient(fs);
 		roomFs.set(s.user_id, tvc);
 
@@ -99,6 +100,8 @@ export async function activate(context: vscode.ExtensionContext) {
 
 		const objProvider = new ObjFileProvider(tvc);
 		vscode.workspace.registerTextDocumentContentProvider("tvc", objProvider);
+	}else if(vscode.workspace.workspaceFolders?.some(a => a.uri.scheme === "meltos")){
+		vscode.workspace.updateWorkspaceFolders(0, vscode.workspace.workspaceFolders.length);
 	}
 }
 
@@ -145,7 +148,7 @@ const registerOpenRoomCommand = (context: vscode.ExtensionContext) => {
 			}
 
 			const args = createOwnerArgs(workspaceSource.fsPath);
-			await initFromArgs(context, args);
+			await initFromArgs(context, args, workspaceSource.fsPath);
 		})
 	);
 };
@@ -168,18 +171,20 @@ const registerJoinRoomCommand = (context: vscode.ExtensionContext) => {
 
 const initFromArgs = async (
 	context: vscode.ExtensionContext,
-	args: UserArgs | OwnerArgs
+	args: UserArgs | OwnerArgs,
+	workspaceSource?: string
 ) => {
 	try {
 		const meltos = await wasm;
-		const fs = new meltos.WasmFileSystem();
+		const fs = new meltos.WasmFileSystem(undefined, workspaceSource);
 		const tvc = new meltos.WasmTvcClient(fs);
 		await tvc.fs().delete_api(".meltos");
 
 		let sessionConfigs: SessionConfigs;
 		if (isOwner(args)) {
-			await copyRealWorkspaceToVirtual(args.workspaceSource, tvc.fs());
+		
 			sessionConfigs = await tvc.open_room(roomLifetimeSecs(), roomCapacity());
+			await context.globalState.update("workspaceSource", args.workspaceSource);
 		} else {
 			sessionConfigs = await tvc.join_room(args.roomId, args.userId);
 		}
@@ -187,7 +192,7 @@ const initFromArgs = async (
 		await context.globalState.update("session", {
 			room_id: sessionConfigs.room_id[0],
 			user_id: sessionConfigs.user_id[0],
-			session_id: sessionConfigs.session_id[0],
+			session_id: sessionConfigs.session_id[0]
 		});
 		const folderCount = vscode.workspace.workspaceFolders?.length || null;
 		const branchNames = (await tvc.branch_names())[0].filter(
@@ -207,12 +212,12 @@ const initFromArgs = async (
 				uri: Uri.parse("meltos:/").with({
 					authority: sessionConfigs.user_id[0],
 				}),
-				name: sessionConfigs!.user_id[0],
+				name: `${sessionConfigs!.user_id[0]} (YOU)`,
 			},
 			...roomUsers
 		);
 	} catch (e) {
-		error(e?.toString() || "failed initialize");
+		console.error(e);
 		throw e;
 	}
 };
@@ -336,7 +341,7 @@ const registerSyncCommand = (
 export const convertToWasmBundle = async (
 	bundle: BundleType
 ): Promise<Bundle> => {
-	const meltos = await import("../wasm/index.js");
+	const meltos = await wasm;
 	const traces = bundle.traces.map(
 		(t) => new meltos.BundleTrace(t.commit_hash, t.obj_hash)
 	);

@@ -1,8 +1,8 @@
-import {CreatedType, RepliedType, SpokeType} from "./types/api";
+import {CreatedType, Open, RepliedType, SpokeType} from "./types/api";
 import {RoomBundleType} from "meltos_ts_lib/src/RoomBundle";
 import {SessionConfigsType} from "meltos_ts_lib/dist/SessionConfigs";
 
-const BASE_URI: string = "http://room.meltos.net";
+const BASE_URI: string = "https://room.meltos.net";
 
 export class HttpRoomClient {
     constructor(
@@ -18,8 +18,8 @@ export class HttpRoomClient {
         return this.configs.session_id;
     }
 
-    static async open() {
-        const opened = await httpOpen();
+    static async open(open: Open) {
+        const opened = await httpOpen(open);
         return new HttpRoomClient(opened);
     }
 
@@ -72,15 +72,14 @@ export class HttpRoomClient {
     };
 }
 
-export const httpOpen = async (userId?: string) => {
+export const httpOpen = async (open: Open) => {
     const response = await fetch(`${BASE_URI}/room/open`, {
         method: "POST",
+        mode: "cors",
         headers: {
-            "content-type": "application/json",
+            "content-type": "application/json", 
         },
-        body: JSON.stringify({
-            user_id: userId,
-        }),
+        body: JSON.stringify(open),
     });
     const json = await response.json();
     return json as {

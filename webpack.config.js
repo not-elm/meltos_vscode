@@ -52,7 +52,7 @@ const extensionConfig = {
         new WasmPackPlugin({
             crateDirectory: path.join(__dirname, "../meltos_wasm"),
             outDir: path.resolve(__dirname, "wasm"),
-            // extraArgs: "--target nodejs"
+            outName: "index",
         }),
     ],
     devtool: 'source-map',

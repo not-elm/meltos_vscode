@@ -3,7 +3,7 @@ import { Uri, Webview } from "vscode";
 
 import { StageMessage } from "meltos_ts_lib/src/scm/changes/ScmFromWebMessage";
 
-import { SessionConfigs } from "../../wasm";
+import { SessionConfigs } from "../../dist";
 import { codiconsCssDir, codiconsCssPath, getNonce } from "../webviewUtil";
 import { toMeltosUri } from "../fs/util";
 

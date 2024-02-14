@@ -1,5 +1,5 @@
 import { MemFS } from "../fs/MemFs";
-import { WasmTvcClient } from "../../wasm";
+import { WasmTvcClient } from "../../dist";
 import { ObjFileProvider } from "../tvc/ObjFileProvider";
 import vscode from "vscode";
 import { deepStrictEqual } from "node:assert";
